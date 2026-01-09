@@ -3,8 +3,9 @@
 import { NextStudio } from 'next-sanity/studio';
 import { defineConfig } from 'sanity';
 import { structureTool } from 'sanity/structure';
-// Ispravna relativna putanja: izlazimo 3 razine van (app/studio/[[...index]]) do roota, pa u cms
-import { schemaTypes } from '../../../cms/schemaTypes/index';
+// Importiramo shemu iz app/lib/schema.ts
+// app/studio/[[...index]] -> ../../lib/schema
+import { schemaTypes } from '../../lib/schema';
 
 const projectId = process.env.NEXT_PUBLIC_SANITY_PROJECT_ID || 'p474xc12';
 const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET || 'production';
