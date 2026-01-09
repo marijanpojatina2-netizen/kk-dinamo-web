@@ -1,6 +1,6 @@
 import { client } from "../lib/sanity";
 import { allNewsQuery } from "../lib/queries";
-import NewsPageContent from "../../components/NewsPageContent";
+import NewsPageContent, { NewsItem } from "../../components/NewsPageContent";
 import { newsItems } from "../data/siteData";
 
 export const revalidate = 60;
@@ -16,30 +16,33 @@ const parseDate = (str: string) => {
 };
 
 export default async function NewsPage() {
-  let news = [];
+  let newsData: any[] = [];
 
   try {
-    const newsData = await client.fetch(allNewsQuery);
-    if (newsData && newsData.length > 0) {
-      news = newsData;
+    const fetchedData = await client.fetch(allNewsQuery);
+    if (fetchedData && fetchedData.length > 0) {
+      newsData = fetchedData;
     }
   } catch (error) {
     console.error("Greška pri dohvatu vijesti iz Sanityja:", error);
   }
 
-  // Fallback ako nema podataka u Sanityju
-  if (news.length === 0) {
-     news = newsItems.map((item: any) => ({
-        title: item.title,
-        slug: item.slug || 'news-item',
-        publishedAt: item.publishedAt || parseDate(item.date),
-        category: item.category || 'Vijesti',
-        imageUrl: item.imageUrl || item.img,
-        excerpt: item.excerpt || ''
-     }));
-  }
+  // Mapiranje podataka kako bi odgovarali NewsItem sučelju
+  // Ako nema podataka iz CMS-a, koristimo dummy podatke
+  const sourceData = newsData.length > 0 ? newsData : newsItems;
+
+  const news: NewsItem[] = sourceData.map((item: any) => ({
+    title: item.title,
+    slug: item.slug || 'news-item',
+    // CMS vraća publishedAt, siteData vraća date.
+    publishedAt: item.publishedAt || parseDate(item.date),
+    category: item.category || 'Vijesti',
+    // CMS vraća imageUrl, siteData vraća img.
+    imageUrl: item.imageUrl || item.img,
+    excerpt: item.excerpt || ''
+  }));
 
   return (
     <NewsPageContent news={news} />
   );
-}   
+}
