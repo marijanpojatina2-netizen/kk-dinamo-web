@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useRef } from 'react';
@@ -31,15 +32,16 @@ interface Staff {
 interface TeamPageProps {
   players: Player[];
   staff: Staff[];
+  logoUrl?: string;
 }
 
-export default function TeamPageContent({ players, staff }: TeamPageProps) {
+export default function TeamPageContent({ players, staff, logoUrl }: TeamPageProps) {
   // Sortiranje igrača po broju
   const sortedRoster = [...players].sort((a, b) => a.number - b.number);
 
   return (
     <div className="font-sans text-white bg-[#000d26] w-full overflow-x-hidden selection:bg-[#002060] selection:text-white pt-24">
-      <HeaderV5 variant="solid" />
+      <HeaderV5 variant="solid" logoUrl={logoUrl} />
 
       {/* HEADER SECTION - "MOMČAD" */}
       <section className="relative py-20 lg:py-32 flex justify-center items-center bg-[#000d26] overflow-hidden">
@@ -161,7 +163,7 @@ export default function TeamPageContent({ players, staff }: TeamPageProps) {
         </section>
       )}
 
-      <FooterV5 />
+      <FooterV5 logoUrl={logoUrl} />
     </div>
   );
 }

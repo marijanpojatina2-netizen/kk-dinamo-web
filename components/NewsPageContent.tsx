@@ -1,3 +1,4 @@
+
 'use client';
 
 import React from 'react';
@@ -18,6 +19,7 @@ export interface NewsItem {
 
 export interface NewsPageProps {
   news: NewsItem[];
+  logoUrl?: string;
 }
 
 // Helper za formatiranje datuma
@@ -27,7 +29,7 @@ const formatDate = (dateString: string) => {
   return `${date.getDate().toString().padStart(2, '0')}.${(date.getMonth() + 1).toString().padStart(2, '0')}.${date.getFullYear()}.`;
 };
 
-export default function NewsPageContent({ news }: NewsPageProps) {
+export default function NewsPageContent({ news, logoUrl }: NewsPageProps) {
   // Sigurnosna provjera ako je news undefined
   const validNews = Array.isArray(news) ? news : [];
   
@@ -36,7 +38,7 @@ export default function NewsPageContent({ news }: NewsPageProps) {
 
   return (
     <div className="font-sans text-[#001035] bg-gray-50 w-full overflow-x-hidden selection:bg-[#002060] selection:text-white pt-24">
-      <HeaderV5 variant="solid" />
+      <HeaderV5 variant="solid" logoUrl={logoUrl} />
 
       {/* DYNAMIC HEADER SECTION */}
       <section className="relative py-24 lg:py-32 bg-[#001035] overflow-hidden text-white">
@@ -187,7 +189,7 @@ export default function NewsPageContent({ news }: NewsPageProps) {
            </div>
       </section>
 
-      <FooterV5 />
+      <FooterV5 logoUrl={logoUrl} />
     </div>
   );
 }

@@ -1,5 +1,6 @@
+
 import { client } from "../../lib/sanity";
-import { singleNewsQuery, newsQuery } from "../../lib/queries";
+import { singleNewsQuery, newsQuery, globalConfigQuery } from "../../lib/queries";
 import NewsSingleContent from "../../../components/NewsSingleContent";
 import { newsItems } from "../../data/siteData";
 
@@ -14,14 +15,19 @@ export default async function NewsSinglePage({ params }: Props) {
   
   let article = null;
   let relatedNews = [];
+  let logoUrl: string | undefined;
 
   try {
-    // 1. Fetch main article
-    article = await client.fetch(singleNewsQuery, { slug });
+    // 1. Fetch main article, related news and global config (logo) in parallel
+    const [fetchedArticle, allNews, globalConfig] = await Promise.all([
+      client.fetch(singleNewsQuery, { slug }),
+      client.fetch(newsQuery),
+      client.fetch(globalConfigQuery).catch(() => null)
+    ]);
     
-    // 2. Fetch related (latest) news
-    const allNews = await client.fetch(newsQuery);
+    article = fetchedArticle;
     relatedNews = allNews.filter((n: any) => n.slug !== slug).slice(0, 3);
+    if (globalConfig) logoUrl = globalConfig.logoUrl;
 
   } catch (error) {
     console.error("Greška pri dohvatu članka:", error);
@@ -49,6 +55,6 @@ export default async function NewsSinglePage({ params }: Props) {
   }
 
   return (
-    <NewsSingleContent article={article} relatedNews={relatedNews} />
+    <NewsSingleContent article={article} relatedNews={relatedNews} logoUrl={logoUrl} />
   );
 }

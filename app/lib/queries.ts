@@ -22,6 +22,11 @@ export const homepageQuery = groq`*[_type == "homepage"][0] {
   }
 }`;
 
+// NOVO: Query za globalne postavke (Logo) koje se koriste na podstranicama
+export const globalConfigQuery = groq`*[_type == "homepage"][0] {
+  "logoUrl": logo.asset->url
+}`;
+
 // Query za Vijesti (zadnjih 6) - koristi se na naslovnici
 export const newsQuery = groq`*[_type == "news"] | order(publishedAt desc)[0...6] {
   title,

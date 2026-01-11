@@ -1,3 +1,4 @@
+
 'use client';
 
 import React from 'react';
@@ -19,6 +20,7 @@ interface NewsArticle {
 interface NewsSingleContentProps {
   article: NewsArticle;
   relatedNews: any[];
+  logoUrl?: string;
 }
 
 // Helper za formatiranje datuma
@@ -28,12 +30,12 @@ const formatDate = (dateString: string) => {
   return `${date.getDate().toString().padStart(2, '0')}.${(date.getMonth() + 1).toString().padStart(2, '0')}.${date.getFullYear()}.`;
 };
 
-export default function NewsSingleContent({ article, relatedNews }: NewsSingleContentProps) {
+export default function NewsSingleContent({ article, relatedNews, logoUrl }: NewsSingleContentProps) {
   if (!article) return null;
 
   return (
     <div className="font-sans text-[#001035] bg-white w-full overflow-x-hidden selection:bg-[#002060] selection:text-white pt-24">
-      <HeaderV5 variant="solid" />
+      <HeaderV5 variant="solid" logoUrl={logoUrl} />
 
       {/* --- ARTICLE HEADER --- */}
       <section className="max-w-[1000px] mx-auto px-4 lg:px-0 pt-12 lg:pt-20 pb-8">
@@ -98,7 +100,7 @@ export default function NewsSingleContent({ article, relatedNews }: NewsSingleCo
                   {article.body ? (
                       <PortableText value={article.body} />
                   ) : (
-                      <p>Nema teksta za prikaz.</p>
+                      <p className="text-gray-500 italic">Više detalja uskoro...</p>
                   )}
               </div>
 

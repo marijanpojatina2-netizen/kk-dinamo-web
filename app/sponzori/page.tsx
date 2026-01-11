@@ -1,5 +1,6 @@
+
 import { client } from "../lib/sanity";
-import { sponsorsQuery } from "../lib/queries";
+import { sponsorsQuery, globalConfigQuery } from "../lib/queries";
 import SponsorsPageContent from "../../components/SponsorsPageContent";
 import { sponsors as staticSponsors } from "../data/siteData";
 
@@ -7,9 +8,15 @@ export const revalidate = 60;
 
 export default async function SponsorsPage() {
   let sponsors = [];
+  let logoUrl: string | undefined;
 
   try {
-    sponsors = await client.fetch(sponsorsQuery);
+    const [s, g] = await Promise.all([
+      client.fetch(sponsorsQuery),
+      client.fetch(globalConfigQuery).catch(() => null)
+    ]);
+    sponsors = s;
+    if (g) logoUrl = g.logoUrl;
   } catch (error) {
     console.error("Greška pri dohvatu sponzora:", error);
   }
@@ -25,6 +32,6 @@ export default async function SponsorsPage() {
   }
 
   return (
-    <SponsorsPageContent sponsors={sponsors} />
+    <SponsorsPageContent sponsors={sponsors} logoUrl={logoUrl} />
   );
 }

@@ -1,5 +1,6 @@
+
 import { client } from "../lib/sanity";
-import { allNewsQuery } from "../lib/queries";
+import { allNewsQuery, globalConfigQuery } from "../lib/queries";
 import NewsPageContent, { NewsItem } from "../../components/NewsPageContent";
 import { newsItems } from "../data/siteData";
 
@@ -17,11 +18,19 @@ const parseDate = (str: string) => {
 
 export default async function NewsPage() {
   let newsData: any[] = [];
+  let logoUrl: string | undefined;
 
   try {
-    const fetchedData = await client.fetch(allNewsQuery);
+    const [fetchedData, globalConfig] = await Promise.all([
+      client.fetch(allNewsQuery),
+      client.fetch(globalConfigQuery)
+    ]);
+    
     if (fetchedData && fetchedData.length > 0) {
       newsData = fetchedData;
+    }
+    if (globalConfig) {
+      logoUrl = globalConfig.logoUrl;
     }
   } catch (error) {
     console.error("Greška pri dohvatu vijesti iz Sanityja:", error);
@@ -43,6 +52,6 @@ export default async function NewsPage() {
   }));
 
   return (
-    <NewsPageContent news={news} />
+    <NewsPageContent news={news} logoUrl={logoUrl} />
   );
 }

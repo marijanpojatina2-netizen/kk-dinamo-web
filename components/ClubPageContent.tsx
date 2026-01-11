@@ -1,3 +1,4 @@
+
 'use client';
 
 import React from 'react';
@@ -11,12 +12,13 @@ interface ClubPageProps {
     history: any;
     historyImageUrl: string;
   } | null;
+  logoUrl?: string;
 }
 
-export default function ClubPageContent({ clubInfo }: ClubPageProps) {
+export default function ClubPageContent({ clubInfo, logoUrl }: ClubPageProps) {
   return (
     <div className="font-sans text-[#001035] bg-white w-full overflow-x-hidden selection:bg-[#002060] selection:text-white pt-24">
-      <HeaderV5 variant="solid" />
+      <HeaderV5 variant="solid" logoUrl={logoUrl} />
 
       {/* HISTORY */}
       <section className="max-w-[1400px] mx-auto px-4 lg:px-12 py-16 lg:py-24">
@@ -83,7 +85,7 @@ export default function ClubPageContent({ clubInfo }: ClubPageProps) {
           </div>
       </section>
 
-      <FooterV5 />
+      <FooterV5 logoUrl={logoUrl} />
     </div>
   );
 }

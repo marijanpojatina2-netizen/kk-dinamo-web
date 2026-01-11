@@ -1,15 +1,27 @@
-'use client';
 
 import React from 'react';
 import HeaderV5 from '../../../components/HeaderV5';
 import FooterV5 from '../../../components/FooterV5';
-import { Calendar, User, ChevronLeft } from 'lucide-react';
+import { ChevronLeft } from 'lucide-react';
 import Link from 'next/link';
+import { client } from '../../lib/sanity';
+import { globalConfigQuery } from '../../lib/queries';
 
-export default function NewsSinglePage() {
+export const revalidate = 60;
+
+export default async function NewsSinglePage() {
+  let logoUrl: string | undefined;
+
+  try {
+    const globalConfig = await client.fetch(globalConfigQuery).catch(() => null);
+    if (globalConfig) logoUrl = globalConfig.logoUrl;
+  } catch (error) {
+    console.error("Error fetching logo:", error);
+  }
+
   return (
     <div className="font-sans text-[#001035] bg-white w-full overflow-x-hidden pt-24">
-      <HeaderV5 variant="solid" />
+      <HeaderV5 variant="solid" logoUrl={logoUrl} />
 
       <section className="max-w-[1000px] mx-auto px-4 lg:px-0 pt-12 lg:pt-20 pb-8">
           <div className="flex items-center gap-2 mb-8 text-sm font-bold uppercase tracking-widest text-gray-400 hover:text-[#002060] transition-colors">
@@ -43,7 +55,7 @@ export default function NewsSinglePage() {
           </div>
       </section>
 
-      <FooterV5 />
+      <FooterV5 logoUrl={logoUrl} />
     </div>
   );
 }

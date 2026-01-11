@@ -1,5 +1,6 @@
+
 import { client } from "../lib/sanity";
-import { clubInfoQuery } from "../lib/queries";
+import { clubInfoQuery, globalConfigQuery } from "../lib/queries";
 import ClubPageContent from "../../components/ClubPageContent";
 import { clubContent } from "../data/siteData";
 
@@ -7,9 +8,15 @@ export const revalidate = 60;
 
 export default async function ClubPage() {
   let clubInfo = null;
+  let logoUrl: string | undefined;
 
   try {
-    clubInfo = await client.fetch(clubInfoQuery);
+    const [c, g] = await Promise.all([
+      client.fetch(clubInfoQuery),
+      client.fetch(globalConfigQuery).catch(() => null)
+    ]);
+    clubInfo = c;
+    if (g) logoUrl = g.logoUrl;
   } catch (error) {
     console.error("Greška pri dohvatu info kluba:", error);
   }
@@ -29,6 +36,6 @@ export default async function ClubPage() {
   }
 
   return (
-    <ClubPageContent clubInfo={clubInfo} />
+    <ClubPageContent clubInfo={clubInfo} logoUrl={logoUrl} />
   );
 }

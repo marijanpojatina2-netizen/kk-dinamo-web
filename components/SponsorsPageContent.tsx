@@ -1,3 +1,4 @@
+
 'use client';
 
 import React from 'react';
@@ -14,9 +15,10 @@ interface Sponsor {
 
 interface SponsorsPageProps {
   sponsors: Sponsor[];
+  logoUrl?: string;
 }
 
-export default function SponsorsPageContent({ sponsors }: SponsorsPageProps) {
+export default function SponsorsPageContent({ sponsors, logoUrl }: SponsorsPageProps) {
   // Find General sponsor (Tier = 'Generalni')
   const generalSponsor = sponsors.find(s => s.tier === 'Generalni') || sponsors[0];
   
@@ -25,7 +27,7 @@ export default function SponsorsPageContent({ sponsors }: SponsorsPageProps) {
 
   return (
     <div className="font-sans text-[#001035] bg-white w-full overflow-x-hidden selection:bg-[#002060] selection:text-white pt-24">
-      <HeaderV5 variant="solid" />
+      <HeaderV5 variant="solid" logoUrl={logoUrl} />
 
       {/* --- HERO SECTION --- */}
       <section className="relative py-24 bg-[#001035] text-white overflow-hidden flex flex-col items-center justify-center text-center">
@@ -156,7 +158,7 @@ export default function SponsorsPageContent({ sponsors }: SponsorsPageProps) {
           </div>
       </section>
 
-      <FooterV5 />
+      <FooterV5 logoUrl={logoUrl} />
     </div>
   );
 }

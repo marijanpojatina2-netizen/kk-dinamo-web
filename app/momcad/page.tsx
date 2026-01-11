@@ -1,5 +1,6 @@
+
 import { client } from "../lib/sanity";
-import { playersQuery, staffQuery } from "../lib/queries";
+import { playersQuery, staffQuery, globalConfigQuery } from "../lib/queries";
 import TeamPageContent from "../../components/TeamPageContent";
 import { roster, staff } from "../data/siteData";
 
@@ -8,14 +9,17 @@ export const revalidate = 60;
 export default async function TeamPage() {
   let playersData = [];
   let staffData = [];
+  let logoUrl: string | undefined;
 
   try {
-    const [p, s] = await Promise.all([
+    const [p, s, g] = await Promise.all([
       client.fetch(playersQuery).catch(() => []),
-      client.fetch(staffQuery).catch(() => [])
+      client.fetch(staffQuery).catch(() => []),
+      client.fetch(globalConfigQuery).catch(() => null)
     ]);
     playersData = p;
     staffData = s;
+    if (g) logoUrl = g.logoUrl;
   } catch (error) {
     console.error("Greška pri dohvatu momčadi:", error);
   }
@@ -50,6 +54,6 @@ export default async function TeamPage() {
   }
 
   return (
-    <TeamPageContent players={playersData} staff={staffData} />
+    <TeamPageContent players={playersData} staff={staffData} logoUrl={logoUrl} />
   );
 }

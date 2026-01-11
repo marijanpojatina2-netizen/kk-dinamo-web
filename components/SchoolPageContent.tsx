@@ -1,3 +1,4 @@
+
 'use client';
 
 import React from 'react';
@@ -9,17 +10,25 @@ import Link from 'next/link';
 interface SchoolPageProps {
   news: any[];
   staff: any[];
+  logoUrl?: string;
 }
 
-export default function SchoolPageContent({ news, staff }: SchoolPageProps) {
+export default function SchoolPageContent({ news, staff, logoUrl }: SchoolPageProps) {
   // Filtriraj voditelja (pretpostavka: role sadrži 'Voditelj' ili je prvi na listi ako nema match-a)
   const headOfAcademy = staff.find(s => s.role && s.role.includes('Voditelj')) || staff[0];
   // Ostali treneri (izbaci voditelja s liste trenera da se ne dupla, ako je nađen)
   const coaches = staff.filter(s => s._id !== headOfAcademy?._id);
 
+  // Paleta boja za kartice trenera
+  const cardStyles = [
+    { bg: 'bg-[#001035]', text: 'text-white', accent: 'text-[#00C2FF]' },
+    { bg: 'bg-[#002060]', text: 'text-white', accent: 'text-[#00C2FF]' },
+    { bg: 'bg-[#00C2FF]', text: 'text-[#001035]', accent: 'text-white' }
+  ];
+
   return (
     <div className="font-sans text-[#001035] bg-white w-full overflow-x-hidden selection:bg-[#002060] selection:text-white pt-24">
-      <HeaderV5 variant="solid" />
+      <HeaderV5 variant="solid" logoUrl={logoUrl} />
 
       {/* INTRO */}
       <section className="max-w-[1400px] mx-auto px-4 lg:px-12 py-12 lg:py-24">
@@ -61,8 +70,8 @@ export default function SchoolPageContent({ news, staff }: SchoolPageProps) {
         </section>
       )}
 
-      {/* COACHES GRID (Dynamic) */}
-      <section className="bg-gray-50 py-24">
+      {/* COACHES GRID (Dynamic with Colored Cards) */}
+      <section className="bg-white py-24">
           <div className="max-w-[1400px] mx-auto px-4 lg:px-12">
               <div className="mb-16">
                   <h2 className="font-condensed font-black text-6xl md:text-8xl uppercase leading-none tracking-tighter text-[#001035]">
@@ -71,18 +80,40 @@ export default function SchoolPageContent({ news, staff }: SchoolPageProps) {
                   <div className="w-20 h-2 bg-[#00C2FF] mt-4"></div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-16">
-                  {coaches.map((coach, i) => (
-                      <div key={i} className="flex flex-col group">
-                          {coach.imageUrl && (
-                              <div className="aspect-square overflow-hidden mb-4 bg-gray-200">
-                                  <img src={coach.imageUrl} alt={coach.lastname} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500" />
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                  {coaches.map((coach, i) => {
+                      const style = cardStyles[i % cardStyles.length];
+                      return (
+                          <div key={i} className={`flex flex-col group relative ${style.bg} transition-colors duration-300 h-full`}>
+                              {/* Image Container */}
+                              <div className="aspect-[4/5] overflow-hidden relative">
+                                  {coach.imageUrl ? (
+                                      <img 
+                                        src={coach.imageUrl} 
+                                        alt={coach.lastname} 
+                                        className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500" 
+                                      />
+                                  ) : (
+                                      <div className="w-full h-full flex items-center justify-center opacity-10">
+                                          <span className={`font-condensed font-black text-6xl ${style.text}`}>KKD</span>
+                                      </div>
+                                  )}
+                                  {/* Gradient Overlay */}
+                                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-60"></div>
                               </div>
-                          )}
-                          <h3 className="font-condensed font-bold text-3xl uppercase tracking-tight mb-1">{coach.name} {coach.lastname}</h3>
-                          <span className="text-sm font-bold uppercase tracking-[0.2em] text-[#002060] opacity-80">{coach.role}</span>
-                      </div>
-                  ))}
+                              
+                              {/* Content */}
+                              <div className="p-8 relative mt-auto">
+                                  <h3 className={`font-condensed font-bold text-3xl uppercase tracking-tight mb-2 ${style.text}`}>
+                                      {coach.name} <br/> {coach.lastname}
+                                  </h3>
+                                  <span className={`text-sm font-bold uppercase tracking-[0.2em] ${style.accent} opacity-90`}>
+                                      {coach.role || 'Trener'}
+                                  </span>
+                              </div>
+                          </div>
+                      );
+                  })}
               </div>
           </div>
       </section>
@@ -133,7 +164,7 @@ export default function SchoolPageContent({ news, staff }: SchoolPageProps) {
           </div>
       </section>
 
-      <FooterV5 />
+      <FooterV5 logoUrl={logoUrl} />
     </div>
   );
 }
