@@ -2,13 +2,14 @@
 import { groq } from "next-sanity";
 
 // Query za Naslovnicu (Hero sekcija i Ticker)
+// ISPRAVAK: Unutar 'hero' bloka ne koristimo prefix 'hero.', samo ime polja ('image', 'mobileImage')
 export const homepageQuery = groq`*[_type == "homepage"][0] {
   "logoUrl": logo.asset->url,
   hero {
     title,
     subtitle,
-    "imageUrl": hero.image.asset->url,
-    "mobileImageUrl": hero.mobileImage.asset->url,
+    "imageUrl": image.asset->url,
+    "mobileImageUrl": mobileImage.asset->url,
     buttonText,
     buttonLink
   },
