@@ -137,7 +137,18 @@ const HeaderV5: React.FC<HeaderV5Props> = ({ variant = 'solid', logoUrl }) => {
                 <Link href="/klub" className="font-condensed font-bold text-4xl uppercase hover:text-blue-300 transition-colors">Klub</Link>
               </nav>
 
-              <div className="mt-auto pb-12">
+              {/* Added CTAs for Mobile */}
+              <div className="flex flex-col gap-3 mt-4 border-t border-white/10 pt-6">
+                  <a href="https://ulaznice.hr" target="_blank" className="flex items-center gap-3 text-2xl font-condensed font-bold uppercase hover:text-blue-300 transition-colors">
+                      <Ticket size={24} /> Ulaznice
+                  </a>
+                  <a href="https://shop.kkdinamo.hr" target="_blank" className="flex items-center gap-3 text-2xl font-condensed font-bold uppercase hover:text-blue-300 transition-colors">
+                      <ShoppingBag size={24} /> Shop
+                  </a>
+              </div>
+
+              {/* Moved Social Icons up (removed mt-auto) */}
+              <div className="mt-4 pb-12">
                   <div className="flex gap-6 text-white/80">
                       <a href="https://www.instagram.com/kk_dinamo/" target="_blank" rel="noopener noreferrer"><Instagram size={28} /></a>
                       <a href="https://www.facebook.com/kkdinamo/" target="_blank" rel="noopener noreferrer"><Facebook size={28} /></a>
