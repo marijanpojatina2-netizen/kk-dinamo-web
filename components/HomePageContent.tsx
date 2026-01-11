@@ -151,8 +151,8 @@ export default function HomePageContent({
                     alt="KK Dinamo Hero Mobile"
                 />
             )}
-            {/* POJAČANO ZASJENČENJE: Tamnija boja i veći opacity (90%) */}
-            <div className="absolute inset-0 bg-gradient-to-t from-[#001035] via-[#002060]/80 to-transparent opacity-90"></div>
+            {/* ZASJENČENJE: Čišći gornji dio, tamno dno za tekst */}
+            <div className="absolute inset-0 bg-gradient-to-t from-[#001035] via-[#001035]/40 to-transparent"></div>
 
             <div className="relative z-10 max-w-[1920px] mx-auto px-6 lg:px-12 w-full text-left">
                 <span className="font-condensed font-bold text-white text-xl lg:text-3xl uppercase tracking-wider mb-2 block drop-shadow-md">
