@@ -137,23 +137,23 @@ const HeaderV5: React.FC<HeaderV5Props> = ({ variant = 'solid', logoUrl }) => {
                 <Link href="/klub" className="font-condensed font-bold text-4xl uppercase hover:text-blue-300 transition-colors">Klub</Link>
               </nav>
 
-              {/* Social Icons - Moved Up */}
-              <div className="mt-8 mb-8">
-                  <div className="flex gap-6 text-white">
-                      <a href="https://www.instagram.com/kk_dinamo/" target="_blank" rel="noopener noreferrer"><Instagram size={28} /></a>
-                      <a href="https://www.facebook.com/kkdinamo/" target="_blank" rel="noopener noreferrer"><Facebook size={28} /></a>
-                      <a href="https://www.tiktok.com/@kk_dinamo" target="_blank" rel="noopener noreferrer"><TikTokIcon size={28} /></a>
-                  </div>
-              </div>
-
-              {/* CTAs for Mobile - High Contrast Buttons */}
-              <div className="flex flex-col gap-4 pt-6 border-t border-white/10 mt-auto pb-12">
+              {/* CTAs for Mobile - High Contrast Buttons - Placed BELOW menu */}
+              <div className="flex flex-col gap-4 mt-8 pt-6 border-t border-white/10">
                   <a href="https://ulaznice.hr" target="_blank" className="flex items-center justify-center gap-3 w-full py-4 bg-white text-[#002060] font-condensed font-bold text-xl uppercase tracking-wider hover:bg-gray-100 transition-colors shadow-lg active:scale-95 transition-transform">
                       <Ticket size={22} /> Ulaznice
                   </a>
                   <a href="https://shop.kkdinamo.hr" target="_blank" className="flex items-center justify-center gap-3 w-full py-4 bg-[#00C2FF] text-[#001035] font-condensed font-bold text-xl uppercase tracking-wider hover:bg-white transition-colors shadow-lg active:scale-95 transition-transform">
                       <ShoppingBag size={22} /> Webshop
                   </a>
+              </div>
+
+              {/* Social Icons - Placed BELOW CTAs */}
+              <div className="mt-8 mb-12">
+                  <div className="flex gap-6 text-white">
+                      <a href="https://www.instagram.com/kk_dinamo/" target="_blank" rel="noopener noreferrer"><Instagram size={28} /></a>
+                      <a href="https://www.facebook.com/kkdinamo/" target="_blank" rel="noopener noreferrer"><Facebook size={28} /></a>
+                      <a href="https://www.tiktok.com/@kk_dinamo" target="_blank" rel="noopener noreferrer"><TikTokIcon size={28} /></a>
+                  </div>
               </div>
           </div>
       </div>
