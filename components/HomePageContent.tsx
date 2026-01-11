@@ -151,8 +151,14 @@ export default function HomePageContent({
                     alt="KK Dinamo Hero Mobile"
                 />
             )}
-            {/* ZASJENČENJE: Čišći gornji dio, tamno dno za tekst */}
-            <div className="absolute inset-0 bg-gradient-to-t from-[#001035] via-[#001035]/40 to-transparent"></div>
+            
+            {/* ZASJENČENJE POPRAVLJENO: 
+                - from-0% (tamno dolje) 
+                - via-30% (poluprozirno pri dnu) 
+                - to-50% (potpuno prozirno od sredine prema gore) 
+                Ovo osigurava da je gornja polovica slike potpuno čista.
+            */}
+            <div className="absolute inset-0 bg-gradient-to-t from-[#001035] from-0% via-[#001035]/60 via-20% to-transparent to-50%"></div>
 
             <div className="relative z-10 max-w-[1920px] mx-auto px-6 lg:px-12 w-full text-left">
                 <span className="font-condensed font-bold text-white text-xl lg:text-3xl uppercase tracking-wider mb-2 block drop-shadow-md">
@@ -194,6 +200,14 @@ export default function HomePageContent({
                     <h2 className="font-condensed font-bold text-4xl lg:text-[6.5rem] xl:text-[8rem] text-black uppercase leading-[0.9] tracking-tighter transition-colors duration-500 group-hover:text-[#002060]">
                         {featuredNews.title}
                     </h2>
+                    
+                    {/* DODAN KRATKI UVOD (EXCERPT) */}
+                    {featuredNews.excerpt && (
+                        <p className="font-body text-lg text-gray-600 mt-6 leading-relaxed line-clamp-3">
+                            {featuredNews.excerpt}
+                        </p>
+                    )}
+
                     <div className="relative w-full mt-8 h-2">
                         <div className="absolute bottom-0 left-0 w-full h-0.5 bg-black z-0"></div>
                         <div className="absolute bottom-0 left-0 w-full h-full bg-[#002060] z-10 origin-left transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 ease-out"></div>
