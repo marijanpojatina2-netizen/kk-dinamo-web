@@ -2,7 +2,6 @@
 import { groq } from "next-sanity";
 
 // Query za Naslovnicu (Hero sekcija i Ticker)
-// ISPRAVAK: Unutar 'hero' bloka ne koristimo prefix 'hero.', samo ime polja ('image', 'mobileImage')
 export const homepageQuery = groq`*[_type == "homepage"][0] {
   "logoUrl": logo.asset->url,
   hero {
@@ -138,4 +137,20 @@ export const sponsorsQuery = groq`*[_type == "sponsor"] {
 export const clubInfoQuery = groq`*[_type == "clubInfo"][0] {
   history,
   "historyImageUrl": historyImage.asset->url
+}`;
+
+// NOVO: Query za Lokacije Treninga
+export const locationsQuery = groq`*[_type == "trainingLocation"] {
+  name,
+  address,
+  "imageUrl": image.asset->url,
+  mapLink
+}`;
+
+// NOVO: Query za Omladinske Selekcije
+export const youthTeamsQuery = groq`*[_type == "youthTeam"] {
+  title,
+  coach,
+  "imageUrl": image.asset->url,
+  schedule
 }`;

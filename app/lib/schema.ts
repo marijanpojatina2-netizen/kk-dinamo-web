@@ -73,14 +73,14 @@ const match = {
   type: 'document',
   fields: [
     { name: 'homeTeam', title: 'Domaćin', type: 'string' },
-    { name: 'homeTeamLogo', title: 'Grb Domaćina', type: 'image' }, // NOVO
+    { name: 'homeTeamLogo', title: 'Grb Domaćina', type: 'image' }, 
     { name: 'awayTeam', title: 'Gost', type: 'string' },
-    { name: 'awayTeamLogo', title: 'Grb Gosta', type: 'image' }, // NOVO
+    { name: 'awayTeamLogo', title: 'Grb Gosta', type: 'image' },
     { name: 'homeScore', title: 'Poeni Domaćin', type: 'number' },
     { name: 'awayScore', title: 'Poeni Gost', type: 'number' },
     { name: 'date', title: 'Datum i vrijeme', type: 'datetime' },
     { name: 'league', title: 'Liga', type: 'string', initialValue: 'Premijer Liga' },
-    { name: 'leagueLogo', title: 'Logo Lige/Natjecanja', type: 'image' }, // NOVO
+    { name: 'leagueLogo', title: 'Logo Lige/Natjecanja', type: 'image' },
     { name: 'round', title: 'Kolo', type: 'string' },
     { name: 'isFinished', title: 'Završena utakmica', type: 'boolean' },
     { name: 'ticketLink', title: 'Link na ulaznice (ako je buduća)', type: 'url', validation: urlValidation },
@@ -218,6 +218,44 @@ const clubInfo = {
   ]
 }
 
+// 10. LOKACIJE TRENINGA (Škola košarke)
+const trainingLocation = {
+  name: 'trainingLocation',
+  title: 'Lokacije Treninga',
+  type: 'document',
+  fields: [
+    { name: 'name', title: 'Naziv Škole/Dvorane', type: 'string' },
+    { name: 'address', title: 'Adresa', type: 'string' },
+    { name: 'image', title: 'Slika škole', type: 'image' },
+    { name: 'mapLink', title: 'Google Maps Link', type: 'url', validation: urlValidation }
+  ]
+}
+
+// 11. OMLADINSKE EKIPE (Selekcije)
+const youthTeam = {
+  name: 'youthTeam',
+  title: 'Omladinske Selekcije',
+  type: 'document',
+  fields: [
+    { name: 'title', title: 'Naziv Selekcije (npr. Juniori)', type: 'string' },
+    { name: 'coach', title: 'Glavni Trener', type: 'string' },
+    { name: 'image', title: 'Timska Slika', type: 'image', options: { hotspot: true } },
+    { 
+      name: 'schedule', 
+      title: 'Nadolazeće Utakmice', 
+      type: 'array', 
+      of: [{ 
+        type: 'object',
+        fields: [
+          { name: 'opponent', title: 'Protivnik', type: 'string' },
+          { name: 'date', title: 'Datum i Vrijeme', type: 'datetime' },
+          { name: 'location', title: 'Mjesto', type: 'string' }
+        ]
+      }]
+    }
+  ]
+}
+
 export const schemaTypes = [
   homepage,
   news,
@@ -227,5 +265,7 @@ export const schemaTypes = [
   shopItem,
   sponsor,
   standing,
-  clubInfo
+  clubInfo,
+  trainingLocation,
+  youthTeam
 ]

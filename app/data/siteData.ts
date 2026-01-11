@@ -154,18 +154,45 @@ export const schoolNews = [
     { title: "Raspored treninga za mlađe kadete", date: "20.12.2024", category: "Raspored", img: "https://images.unsplash.com/photo-1518407613690-d9fc990e795f?q=80&w=800" },
 ];
 
-export const youthLeadership = {
-    headName: "Branimir Pavić",
-    headTitle: "Voditelj omladinskog pogona",
-    quote: "Naš cilj nije samo stvaranje vrhunskih igrača, već i zdravih, discipliniranih mladih ljudi.",
-    stats: { students: "450+", coaches: "12" }
-};
+export const trainingLocations = [
+    { name: "OŠ Rudeš", address: "Jablanska ul. 51", img: "https://images.unsplash.com/photo-1580582932707-520aed937b7b?q=80&w=600" },
+    { name: "OŠ Vrbani", address: "Lipanjska ul. 28", img: "https://images.unsplash.com/photo-1562774053-701939374585?q=80&w=600" },
+    { name: "OŠ Prečko", address: "Dekanići ul. 6", img: "https://images.unsplash.com/photo-1577416412292-767992299d9d?q=80&w=600" },
+    { name: "OŠ Tituša Brezovačkog", address: "Špansko ul. 1", img: "https://images.unsplash.com/photo-1544919982-b61976f0ba43?q=80&w=600" },
+    { name: "OŠ Malešnica", address: "Ul. Ante Topića Mimare 36", img: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?q=80&w=600" },
+    { name: "OŠ Voltino", address: "Vinkovačka ul. 2", img: "https://images.unsplash.com/photo-1546519638-68e109498ffc?q=80&w=600" },
+    { name: "OŠ Ljubljanica", address: "Ljubljanica 27", img: "https://images.unsplash.com/photo-1574602305366-eb9a0a4305b6?q=80&w=600" }
+];
 
-export const youthCoaches = [
-    { name: "Matija Brstilo", selection: "JUNIORI", role: "Glavni trener" },
-    { name: "Tihomir Begić", selection: "KADETI", role: "Glavni trener" },
-    { name: "Zvonimir Galovac", selection: "PRETKADETI", role: "Glavni trener" },
-    { name: "Robert Galić", selection: "U13 SELEKCIJA", role: "Glavni trener" },
-    { name: "Marija Horvat", selection: "MINI BASKET", role: "Trenerica" },
-    { name: "Ivan Perić", selection: "MINI BASKET", role: "Trener" }
+export const youthSelectionsStatic = [
+    { 
+        title: "JUNIORI", 
+        coach: "Matija Brstilo", 
+        img: "https://images.unsplash.com/photo-1546519638-68e109498ffc?q=80&w=1200",
+        schedule: [{ opponent: "Cibona", date: "12.01. @ 14:00", location: "Dom Sportova" }, { opponent: "Cedevita", date: "19.01. @ 12:00", location: "Rudeš" }]
+    },
+    { 
+        title: "KADETI", 
+        coach: "Tihomir Begić", 
+        img: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?q=80&w=1200",
+        schedule: [{ opponent: "Dubrava", date: "11.01. @ 10:00", location: "Dubrava" }] 
+    },
+    { 
+        title: "PRETKADETI", 
+        coach: "Zvonimir Galovac", 
+        img: "https://images.unsplash.com/photo-1574602305366-eb9a0a4305b6?q=80&w=1200",
+        schedule: [{ opponent: "Mladost", date: "13.01. @ 18:00", location: "Rudeš" }]
+    },
+    { 
+        title: "U13 SELEKCIJA", 
+        coach: "Robert Galić", 
+        img: "https://images.unsplash.com/photo-1544919982-b61976f0ba43?q=80&w=1200",
+        schedule: [{ opponent: "Vučići", date: "11.01. @ 09:00", location: "Velesajam" }]
+    },
+    { 
+        title: "SENIORI B", 
+        coach: "Ivan Perić", 
+        img: "https://images.unsplash.com/photo-1628779238951-bd5c95813bd3?q=80&w=1200",
+        schedule: [{ opponent: "Zapruđe", date: "14.01. @ 20:30", location: "Zapruđe" }]
+    }
 ];
