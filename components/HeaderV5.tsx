@@ -128,7 +128,7 @@ const HeaderV5: React.FC<HeaderV5Props> = ({ variant = 'solid', logoUrl }) => {
               </button>
           </div>
           
-          <div className="flex flex-col p-6 gap-6 h-full overflow-y-auto">
+          <div className="flex flex-col p-6 h-full overflow-y-auto">
               <nav className="flex flex-col gap-4">
                 <Link href="/vijesti" className="font-condensed font-bold text-4xl uppercase hover:text-blue-300 transition-colors">Vijesti</Link>
                 <Link href="/momcad" className="font-condensed font-bold text-4xl uppercase hover:text-blue-300 transition-colors">Momčad</Link>
@@ -137,23 +137,23 @@ const HeaderV5: React.FC<HeaderV5Props> = ({ variant = 'solid', logoUrl }) => {
                 <Link href="/klub" className="font-condensed font-bold text-4xl uppercase hover:text-blue-300 transition-colors">Klub</Link>
               </nav>
 
-              {/* Added CTAs for Mobile */}
-              <div className="flex flex-col gap-3 mt-4 border-t border-white/10 pt-6">
-                  <a href="https://ulaznice.hr" target="_blank" className="flex items-center gap-3 text-2xl font-condensed font-bold uppercase hover:text-blue-300 transition-colors">
-                      <Ticket size={24} /> Ulaznice
-                  </a>
-                  <a href="https://shop.kkdinamo.hr" target="_blank" className="flex items-center gap-3 text-2xl font-condensed font-bold uppercase hover:text-blue-300 transition-colors">
-                      <ShoppingBag size={24} /> Shop
-                  </a>
-              </div>
-
-              {/* Moved Social Icons up (removed mt-auto) */}
-              <div className="mt-4 pb-12">
-                  <div className="flex gap-6 text-white/80">
+              {/* Social Icons - Moved Up */}
+              <div className="mt-8 mb-8">
+                  <div className="flex gap-6 text-white">
                       <a href="https://www.instagram.com/kk_dinamo/" target="_blank" rel="noopener noreferrer"><Instagram size={28} /></a>
                       <a href="https://www.facebook.com/kkdinamo/" target="_blank" rel="noopener noreferrer"><Facebook size={28} /></a>
                       <a href="https://www.tiktok.com/@kk_dinamo" target="_blank" rel="noopener noreferrer"><TikTokIcon size={28} /></a>
                   </div>
+              </div>
+
+              {/* CTAs for Mobile - High Contrast Buttons */}
+              <div className="flex flex-col gap-4 pt-6 border-t border-white/10 mt-auto pb-12">
+                  <a href="https://ulaznice.hr" target="_blank" className="flex items-center justify-center gap-3 w-full py-4 bg-white text-[#002060] font-condensed font-bold text-xl uppercase tracking-wider hover:bg-gray-100 transition-colors shadow-lg active:scale-95 transition-transform">
+                      <Ticket size={22} /> Ulaznice
+                  </a>
+                  <a href="https://shop.kkdinamo.hr" target="_blank" className="flex items-center justify-center gap-3 w-full py-4 bg-[#00C2FF] text-[#001035] font-condensed font-bold text-xl uppercase tracking-wider hover:bg-white transition-colors shadow-lg active:scale-95 transition-transform">
+                      <ShoppingBag size={22} /> Webshop
+                  </a>
               </div>
           </div>
       </div>
