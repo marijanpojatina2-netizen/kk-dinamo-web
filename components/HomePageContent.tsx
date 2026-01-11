@@ -136,7 +136,7 @@ export default function HomePageContent({
 
       {/* HERO SECTION */}
       {hero && (
-        <section className="relative min-h-[85vh] lg:min-h-screen w-full overflow-hidden flex flex-col justify-end pt-40 pb-12 lg:pb-32 bg-gray-900">
+        <section className="relative min-h-[85vh] lg:min-h-screen w-full overflow-hidden flex flex-col justify-end pt-40 pb-12 lg:pb-16 bg-gray-900">
             {/* Desktop Image */}
             <img 
                 src={hero.imageUrl || "https://images.unsplash.com/photo-1519861531473-920026393112?q=80&w=1600"} 
@@ -151,7 +151,8 @@ export default function HomePageContent({
                     alt="KK Dinamo Hero Mobile"
                 />
             )}
-            <div className="absolute inset-0 bg-gradient-to-t from-[#002060] via-transparent to-black/40 opacity-90 lg:opacity-80"></div>
+            {/* POJAČANO ZASJENČENJE: Tamnija boja i veći opacity (90%) */}
+            <div className="absolute inset-0 bg-gradient-to-t from-[#001035] via-[#002060]/80 to-transparent opacity-90"></div>
 
             <div className="relative z-10 max-w-[1920px] mx-auto px-6 lg:px-12 w-full text-left">
                 <span className="font-condensed font-bold text-white text-xl lg:text-3xl uppercase tracking-wider mb-2 block drop-shadow-md">
@@ -161,7 +162,7 @@ export default function HomePageContent({
                     {hero.title}
                 </h1>
                 {hero.buttonLink && (
-                    <a href={hero.buttonLink} className="inline-block bg-[#002060] text-white font-condensed font-bold text-lg lg:text-3xl uppercase px-6 py-3 lg:px-10 lg:py-5 hover:bg-white hover:text-[#002060] transition-colors skew-x-[-10deg] border-2 border-white lg:border-[#002060]">
+                    <a href={hero.buttonLink} className="inline-block bg-[#002060] text-white font-condensed font-bold text-lg lg:text-3xl uppercase px-6 py-3 lg:px-10 lg:py-5 hover:bg-white hover:text-[#002060] transition-colors skew-x-[-10deg] border-2 border-white">
                         <span className="skew-x-[10deg] inline-block">{hero.buttonText}</span>
                     </a>
                 )}
