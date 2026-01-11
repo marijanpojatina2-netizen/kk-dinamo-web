@@ -14,6 +14,10 @@ export const homepageQuery = groq`*[_type == "homepage"][0] {
     buttonLink
   },
   mainTicker,
+  standingsConfig {
+    source,
+    sofascoreEmbedUrl
+  },
   shopConfig {
     title,
     buttonText,
@@ -89,11 +93,14 @@ export const staffQuery = groq`*[_type == "staff"] {
 // Query za Utakmice (Raspored i Rezultati)
 export const matchesQuery = groq`*[_type == "match"] | order(date asc) {
   homeTeam,
+  "homeTeamLogo": homeTeamLogo.asset->url,
   awayTeam,
+  "awayTeamLogo": awayTeamLogo.asset->url,
   homeScore,
   awayScore,
   date,
   league,
+  "leagueLogo": leagueLogo.asset->url,
   round,
   isFinished,
   ticketLink,

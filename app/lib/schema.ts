@@ -73,11 +73,14 @@ const match = {
   type: 'document',
   fields: [
     { name: 'homeTeam', title: 'Domaćin', type: 'string' },
+    { name: 'homeTeamLogo', title: 'Grb Domaćina', type: 'image' }, // NOVO
     { name: 'awayTeam', title: 'Gost', type: 'string' },
+    { name: 'awayTeamLogo', title: 'Grb Gosta', type: 'image' }, // NOVO
     { name: 'homeScore', title: 'Poeni Domaćin', type: 'number' },
     { name: 'awayScore', title: 'Poeni Gost', type: 'number' },
     { name: 'date', title: 'Datum i vrijeme', type: 'datetime' },
     { name: 'league', title: 'Liga', type: 'string', initialValue: 'Premijer Liga' },
+    { name: 'leagueLogo', title: 'Logo Lige/Natjecanja', type: 'image' }, // NOVO
     { name: 'round', title: 'Kolo', type: 'string' },
     { name: 'isFinished', title: 'Završena utakmica', type: 'boolean' },
     { name: 'ticketLink', title: 'Link na ulaznice (ako je buduća)', type: 'url', validation: urlValidation },
@@ -118,7 +121,7 @@ const sponsor = {
 // 7. LJESTVICA (Standings)
 const standing = {
   name: 'standing',
-  title: 'Ljestvica',
+  title: 'Ljestvica (Ručni Unos)',
   type: 'document',
   fields: [
     { name: 'position', title: 'Pozicija', type: 'number' },
@@ -161,6 +164,34 @@ const homepage = {
       name: 'mainTicker', 
       title: 'Tekst na velikom Tickeru (ispod slike)', 
       type: 'string' 
+    },
+    {
+      name: 'standingsConfig',
+      title: 'Postavke Ljestvice',
+      type: 'object',
+      description: 'Odaberite želite li prikazivati ručno unesenu ljestvicu ili automatsku (Sofascore).',
+      fields: [
+        {
+          name: 'source',
+          title: 'Izvor Podataka',
+          type: 'string',
+          options: {
+            list: [
+              { title: 'Ručni Unos (CMS)', value: 'manual' },
+              { title: 'Sofascore Widget (Automatski)', value: 'sofascore' }
+            ],
+            layout: 'radio'
+          },
+          initialValue: 'manual'
+        },
+        {
+          name: 'sofascoreEmbedUrl',
+          title: 'Sofascore Embed URL',
+          type: 'url',
+          description: 'Otiđite na Sofascore, nađite Premijer Ligu, kliknite na "Tablica", pa "Dodaj tablicu na web". Kopirajte onaj link unutar src="..." dijela. Primjer: https://www.sofascore.com/tournament/basketball/croatia/a1-liga/182/standings/tables/embed',
+          hidden: ({ parent }: any) => parent?.source !== 'sofascore'
+        }
+      ]
     },
     {
       name: 'shopConfig',

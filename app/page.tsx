@@ -107,6 +107,8 @@ export default async function Home() {
       featuredMatch = {
           homeTeam: matchCenter.homeTeam,
           awayTeam: matchCenter.awayTeam,
+          homeTeamLogo: matchCenter.homeLogo, // fallback logo
+          awayTeamLogo: matchCenter.awayLogo, // fallback logo
           date: new Date(Date.now() + 172800000).toISOString(), 
           league: matchCenter.league,
           round: matchCenter.round,
@@ -123,7 +125,13 @@ export default async function Home() {
       lastname: p.lastname || p.last,
       number: p.number || p.num,
       position: p.position || p.pos,
-      imageUrl: p.imageUrl || p.img
+      imageUrl: p.imageUrl || p.img,
+      // Dodajemo detaljne atribute za flip karticu
+      height: p.height || "N/A",
+      weight: p.weight || "N/A",
+      dob: p.dob || "N/A",
+      city: p.city || "N/A",
+      nat: p.nat || "CRO"
   }));
 
   // 6. Shop
@@ -148,9 +156,10 @@ export default async function Home() {
       isDinamo: t.isDinamo || t.active
   }));
 
-  // 8. Global Info (Logo, Shop Config)
+  // 8. Global Info (Logo, Shop Config, Standings Config)
   const logoUrl = homepageData?.logoUrl;
   const shopConfig = homepageData?.shopConfig;
+  const standingsConfig = homepageData?.standingsConfig;
 
   return (
     <HomePageContent 
@@ -164,6 +173,7 @@ export default async function Home() {
       standings={table}
       logoUrl={logoUrl}
       shopConfig={shopConfig}
+      standingsConfig={standingsConfig}
     />
   );
 }

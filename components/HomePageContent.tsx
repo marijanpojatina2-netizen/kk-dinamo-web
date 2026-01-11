@@ -1,7 +1,7 @@
 
 'use client';
 
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { ChevronRight, ChevronLeft, ShoppingBag, ArrowRight, Play, Pause } from 'lucide-react';
 import Link from 'next/link';
 import HeaderV5 from './HeaderV5';
@@ -27,11 +27,14 @@ interface NewsItem {
 
 interface MatchItem {
   homeTeam: string;
+  homeTeamLogo?: string;
   awayTeam: string;
+  awayTeamLogo?: string;
   homeScore?: number;
   awayScore?: number;
   date: string;
   league: string;
+  leagueLogo?: string;
   round: string;
   isFinished: boolean;
   ticketLink?: string;
@@ -44,6 +47,11 @@ interface PlayerItem {
   number: number;
   position: string;
   imageUrl: string;
+  height?: string;
+  weight?: string;
+  dob?: string;
+  city?: string;
+  nat?: string;
 }
 
 interface ShopItem {
@@ -71,6 +79,11 @@ interface ShopConfig {
   imageUrl: string;
 }
 
+interface StandingsConfig {
+  source: 'manual' | 'sofascore';
+  sofascoreEmbedUrl?: string;
+}
+
 interface HomePageProps {
   hero: HeroData;
   mainTicker: string;
@@ -82,6 +95,7 @@ interface HomePageProps {
   standings: StandingItem[];
   logoUrl?: string;
   shopConfig?: ShopConfig;
+  standingsConfig?: StandingsConfig;
 }
 
 const formatDate = (dateString: string) => {
@@ -106,6 +120,82 @@ const SpotifyIcon = () => (
   </svg>
 );
 
+// PlayerFlipCard Component
+const PlayerFlipCard: React.FC<{ player: PlayerItem }> = ({ player }) => {
+  const [isFlipped, setIsFlipped] = useState(false);
+
+  return (
+    <div 
+      className="min-w-[300px] md:min-w-[360px] aspect-[3/4] [perspective:1000px] cursor-pointer snap-start"
+      onClick={() => setIsFlipped(!isFlipped)}
+    >
+        <div className={`relative h-full w-full transition-all duration-700 [transform-style:preserve-3d] shadow-lg ${isFlipped ? '[transform:rotateY(180deg)]' : ''}`}>
+            
+            {/* FRONT */}
+            <div className="absolute inset-0 h-full w-full bg-white [backface-visibility:hidden]">
+                <div className="relative h-full w-full overflow-hidden bg-gray-100">
+                    {player.imageUrl && (
+                      <img 
+                        src={player.imageUrl} 
+                        className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-500" 
+                        alt={player.lastname}
+                      />
+                    )}
+                    <div className="absolute top-0 right-0 p-4">
+                      <span className="font-condensed font-bold text-7xl text-white drop-shadow-md opacity-80">{player.number}</span>
+                    </div>
+                    
+                    <div className="absolute bottom-0 left-0 w-full bg-white p-6 border-b-8 border-[#002060]">
+                        <span className="block font-body text-sm font-bold text-gray-400 uppercase tracking-widest">{player.name}</span>
+                        <span className="block font-condensed text-5xl font-bold text-[#002060] uppercase mt-1">{player.lastname}</span>
+                    </div>
+                </div>
+            </div>
+
+            {/* BACK */}
+            <div className="absolute inset-0 h-full w-full bg-[#002060] [transform:rotateY(180deg)] [backface-visibility:hidden] p-8 flex flex-col justify-center border border-white/10 text-white">
+                <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10"></div>
+                
+                <div className="relative z-10">
+                    <div className="mb-10">
+                        <h4 className="font-condensed font-bold text-3xl text-blue-300 uppercase mb-4 tracking-wide border-b border-white/20 pb-2">Profil</h4>
+                        <div className="space-y-2 font-sans">
+                            <p className="text-xl font-bold">
+                                Visina <span className="text-white text-2xl ml-2">{player.height}cm</span>
+                            </p>
+                            <p className="text-xl font-bold">
+                                Težina <span className="text-white text-2xl ml-2">{player.weight}kg</span>
+                            </p>
+                            <p className="text-xl font-bold text-blue-200 uppercase tracking-widest mt-4">{player.position}</p>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h4 className="font-condensed font-bold text-3xl text-blue-300 uppercase mb-4 tracking-wide border-b border-white/20 pb-2">Info</h4>
+                        <div className="space-y-4">
+                            <div>
+                              <p className="text-xs font-bold text-blue-200 uppercase tracking-widest mb-1">Datum Rođenja</p>
+                              <p className="text-xl font-bold text-white">{player.dob}</p>
+                            </div>
+                            <div>
+                              <p className="text-xs font-bold text-blue-200 uppercase tracking-widest mb-1">Mjesto Rođenja</p>
+                              <p className="text-xl font-bold text-white">{player.city}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                {/* Decorative Number on Back */}
+                <div className="absolute bottom-[-20px] right-[-10px] text-[8rem] font-condensed font-bold text-white opacity-5 select-none leading-none">
+                    {player.number}
+                </div>
+            </div>
+
+        </div>
+    </div>
+  );
+};
+
 export default function HomePageContent({
   hero,
   mainTicker,
@@ -116,7 +206,8 @@ export default function HomePageContent({
   roster,
   standings,
   logoUrl,
-  shopConfig
+  shopConfig,
+  standingsConfig
 }: HomePageProps) {
   const rosterRef = useRef<HTMLDivElement>(null);
   const tickerRef = useRef<HTMLDivElement>(null);
@@ -152,12 +243,6 @@ export default function HomePageContent({
                 />
             )}
             
-            {/* ZASJENČENJE POPRAVLJENO: 
-                - from-0% (tamno dolje) 
-                - via-30% (poluprozirno pri dnu) 
-                - to-50% (potpuno prozirno od sredine prema gore) 
-                Ovo osigurava da je gornja polovica slike potpuno čista.
-            */}
             <div className="absolute inset-0 bg-gradient-to-t from-[#001035] from-0% via-[#001035]/60 via-20% to-transparent to-50%"></div>
 
             <div className="relative z-10 max-w-[1920px] mx-auto px-6 lg:px-12 w-full text-left">
@@ -201,7 +286,6 @@ export default function HomePageContent({
                         {featuredNews.title}
                     </h2>
                     
-                    {/* DODAN KRATKI UVOD (EXCERPT) */}
                     {featuredNews.excerpt && (
                         <p className="font-body text-lg text-gray-600 mt-6 leading-relaxed line-clamp-3">
                             {featuredNews.excerpt}
@@ -242,7 +326,11 @@ export default function HomePageContent({
              <>
                 <div className="w-full bg-[#002060] text-white flex justify-between items-center px-4 md:px-8 py-3 font-condensed font-bold uppercase tracking-widest text-lg md:text-xl rounded-t-sm">
                     <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full border border-white flex items-center justify-center text-[10px] font-sans">PL</div>
+                        {featuredMatch.leagueLogo ? (
+                            <img src={featuredMatch.leagueLogo} className="w-8 h-8 object-contain" alt={featuredMatch.league} />
+                        ) : (
+                            <div className="w-8 h-8 rounded-full border border-white flex items-center justify-center text-[10px] font-sans">PL</div>
+                        )}
                         <span>{featuredMatch.league}</span>
                     </div>
                     <span>{featuredMatch.round}</span>
@@ -261,9 +349,17 @@ export default function HomePageContent({
                             <span className="hidden md:block font-condensed font-bold text-3xl md:text-4xl lg:text-5xl xl:text-6xl uppercase leading-[0.9] tracking-tight">
                                 {featuredMatch.homeTeam}
                             </span>
-                            <div className="w-20 h-20 md:w-24 md:h-24 lg:w-32 lg:h-32 xl:w-40 xl:h-40 shrink-0 rounded-full bg-white/10 flex items-center justify-center border-2 border-white/20">
-                                <span className="font-condensed font-bold text-3xl md:text-4xl lg:text-5xl xl:text-6xl">{featuredMatch.homeTeam.substring(0,1)}</span>
-                            </div>
+                            
+                            {featuredMatch.homeTeamLogo ? (
+                                <div className="w-20 h-20 md:w-24 md:h-24 lg:w-32 lg:h-32 xl:w-40 xl:h-40 shrink-0 flex items-center justify-center">
+                                    <img src={featuredMatch.homeTeamLogo} className="w-full h-full object-contain drop-shadow-lg" alt={featuredMatch.homeTeam} />
+                                </div>
+                            ) : (
+                                <div className="w-20 h-20 md:w-24 md:h-24 lg:w-32 lg:h-32 xl:w-40 xl:h-40 shrink-0 rounded-full bg-white/10 flex items-center justify-center border-2 border-white/20">
+                                    <span className="font-condensed font-bold text-3xl md:text-4xl lg:text-5xl xl:text-6xl">{featuredMatch.homeTeam.substring(0,1)}</span>
+                                </div>
+                            )}
+                            
                             <span className="md:hidden font-condensed font-bold text-4xl uppercase mt-2">{featuredMatch.homeTeam}</span>
                         </div>
 
@@ -287,9 +383,17 @@ export default function HomePageContent({
                             <span className="hidden md:block font-condensed font-bold text-3xl md:text-4xl lg:text-5xl xl:text-6xl uppercase leading-[0.9] tracking-tight">
                                 {featuredMatch.awayTeam}
                             </span>
-                             <div className="w-20 h-20 md:w-24 md:h-24 lg:w-32 lg:h-32 xl:w-40 xl:h-40 shrink-0 rounded-full bg-white/10 flex items-center justify-center border-2 border-white/20">
-                                <span className="font-condensed font-bold text-3xl md:text-4xl lg:text-5xl xl:text-6xl">{featuredMatch.awayTeam.substring(0,1)}</span>
-                            </div>
+                            
+                            {featuredMatch.awayTeamLogo ? (
+                                <div className="w-20 h-20 md:w-24 md:h-24 lg:w-32 lg:h-32 xl:w-40 xl:h-40 shrink-0 flex items-center justify-center">
+                                    <img src={featuredMatch.awayTeamLogo} className="w-full h-full object-contain drop-shadow-lg" alt={featuredMatch.awayTeam} />
+                                </div>
+                            ) : (
+                                <div className="w-20 h-20 md:w-24 md:h-24 lg:w-32 lg:h-32 xl:w-40 xl:h-40 shrink-0 rounded-full bg-white/10 flex items-center justify-center border-2 border-white/20">
+                                    <span className="font-condensed font-bold text-3xl md:text-4xl lg:text-5xl xl:text-6xl">{featuredMatch.awayTeam.substring(0,1)}</span>
+                                </div>
+                            )}
+
                             <span className="md:hidden font-condensed font-bold text-4xl uppercase mt-2">{featuredMatch.awayTeam}</span>
                         </div>
                     </div>
@@ -320,13 +424,12 @@ export default function HomePageContent({
           </div>
       </section>
 
-      {/* SHOP SECTION - Redesigned (Napoli Style) */}
+      {/* SHOP SECTION */}
       <section className="max-w-[1920px] mx-auto w-full bg-white border-y border-gray-200">
           <div className="grid grid-cols-1 lg:grid-cols-2">
               
               {/* Left Side: Big Promo Banner */}
               <div className="relative h-[600px] lg:h-auto bg-[#002060] overflow-hidden group">
-                  {/* Background Image from CMS or Default */}
                   <img 
                     src={shopConfig?.imageUrl || "https://images.unsplash.com/photo-1556821840-3a63f95609a7?q=80&w=1200"} 
                     className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:opacity-40 transition-opacity duration-700"
@@ -373,7 +476,7 @@ export default function HomePageContent({
           </div>
       </section>
 
-      {/* ROSTER PREVIEW */}
+      {/* ROSTER PREVIEW (FLIP CARDS) */}
       <section className="bg-white py-20 overflow-hidden">
            <div className="max-w-[1920px] mx-auto px-4 lg:px-12 mb-12 flex justify-between items-end">
               <h2 className="font-condensed font-bold text-5xl md:text-8xl uppercase text-black leading-none tracking-tighter">Momčad</h2>
@@ -382,31 +485,20 @@ export default function HomePageContent({
                   <button onClick={() => scrollContainer(rosterRef, 'right')} className="p-4 border border-gray-300 hover:bg-[#002060] hover:text-white"><ChevronRight size={24} /></button>
               </div>
            </div>
+           
            <div ref={rosterRef} className="pl-4 lg:pl-12 overflow-x-auto no-scrollbar flex gap-6 pb-8 snap-x">
               {roster.map((p, i) => (
-                  <Link href="/momcad" key={i} className="min-w-[300px] md:min-w-[360px] relative group cursor-pointer snap-start block">
-                      <div className="aspect-[3/4] overflow-hidden bg-gray-100 relative">
-                          {p.imageUrl && <img src={p.imageUrl} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500" alt={p.lastname}/>}
-                          <div className="absolute top-0 right-0 p-4"><span className="font-condensed font-bold text-7xl text-white drop-shadow-md opacity-80">{p.number}</span></div>
-                      </div>
-                      <div className="bg-white p-6 border-b-8 border-transparent group-hover:border-[#002060] transition-colors">
-                          <span className="block font-body text-sm font-bold text-gray-400 uppercase tracking-widest">{p.name}</span>
-                          <span className="block font-condensed text-5xl font-bold text-[#002060] uppercase mt-1">{p.lastname}</span>
-                      </div>
-                  </Link>
+                  <PlayerFlipCard key={i} player={p} />
               ))}
            </div>
       </section>
 
-      {/* --- NEW: SPOTIFY PLAYLIST SECTION --- */}
+      {/* SPOTIFY PLAYLIST SECTION */}
       <section className="bg-black text-white py-20 lg:py-28 overflow-hidden relative">
-          {/* Background Gradient & Pattern */}
           <div className="absolute inset-0 bg-gradient-to-r from-black via-[#111] to-black"></div>
           <div className="absolute inset-0 opacity-10" style={{backgroundImage: 'repeating-linear-gradient(45deg, #1DB954 0, #1DB954 1px, transparent 0, transparent 50%)', backgroundSize: '20px 20px'}}></div>
           
           <div className="max-w-[1400px] mx-auto px-4 lg:px-12 relative z-10 flex flex-col md:flex-row items-center gap-12 lg:gap-24">
-              
-              {/* Left: Text & Button */}
               <div className="flex-1 text-center md:text-left">
                   <div className="flex items-center justify-center md:justify-start gap-4 mb-6">
                       <SpotifyIcon />
@@ -423,7 +515,6 @@ export default function HomePageContent({
                   </a>
               </div>
 
-              {/* Right: Visualizer Animation */}
               <div className="flex-1 flex justify-center items-center h-64 gap-2 lg:gap-4">
                   {[...Array(8)].map((_, i) => (
                       <div 
@@ -442,29 +533,49 @@ export default function HomePageContent({
 
       {/* STANDINGS & NEWSLETTER */}
       <section className="flex flex-col lg:flex-row w-full max-w-[1920px] mx-auto border-t border-gray-200">
-           {/* STANDINGS */}
            <div className="w-full lg:w-1/2 bg-[#F8F8F6] p-8 lg:p-24 flex flex-col">
                 <h2 className="font-condensed font-bold text-5xl md:text-7xl text-black uppercase leading-none mb-10 tracking-tighter">LJESTVICA</h2>
                 <div className="flex gap-8 mb-8 font-condensed font-bold uppercase text-2xl text-gray-400">
                     <span className="text-black border-b-2 border-black pb-1 cursor-pointer">PREMIJER LIGA</span>
                     <span className="cursor-pointer hover:text-black transition-colors">KUP</span>
                 </div>
-                <div className="grid grid-cols-12 gap-2 text-sm font-bold font-body text-gray-500 uppercase tracking-wider mb-4 px-2">
-                    <div className="col-span-1">PL</div><div className="col-span-5">KLUB</div><div className="col-span-1 text-center">U</div><div className="col-span-1 text-center">P</div><div className="col-span-1 text-center">I</div><div className="col-span-2 text-center">PTS</div><div className="col-span-1 text-center">+/-</div>
-                </div>
-                <div className="border-t border-black mb-6">
-                    {standings.map((team, i) => (
-                        <div key={i} className={`grid grid-cols-12 gap-2 py-4 px-2 border-b border-gray-200 items-center ${team.isDinamo ? 'text-[#002060] font-black' : 'text-black font-bold'}`}>
-                             <div className="col-span-1 font-condensed text-xl">{team.position}</div>
-                             <div className="col-span-5 flex items-center gap-3"><div className={`w-8 h-8 rounded-full flex items-center justify-center text-[10px] text-white ${team.isDinamo ? 'bg-[#002060]' : 'bg-gray-800'}`}>{team.teamName.substring(0,1)}</div><span className="uppercase font-condensed text-lg">{team.teamName}</span></div>
-                             <div className="col-span-1 text-center font-body">{team.played}</div><div className="col-span-1 text-center font-body">{team.won}</div><div className="col-span-1 text-center font-body">{team.lost}</div><div className="col-span-2 text-center font-body">{team.points}</div><div className="col-span-1 text-center font-body text-xs text-gray-500">{team.diff}</div>
-                        </div>
-                    ))}
-                </div>
-                <div className="mt-4"><button className="border-2 border-black bg-transparent text-black px-8 py-3 font-condensed font-bold text-xl uppercase hover:bg-black hover:text-white transition-colors">PUNA LJESTVICA</button></div>
+
+                {standingsConfig?.source === 'sofascore' && standingsConfig.sofascoreEmbedUrl ? (
+                  // SOFASCORE WIDGET EMBED
+                  <div className="w-full h-[600px]">
+                    <iframe 
+                      width="100%" 
+                      height="100%" 
+                      src={standingsConfig.sofascoreEmbedUrl} 
+                      frameBorder="0" 
+                      scrolling="no" 
+                      className="w-full h-full"
+                      style={{ border: 'none' }}
+                    ></iframe>
+                    <div className="text-[10px] text-gray-400 mt-2 text-right uppercase tracking-widest">
+                        Powered by Sofascore
+                    </div>
+                  </div>
+                ) : (
+                  // MANUAL TABLE (Fallback)
+                  <>
+                    <div className="grid grid-cols-12 gap-2 text-sm font-bold font-body text-gray-500 uppercase tracking-wider mb-4 px-2">
+                        <div className="col-span-1">PL</div><div className="col-span-5">KLUB</div><div className="col-span-1 text-center">U</div><div className="col-span-1 text-center">P</div><div className="col-span-1 text-center">I</div><div className="col-span-2 text-center">PTS</div><div className="col-span-1 text-center">+/-</div>
+                    </div>
+                    <div className="border-t border-black mb-6">
+                        {standings.map((team, i) => (
+                            <div key={i} className={`grid grid-cols-12 gap-2 py-4 px-2 border-b border-gray-200 items-center ${team.isDinamo ? 'text-[#002060] font-black' : 'text-black font-bold'}`}>
+                                <div className="col-span-1 font-condensed text-xl">{team.position}</div>
+                                <div className="col-span-5 flex items-center gap-3"><div className={`w-8 h-8 rounded-full flex items-center justify-center text-[10px] text-white ${team.isDinamo ? 'bg-[#002060]' : 'bg-gray-800'}`}>{team.teamName.substring(0,1)}</div><span className="uppercase font-condensed text-lg">{team.teamName}</span></div>
+                                <div className="col-span-1 text-center font-body">{team.played}</div><div className="col-span-1 text-center font-body">{team.won}</div><div className="col-span-1 text-center font-body">{team.lost}</div><div className="col-span-2 text-center font-body">{team.points}</div><div className="col-span-1 text-center font-body text-xs text-gray-500">{team.diff}</div>
+                            </div>
+                        ))}
+                    </div>
+                    <div className="mt-4"><button className="border-2 border-black bg-transparent text-black px-8 py-3 font-condensed font-bold text-xl uppercase hover:bg-black hover:text-white transition-colors">PUNA LJESTVICA</button></div>
+                  </>
+                )}
            </div>
 
-           {/* NEWSLETTER */}
            <div className="w-full lg:w-1/2 bg-[#002060] p-8 lg:p-24 flex flex-col justify-center text-white">
                 <h2 className="font-condensed font-bold text-5xl md:text-7xl uppercase leading-none mb-10 tracking-tighter">NEWSLETTER</h2>
                 <form className="flex flex-col gap-6 w-full max-w-lg">
