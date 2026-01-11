@@ -1,4 +1,11 @@
+
 // Definicije Sanity schema tipova premještene ovdje radi boljeg buildanja
+
+// Helper za URL validaciju - Olabavljena validacija
+const urlValidation = (Rule: any) => Rule.uri({
+  scheme: ['http', 'https', 'mailto', 'tel'],
+  allowRelative: true // Dozvoljava relativne linkove
+});
 
 // 1. IGRAC (Player)
 const player = {
@@ -73,7 +80,7 @@ const match = {
     { name: 'league', title: 'Liga', type: 'string', initialValue: 'Premijer Liga' },
     { name: 'round', title: 'Kolo', type: 'string' },
     { name: 'isFinished', title: 'Završena utakmica', type: 'boolean' },
-    { name: 'ticketLink', title: 'Link na ulaznice (ako je buduća)', type: 'url' },
+    { name: 'ticketLink', title: 'Link na ulaznice (ako je buduća)', type: 'url', validation: urlValidation },
     { name: 'isBigAnnouncement', title: 'Prikaži kao Glavnu Najavu', type: 'boolean' }, 
   ]
 }
@@ -87,7 +94,7 @@ const shopItem = {
     { name: 'name', title: 'Naziv artikla', type: 'string' },
     { name: 'price', title: 'Cijena', type: 'string' },
     { name: 'image', title: 'Slika artikla', type: 'image' },
-    { name: 'link', title: 'Link na Webshop', type: 'url' },
+    { name: 'link', title: 'Link na Webshop', type: 'url', validation: urlValidation },
   ]
 }
 
@@ -131,6 +138,12 @@ const homepage = {
   title: 'Postavke Naslovnice',
   type: 'document',
   fields: [
+    {
+      name: 'logo',
+      title: 'Logo Kluba',
+      type: 'image',
+      description: 'Uploadajte PNG logotip prozirne pozadine (cca 500x500px). Prikazivat će se u navigaciji i footeru.'
+    },
     { 
       name: 'hero', 
       title: 'Hero Sekcija (Glavna slika)', 
@@ -138,9 +151,10 @@ const homepage = {
       fields: [
         { name: 'title', title: 'Glavni Naslov', type: 'string' },
         { name: 'subtitle', title: 'Podnaslov', type: 'string' },
-        { name: 'image', title: 'Pozadinska slika', type: 'image' },
+        { name: 'image', title: 'Desktop Slika (Landscape)', type: 'image', description: 'Preporučeno: 1920x1080px' },
+        { name: 'mobileImage', title: 'Mobilna Slika (Portrait)', type: 'image', description: 'Preporučeno: 1080x1920px (Story format). Ako nije postavljena, koristi se desktop slika.' },
         { name: 'buttonText', title: 'Tekst na gumbu', type: 'string' },
-        { name: 'buttonLink', title: 'Link gumba', type: 'url' },
+        { name: 'buttonLink', title: 'Link gumba', type: 'url', validation: urlValidation },
       ]
     },
     { 
@@ -148,6 +162,17 @@ const homepage = {
       title: 'Tekst na velikom Tickeru (ispod slike)', 
       type: 'string' 
     },
+    {
+      name: 'shopConfig',
+      title: 'Webshop Sekcija (Banner)',
+      type: 'object',
+      fields: [
+        { name: 'title', title: 'Naslov bannera (npr. Proud to be Dinamo)', type: 'string' },
+        { name: 'buttonText', title: 'Tekst gumba', type: 'string' },
+        { name: 'buttonLink', title: 'Link na shop', type: 'url', validation: urlValidation },
+        { name: 'image', title: 'Pozadinska slika bannera', type: 'image', description: 'Preporučeno vertikalna ili kvadratna slika visoke kvalitete.' }
+      ]
+    }
   ]
 }
 

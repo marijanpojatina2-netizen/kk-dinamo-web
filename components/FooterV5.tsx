@@ -1,17 +1,42 @@
+
 'use client';
 
 import React from 'react';
-import { Instagram, Facebook, Youtube } from 'lucide-react';
+import { Instagram, Facebook } from 'lucide-react';
 import Link from 'next/link';
 import { sponsors } from '../app/data/siteData';
 
-const FooterV5: React.FC = () => {
+// Custom TikTok Icon (Lucide doesn't have it)
+const TikTokIcon = ({ size = 24, className = "" }) => (
+  <svg 
+    width={size} 
+    height={size} 
+    viewBox="0 0 24 24" 
+    fill="none" 
+    stroke="currentColor" 
+    strokeWidth="2" 
+    strokeLinecap="round" 
+    strokeLinejoin="round" 
+    className={className}
+  >
+    <path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5" />
+  </svg>
+);
+
+interface FooterV5Props {
+  logoUrl?: string;
+}
+
+const FooterV5: React.FC<FooterV5Props> = ({ logoUrl }) => {
   const half = Math.ceil(sponsors.length / 2);
   const firstRow = sponsors.slice(0, half);
   const secondRow = sponsors.slice(half);
 
   const repeatRow1 = [...firstRow, ...firstRow, ...firstRow];
   const repeatRow2 = [...secondRow, ...secondRow, ...secondRow];
+
+  // Fallback logo if CMS url is missing
+  const displayLogo = logoUrl || "https://upload.wikimedia.org/wikipedia/hr/thumb/2/23/KK_Dinamo_Zagreb.png/260px-KK_Dinamo_Zagreb.png";
 
   return (
     <div className="flex flex-col">
@@ -45,7 +70,14 @@ const FooterV5: React.FC = () => {
             <div className="max-w-[1920px] mx-auto px-4 lg:px-12">
                 <div className="grid grid-cols-1 lg:grid-cols-4 gap-12 pt-0">
                     <div>
-                        <img src="https://shop.kkdinamo.hr/wp-content/uploads/2022/09/grb-dinamo.png" className="w-20 h-20 mb-6 brightness-0 invert" alt="Logo"/>
+                        <img 
+                          src={displayLogo} 
+                          className="w-20 h-20 mb-6 brightness-0 invert object-contain" 
+                          alt="Logo"
+                          onError={(e) => {
+                            e.currentTarget.style.display = 'none';
+                          }}
+                        />
                         <address className="not-italic text-base text-blue-200 font-body">KK Dinamo Zagreb<br/>Rudeška 71, Zagreb</address>
                         <p className="text-white/60 mt-4 text-sm">info@kkdinamo.hr</p>
                     </div>
@@ -67,9 +99,15 @@ const FooterV5: React.FC = () => {
 
                     <div className="flex flex-col items-start lg:items-end">
                         <div className="flex gap-6 mb-6 text-white">
-                            <Instagram size={30} className="hover:text-blue-300 cursor-pointer transition-colors" />
-                            <Facebook size={30} className="hover:text-blue-300 cursor-pointer transition-colors" />
-                            <Youtube size={30} className="hover:text-blue-300 cursor-pointer transition-colors" />
+                            <a href="https://www.instagram.com/kk_dinamo/" target="_blank" rel="noopener noreferrer">
+                              <Instagram size={30} className="hover:text-blue-300 cursor-pointer transition-colors" />
+                            </a>
+                            <a href="https://www.facebook.com/kkdinamo/" target="_blank" rel="noopener noreferrer">
+                              <Facebook size={30} className="hover:text-blue-300 cursor-pointer transition-colors" />
+                            </a>
+                            <a href="https://www.tiktok.com/@kk_dinamo" target="_blank" rel="noopener noreferrer">
+                              <TikTokIcon size={30} className="hover:text-blue-300 cursor-pointer transition-colors" />
+                            </a>
                         </div>
                         <p className="text-sm text-blue-300 font-body">© 2025 KK Dinamo Zagreb</p>
                     </div>

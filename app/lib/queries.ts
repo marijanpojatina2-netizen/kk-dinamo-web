@@ -1,15 +1,24 @@
+
 import { groq } from "next-sanity";
 
 // Query za Naslovnicu (Hero sekcija i Ticker)
 export const homepageQuery = groq`*[_type == "homepage"][0] {
+  "logoUrl": logo.asset->url,
   hero {
     title,
     subtitle,
     "imageUrl": hero.image.asset->url,
+    "mobileImageUrl": hero.mobileImage.asset->url,
     buttonText,
     buttonLink
   },
-  mainTicker
+  mainTicker,
+  shopConfig {
+    title,
+    buttonText,
+    buttonLink,
+    "imageUrl": image.asset->url
+  }
 }`;
 
 // Query za Vijesti (zadnjih 6) - koristi se na naslovnici

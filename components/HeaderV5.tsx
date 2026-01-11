@@ -1,18 +1,40 @@
+
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Menu, X, ShoppingBag, Ticket, Instagram, Facebook, Youtube } from 'lucide-react';
+import { Menu, X, ShoppingBag, Ticket, Instagram, Facebook } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
+// Custom TikTok Icon (Lucide doesn't have it)
+const TikTokIcon = ({ size = 24, className = "" }) => (
+  <svg 
+    width={size} 
+    height={size} 
+    viewBox="0 0 24 24" 
+    fill="none" 
+    stroke="currentColor" 
+    strokeWidth="2" 
+    strokeLinecap="round" 
+    strokeLinejoin="round" 
+    className={className}
+  >
+    <path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5" />
+  </svg>
+);
+
 interface HeaderV5Props {
   variant?: 'transparent' | 'solid';
+  logoUrl?: string;
 }
 
-const HeaderV5: React.FC<HeaderV5Props> = ({ variant = 'solid' }) => {
+const HeaderV5: React.FC<HeaderV5Props> = ({ variant = 'solid', logoUrl }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
+
+  // Fallback logo if CMS url is missing
+  const displayLogo = logoUrl || "https://upload.wikimedia.org/wikipedia/hr/thumb/2/23/KK_Dinamo_Zagreb.png/260px-KK_Dinamo_Zagreb.png";
 
   useEffect(() => {
     const handleScroll = () => {
@@ -40,7 +62,17 @@ const HeaderV5: React.FC<HeaderV5Props> = ({ variant = 'solid' }) => {
       <header className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${isScrolled ? 'bg-white shadow-md py-2' : 'bg-transparent py-4'}`}>
         <div className="max-w-[1920px] mx-auto px-4 lg:px-12 flex items-center justify-between">
             <Link href="/" className="w-12 h-12 lg:w-20 lg:h-20 relative z-50 block hover:scale-105 transition-transform">
-                <img src="https://shop.kkdinamo.hr/wp-content/uploads/2022/09/grb-dinamo.png" alt="KK Dinamo" className="w-full h-full object-contain drop-shadow-md"/>
+                <img 
+                  src={displayLogo} 
+                  alt="KK Dinamo" 
+                  className="w-full h-full object-contain drop-shadow-md"
+                  onError={(e) => {
+                    // Fallback in case image load fails
+                    e.currentTarget.style.display = 'none';
+                    e.currentTarget.parentElement?.classList.add('bg-[#002060]', 'text-white', 'flex', 'items-center', 'justify-center', 'rounded-full', 'font-black');
+                    if(e.currentTarget.parentElement) e.currentTarget.parentElement.innerText = "d";
+                  }}
+                />
             </Link>
 
             <div className="hidden lg:flex items-center gap-8">
@@ -66,9 +98,15 @@ const HeaderV5: React.FC<HeaderV5Props> = ({ variant = 'solid' }) => {
 
             <div className={`flex items-center gap-6 ${textColorClass}`}>
                 <div className="hidden lg:flex gap-5">
-                    <Instagram size={30} className="hover:scale-110 cursor-pointer"/>
-                    <Facebook size={30} className="hover:scale-110 cursor-pointer"/>
-                    <Youtube size={34} className="hover:scale-110 cursor-pointer"/>
+                    <a href="https://www.instagram.com/kk_dinamo/" target="_blank" rel="noopener noreferrer">
+                      <Instagram size={30} className="hover:scale-110 cursor-pointer transition-transform"/>
+                    </a>
+                    <a href="https://www.facebook.com/kkdinamo/" target="_blank" rel="noopener noreferrer">
+                      <Facebook size={30} className="hover:scale-110 cursor-pointer transition-transform"/>
+                    </a>
+                    <a href="https://www.tiktok.com/@kk_dinamo" target="_blank" rel="noopener noreferrer">
+                      <TikTokIcon size={30} className="hover:scale-110 cursor-pointer transition-transform"/>
+                    </a>
                 </div>
                 <div className="lg:hidden cursor-pointer hover:opacity-70" onClick={() => setIsMenuOpen(true)}>
                     <Menu size={32} />
@@ -101,9 +139,9 @@ const HeaderV5: React.FC<HeaderV5Props> = ({ variant = 'solid' }) => {
 
               <div className="mt-auto pb-12">
                   <div className="flex gap-6 text-white/80">
-                      <Instagram size={28} />
-                      <Facebook size={28} />
-                      <Youtube size={32} />
+                      <a href="https://www.instagram.com/kk_dinamo/" target="_blank" rel="noopener noreferrer"><Instagram size={28} /></a>
+                      <a href="https://www.facebook.com/kkdinamo/" target="_blank" rel="noopener noreferrer"><Facebook size={28} /></a>
+                      <a href="https://www.tiktok.com/@kk_dinamo" target="_blank" rel="noopener noreferrer"><TikTokIcon size={28} /></a>
                   </div>
               </div>
           </div>

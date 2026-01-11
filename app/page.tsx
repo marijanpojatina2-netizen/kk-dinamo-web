@@ -1,3 +1,4 @@
+
 import { client } from "./lib/sanity";
 import { 
   homepageQuery, 
@@ -11,7 +12,7 @@ import HomePageContent from "../components/HomePageContent";
 import { 
   heroContent, 
   mainTicker as staticTicker, 
-  newsItems,    
+  newsItems, 
   matchCenter, 
   resultsTicker, 
   shopItems, 
@@ -58,16 +59,16 @@ export default async function Home() {
   // --- MAPIRANJE PODATAKA (FALLBACK NA SITEDATA) ---
 
   // 1. Hero
-  const hero = homepageData?.hero || {
-    title: heroContent.titleLine1 ? `${heroContent.titleLine1}\n${heroContent.titleLine2}` : "KK DINAMO\nZAGREB",
-    subtitle: heroContent.subtitle,
-    imageUrl: heroContent.image,
-    buttonText: heroContent.buttonText,
-    buttonLink: heroContent.buttonLink
+  const hero = {
+    title: homepageData?.hero?.title || (heroContent.titleLine1 ? `${heroContent.titleLine1}\n${heroContent.titleLine2}` : "KK DINAMO\nZAGREB"),
+    subtitle: homepageData?.hero?.subtitle || heroContent.subtitle,
+    imageUrl: homepageData?.hero?.imageUrl || heroContent.image,
+    mobileImageUrl: homepageData?.hero?.mobileImageUrl || null,
+    buttonText: homepageData?.hero?.buttonText || heroContent.buttonText,
+    buttonLink: homepageData?.hero?.buttonLink || heroContent.buttonLink
   };
 
   // 2. Ticker
-  // Sanity vraća string, siteData vraća array stringova
   const mainTicker = homepageData?.mainTicker || (Array.isArray(staticTicker) ? staticTicker.join(" /// ") : staticTicker);
 
   // 3. News
@@ -75,10 +76,8 @@ export default async function Home() {
   const news = newsSource.map((item: any) => ({
      title: item.title,
      slug: item.slug || 'news-item',
-     // Ako dolazi iz Sanityja ima publishedAt, ako iz siteData ima date (string)
      publishedAt: item.publishedAt || parseDate(item.date),
      category: item.category || 'Vijesti',
-     // Sanity ima imageUrl, siteData ima img
      imageUrl: item.imageUrl || item.img,
      excerpt: item.excerpt || ''
   }));
@@ -93,23 +92,21 @@ export default async function Home() {
         || matchesData.find((m: any) => !m.isFinished) 
         || null;
   } else {
-      // Fallback iz resultsTicker
+      // Fallback
       matches = resultsTicker.map((r: any) => ({
           homeTeam: r.h === "DIN" ? "Dinamo" : r.h,
           awayTeam: r.a === "DIN" ? "Dinamo" : r.a,
           homeScore: r.score.includes(":") ? parseInt(r.score.split(":")[0]) : undefined,
           awayScore: r.score.includes(":") ? parseInt(r.score.split(":")[1]) : undefined,
-          date: parseDate(r.date + "2024"), // Dodajemo godinu jer je u siteData nema
+          date: parseDate(r.date + "2024"),
           league: "Premijer Liga",
           round: "Kolo X",
           isFinished: r.score.includes(":"),
       }));
 
-      // Fallback featured match iz matchCenter
       featuredMatch = {
           homeTeam: matchCenter.homeTeam,
           awayTeam: matchCenter.awayTeam,
-          // Postavi datum 2 dana u budućnost
           date: new Date(Date.now() + 172800000).toISOString(), 
           league: matchCenter.league,
           round: matchCenter.round,
@@ -151,6 +148,10 @@ export default async function Home() {
       isDinamo: t.isDinamo || t.active
   }));
 
+  // 8. Global Info (Logo, Shop Config)
+  const logoUrl = homepageData?.logoUrl;
+  const shopConfig = homepageData?.shopConfig;
+
   return (
     <HomePageContent 
       hero={hero}
@@ -161,6 +162,8 @@ export default async function Home() {
       roster={teamRoster}
       shopItems={shop}
       standings={table}
+      logoUrl={logoUrl}
+      shopConfig={shopConfig}
     />
   );
 }

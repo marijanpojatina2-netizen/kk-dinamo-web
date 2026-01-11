@@ -1,16 +1,17 @@
+
 'use client';
 
 import React, { useRef } from 'react';
-import { ChevronRight, ChevronLeft, ShoppingBag } from 'lucide-react';
+import { ChevronRight, ChevronLeft, ShoppingBag, ArrowRight, Play, Pause } from 'lucide-react';
 import Link from 'next/link';
 import HeaderV5 from './HeaderV5';
 import FooterV5 from './FooterV5';
 
-// Definiramo tipove podataka koji dolaze iz Sanityja
 interface HeroData {
   title: string;
   subtitle: string;
   imageUrl: string;
+  mobileImageUrl?: string;
   buttonText: string;
   buttonLink: string;
 }
@@ -29,7 +30,7 @@ interface MatchItem {
   awayTeam: string;
   homeScore?: number;
   awayScore?: number;
-  date: string; // ISO string iz Sanityja
+  date: string;
   league: string;
   round: string;
   isFinished: boolean;
@@ -63,6 +64,13 @@ interface StandingItem {
   isDinamo: boolean;
 }
 
+interface ShopConfig {
+  title: string;
+  buttonText: string;
+  buttonLink: string;
+  imageUrl: string;
+}
+
 interface HomePageProps {
   hero: HeroData;
   mainTicker: string;
@@ -72,16 +80,16 @@ interface HomePageProps {
   shopItems: ShopItem[];
   roster: PlayerItem[];
   standings: StandingItem[];
+  logoUrl?: string;
+  shopConfig?: ShopConfig;
 }
 
-// Helper za formatiranje datuma (pretvara 2024-03-20 u "20.03.")
 const formatDate = (dateString: string) => {
   if (!dateString) return "";
   const date = new Date(dateString);
   return `${date.getDate().toString().padStart(2, '0')}.${(date.getMonth() + 1).toString().padStart(2, '0')}.`;
 };
 
-// Helper za formatiranje vremena (pretvara ISO u "Petak, 20:00 h")
 const formatDateTime = (dateString: string) => {
   if (!dateString) return "";
   const date = new Date(dateString);
@@ -91,6 +99,13 @@ const formatDateTime = (dateString: string) => {
   return `${dayName}, ${time} h`;
 };
 
+// Spotify Icon SVG
+const SpotifyIcon = () => (
+  <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor" className="text-[#1DB954]">
+    <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.46-1.02 15.96 1.681.539.3.719 1.02.419 1.56-.24.42-1.02.6-1.56.3z"/>
+  </svg>
+);
+
 export default function HomePageContent({
   hero,
   mainTicker,
@@ -99,7 +114,9 @@ export default function HomePageContent({
   matches,
   shopItems,
   roster,
-  standings
+  standings,
+  logoUrl,
+  shopConfig
 }: HomePageProps) {
   const rosterRef = useRef<HTMLDivElement>(null);
   const tickerRef = useRef<HTMLDivElement>(null);
@@ -110,22 +127,30 @@ export default function HomePageContent({
     }
   };
 
-  // Uzimamo prvu vijest kao glavnu, ostale za grid
   const featuredNews = news && news.length > 0 ? news[0] : null;
   const gridNews = news && news.length > 1 ? news.slice(1, 5) : [];
 
   return (
     <div className="font-sans text-[#001035] bg-white w-full overflow-x-hidden selection:bg-[#002060] selection:text-white">
-      <HeaderV5 variant="transparent" />
+      <HeaderV5 variant="transparent" logoUrl={logoUrl} />
 
-      {/* HERO SECTION - Dodan pt-40 da se tekst spusti ispod menija */}
+      {/* HERO SECTION */}
       {hero && (
         <section className="relative min-h-[85vh] lg:min-h-screen w-full overflow-hidden flex flex-col justify-end pt-40 pb-12 lg:pb-32 bg-gray-900">
+            {/* Desktop Image */}
             <img 
                 src={hero.imageUrl || "https://images.unsplash.com/photo-1519861531473-920026393112?q=80&w=1600"} 
-                className="absolute inset-0 w-full h-full object-cover" 
+                className={`absolute inset-0 w-full h-full object-cover ${hero.mobileImageUrl ? 'hidden md:block' : 'block'}`}
                 alt="KK Dinamo Hero"
             />
+            {/* Mobile Image (Only if available) */}
+            {hero.mobileImageUrl && (
+                <img 
+                    src={hero.mobileImageUrl} 
+                    className="absolute inset-0 w-full h-full object-cover md:hidden"
+                    alt="KK Dinamo Hero Mobile"
+                />
+            )}
             <div className="absolute inset-0 bg-gradient-to-t from-[#002060] via-transparent to-black/40 opacity-90 lg:opacity-80"></div>
 
             <div className="relative z-10 max-w-[1920px] mx-auto px-6 lg:px-12 w-full text-left">
@@ -165,11 +190,9 @@ export default function HomePageContent({
                 </div>
                 <div className="order-2 bg-white p-6 lg:p-12 flex flex-col justify-center border-b lg:border-b-0 lg:border-l border-gray-100">
                     <span className="font-body text-sm font-bold text-gray-500 mb-4 uppercase tracking-widest">{formatDate(featuredNews.publishedAt)}</span>
-                    
                     <h2 className="font-condensed font-bold text-4xl lg:text-[6.5rem] xl:text-[8rem] text-black uppercase leading-[0.9] tracking-tighter transition-colors duration-500 group-hover:text-[#002060]">
                         {featuredNews.title}
                     </h2>
-                    
                     <div className="relative w-full mt-8 h-2">
                         <div className="absolute bottom-0 left-0 w-full h-0.5 bg-black z-0"></div>
                         <div className="absolute bottom-0 left-0 w-full h-full bg-[#002060] z-10 origin-left transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 ease-out"></div>
@@ -196,7 +219,7 @@ export default function HomePageContent({
           </div>
       </section>
 
-      {/* MATCH CENTER - Poboljšano skaliranje i dimenzije za sve ekrane */}
+      {/* MATCH CENTER */}
       <section className="max-w-[1920px] mx-auto px-4 lg:px-12 py-8 lg:py-24">
           <h2 className="font-condensed font-bold text-5xl md:text-8xl uppercase text-black leading-none mb-8 tracking-tighter">Raspored</h2>
           
@@ -217,16 +240,12 @@ export default function HomePageContent({
                         </div>
                     </div>
 
-                    {/* Glavni kontejner - Smanjen gap i bolje centriranje */}
                     <div className="relative z-10 w-full max-w-[1600px] mx-auto flex flex-col md:flex-row items-center justify-center gap-4 md:gap-8 lg:gap-12 px-2 md:px-4">
-                        
                         {/* Home Team */}
                         <div className="flex flex-col md:flex-row items-center gap-4 text-center md:text-right flex-1 justify-end min-w-0">
-                            {/* Ime kluba: Smanjen maksimalni font na xl i lg da stane */}
                             <span className="hidden md:block font-condensed font-bold text-3xl md:text-4xl lg:text-5xl xl:text-6xl uppercase leading-[0.9] tracking-tight">
                                 {featuredMatch.homeTeam}
                             </span>
-                            {/* Krug sa slovom: Smanjen na lg i xl */}
                             <div className="w-20 h-20 md:w-24 md:h-24 lg:w-32 lg:h-32 xl:w-40 xl:h-40 shrink-0 rounded-full bg-white/10 flex items-center justify-center border-2 border-white/20">
                                 <span className="font-condensed font-bold text-3xl md:text-4xl lg:text-5xl xl:text-6xl">{featuredMatch.homeTeam.substring(0,1)}</span>
                             </div>
@@ -235,7 +254,6 @@ export default function HomePageContent({
 
                         {/* Center Info */}
                         <div className="flex flex-col items-center text-center shrink-0 mx-2 lg:mx-6">
-                            {/* Datum: Smanjen font (lg:text-8xl umjesto [8rem]) da ostavi mjesta klubovima */}
                             <span className="font-condensed font-bold text-6xl md:text-7xl lg:text-8xl xl:text-9xl leading-none mb-2 tracking-tighter whitespace-nowrap">
                                 {formatDate(featuredMatch.date).slice(0, -1)}
                             </span>
@@ -287,37 +305,56 @@ export default function HomePageContent({
           </div>
       </section>
 
-      {/* SHOP */}
+      {/* SHOP SECTION - Redesigned (Napoli Style) */}
       <section className="max-w-[1920px] mx-auto w-full bg-white border-y border-gray-200">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 min-h-[500px]">
-              <a href="https://shop.kkdinamo.hr" className="bg-[#002060] text-white flex flex-col justify-center items-center p-12 text-center group hover:bg-[#001540] transition-colors relative overflow-hidden">
-                  <div className="absolute inset-0 flex flex-col justify-center items-center opacity-[0.07] pointer-events-none select-none overflow-hidden transform -rotate-12 scale-150">
-                       <div className="animate-marquee whitespace-nowrap flex items-center gap-16 mb-12">
-                          {[...Array(8)].map((_, i) => (
-                              <div key={`r1-${i}`} className="flex items-center gap-16">
-                                  <span className="font-condensed font-bold text-9xl">SHOP</span>
-                                  <ShoppingBag size={80} strokeWidth={2.5} />
-                              </div>
-                          ))}
-                       </div>
+          <div className="grid grid-cols-1 lg:grid-cols-2">
+              
+              {/* Left Side: Big Promo Banner */}
+              <div className="relative h-[600px] lg:h-auto bg-[#002060] overflow-hidden group">
+                  {/* Background Image from CMS or Default */}
+                  <img 
+                    src={shopConfig?.imageUrl || "https://images.unsplash.com/photo-1556821840-3a63f95609a7?q=80&w=1200"} 
+                    className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:opacity-40 transition-opacity duration-700"
+                    alt="Shop Promo"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#002060] via-transparent to-transparent"></div>
+                  
+                  <div className="relative z-10 h-full flex flex-col justify-end p-8 lg:p-16 text-white">
+                      <div className="mb-6">
+                          <h2 className="font-condensed font-black text-6xl lg:text-8xl uppercase leading-[0.9] tracking-tighter">
+                              {shopConfig?.title || "Proud to be\nDinamo"}
+                          </h2>
+                      </div>
+                      <a 
+                        href={shopConfig?.buttonLink || "https://shop.kkdinamo.hr"} 
+                        target="_blank"
+                        className="inline-flex items-center gap-4 bg-white text-[#002060] px-8 py-4 w-fit font-condensed font-bold text-xl uppercase hover:bg-[#00C2FF] hover:text-white transition-colors"
+                      >
+                          {shopConfig?.buttonText || "Posjeti Webshop"} <ArrowRight size={24} />
+                      </a>
                   </div>
+              </div>
 
-                  <div className="relative z-10 flex flex-col items-center">
-                       <h2 className="font-condensed font-bold text-7xl lg:text-9xl uppercase leading-none tracking-tighter mb-6">SHOP</h2>
-                       <span className="inline-block border-2 border-white px-8 py-3 font-condensed font-bold text-xl uppercase group-hover:bg-white group-hover:text-[#002060] transition-colors">Posjeti</span>
-                  </div>
-              </a>
-              {shopItems.slice(0, 3).map((p, i) => (
-                  <a key={i} href={p.link} className="bg-gray-50 border-r border-gray-200 relative group overflow-hidden flex flex-col">
-                      <div className="flex-1 relative flex items-center justify-center p-8 overflow-hidden">
-                          {p.imageUrl && <img src={p.imageUrl} className="relative z-10 w-full h-full object-contain group-hover:scale-110 transition-transform duration-500" alt={p.name}/>}
-                      </div>
-                      <div className="p-8 bg-white border-t border-gray-100 relative z-10 text-center">
-                          <h3 className="font-condensed font-bold text-3xl lg:text-4xl text-black uppercase mb-2 group-hover:text-[#002060] transition-colors">{p.name}</h3>
-                          <span className="font-body font-bold text-xl text-gray-500">{p.price}</span>
-                      </div>
-                  </a>
-              ))}
+              {/* Right Side: Product Grid (2x2) */}
+              <div className="grid grid-cols-2">
+                  {shopItems.slice(0, 4).map((p, i) => (
+                      <a key={i} href={p.link} target="_blank" className="relative group border-b border-r border-gray-200 bg-white overflow-hidden flex flex-col aspect-square">
+                          <div className="flex-1 relative flex items-center justify-center p-6">
+                              {p.imageUrl && (
+                                <img 
+                                    src={p.imageUrl} 
+                                    className="relative z-10 w-full h-full object-contain group-hover:scale-110 transition-transform duration-500" 
+                                    alt={p.name}
+                                />
+                              )}
+                          </div>
+                          <div className="p-6 text-center z-20 bg-white group-hover:bg-[#002060] group-hover:text-white transition-colors duration-300">
+                              <h3 className="font-condensed font-bold text-xl lg:text-2xl uppercase mb-1">{p.name}</h3>
+                              <span className="font-body font-bold text-gray-500 group-hover:text-blue-300">{p.price}</span>
+                          </div>
+                      </a>
+                  ))}
+              </div>
           </div>
       </section>
 
@@ -344,6 +381,48 @@ export default function HomePageContent({
                   </Link>
               ))}
            </div>
+      </section>
+
+      {/* --- NEW: SPOTIFY PLAYLIST SECTION --- */}
+      <section className="bg-black text-white py-20 lg:py-28 overflow-hidden relative">
+          {/* Background Gradient & Pattern */}
+          <div className="absolute inset-0 bg-gradient-to-r from-black via-[#111] to-black"></div>
+          <div className="absolute inset-0 opacity-10" style={{backgroundImage: 'repeating-linear-gradient(45deg, #1DB954 0, #1DB954 1px, transparent 0, transparent 50%)', backgroundSize: '20px 20px'}}></div>
+          
+          <div className="max-w-[1400px] mx-auto px-4 lg:px-12 relative z-10 flex flex-col md:flex-row items-center gap-12 lg:gap-24">
+              
+              {/* Left: Text & Button */}
+              <div className="flex-1 text-center md:text-left">
+                  <div className="flex items-center justify-center md:justify-start gap-4 mb-6">
+                      <SpotifyIcon />
+                      <span className="text-[#1DB954] font-bold tracking-widest uppercase text-sm">Službena Playlist</span>
+                  </div>
+                  <h2 className="font-condensed font-black text-6xl lg:text-8xl uppercase leading-none mb-8">
+                      Ritam <br/> <span className="text-transparent" style={{ WebkitTextStroke: '1px #fff' }}>Tribine</span>
+                  </h2>
+                  <p className="text-gray-400 text-lg mb-8 max-w-md mx-auto md:mx-0">
+                      Pripremi se za utakmicu uz službenu playlistu KK Dinama. Najveći hitovi s tribina i svlačionice na jednom mjestu.
+                  </p>
+                  <a href="https://open.spotify.com" target="_blank" className="inline-flex items-center gap-3 bg-[#1DB954] text-black px-8 py-4 rounded-full font-bold uppercase tracking-wider hover:scale-105 transition-transform">
+                      <Play fill="black" size={20} /> Slušaj na Spotify-u
+                  </a>
+              </div>
+
+              {/* Right: Visualizer Animation */}
+              <div className="flex-1 flex justify-center items-center h-64 gap-2 lg:gap-4">
+                  {[...Array(8)].map((_, i) => (
+                      <div 
+                        key={i} 
+                        className="w-4 lg:w-6 bg-[#1DB954] rounded-full animate-pulse"
+                        style={{
+                            height: `${Math.random() * 100 + 20}%`,
+                            animationDuration: `${Math.random() * 0.5 + 0.5}s`,
+                            animationIterationCount: 'infinite'
+                        }}
+                      ></div>
+                  ))}
+              </div>
+          </div>
       </section>
 
       {/* STANDINGS & NEWSLETTER */}
@@ -385,7 +464,7 @@ export default function HomePageContent({
            </div>
       </section>
 
-      <FooterV5 />
+      <FooterV5 logoUrl={logoUrl} />
     </div>
   );
 }
