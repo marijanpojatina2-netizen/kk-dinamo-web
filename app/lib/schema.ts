@@ -149,13 +149,54 @@ const homepage = {
     },
     { 
       name: 'hero', 
-      title: 'Hero Sekcija (Glavna slika)', 
+      title: 'Hero Sekcija (Glavna slika/video)', 
       type: 'object',
       fields: [
         { name: 'title', title: 'Glavni Naslov', type: 'string' },
         { name: 'subtitle', title: 'Podnaslov', type: 'string' },
-        { name: 'image', title: 'Desktop Slika (Landscape)', type: 'image', description: 'Preporučeno: 1920x1080px' },
-        { name: 'mobileImage', title: 'Mobilna Slika (Portrait)', type: 'image', description: 'Preporučeno: 1080x1920px (Story format). Ako nije postavljena, koristi se desktop slika.' },
+        { 
+          name: 'type', 
+          title: 'Tip Pozadine', 
+          type: 'string',
+          options: {
+            list: [
+              {title: 'Slika', value: 'image'},
+              {title: 'Video', value: 'video'}
+            ],
+            layout: 'radio'
+          },
+          initialValue: 'image'
+        },
+        { 
+          name: 'image', 
+          title: 'Desktop Slika (Landscape)', 
+          type: 'image', 
+          description: 'Preporučeno: 1920x1080px',
+          hidden: ({parent}: any) => parent?.type === 'video'
+        },
+        { 
+          name: 'mobileImage', 
+          title: 'Mobilna Slika (Portrait)', 
+          type: 'image', 
+          description: 'Preporučeno: 1080x1920px (Story format).',
+          hidden: ({parent}: any) => parent?.type === 'video'
+        },
+        {
+          name: 'videoDesktop',
+          title: 'Desktop Video (Landscape)',
+          type: 'file',
+          options: { accept: 'video/*' },
+          description: 'MP4 format, max 10MB preporučeno.',
+          hidden: ({parent}: any) => parent?.type !== 'video'
+        },
+        {
+          name: 'videoMobile',
+          title: 'Mobilni Video (Portrait)',
+          type: 'file',
+          options: { accept: 'video/*' },
+          description: 'MP4 format, vertikalni video.',
+          hidden: ({parent}: any) => parent?.type !== 'video'
+        },
         { name: 'buttonText', title: 'Tekst na gumbu', type: 'string' },
         { name: 'buttonLink', title: 'Link gumba', type: 'url', validation: urlValidation },
       ]

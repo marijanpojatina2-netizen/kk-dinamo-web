@@ -7,8 +7,11 @@ export const homepageQuery = groq`*[_type == "homepage"][0] {
   hero {
     title,
     subtitle,
+    type,
     "imageUrl": image.asset->url,
     "mobileImageUrl": mobileImage.asset->url,
+    "videoDesktopUrl": videoDesktop.asset->url,
+    "videoMobileUrl": videoMobile.asset->url,
     buttonText,
     buttonLink
   },

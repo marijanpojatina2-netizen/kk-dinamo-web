@@ -62,8 +62,11 @@ export default async function Home() {
   const hero = {
     title: homepageData?.hero?.title || (heroContent.titleLine1 ? `${heroContent.titleLine1}\n${heroContent.titleLine2}` : "KK DINAMO\nZAGREB"),
     subtitle: homepageData?.hero?.subtitle || heroContent.subtitle,
+    type: homepageData?.hero?.type || 'image', // 'image' or 'video'
     imageUrl: homepageData?.hero?.imageUrl || heroContent.image,
     mobileImageUrl: homepageData?.hero?.mobileImageUrl || null,
+    videoDesktopUrl: homepageData?.hero?.videoDesktopUrl || null,
+    videoMobileUrl: homepageData?.hero?.videoMobileUrl || null,
     buttonText: homepageData?.hero?.buttonText || heroContent.buttonText,
     buttonLink: homepageData?.hero?.buttonLink || heroContent.buttonLink
   };

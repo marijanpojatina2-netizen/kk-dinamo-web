@@ -10,8 +10,11 @@ import FooterV5 from './FooterV5';
 interface HeroData {
   title: string;
   subtitle: string;
+  type?: 'image' | 'video';
   imageUrl: string;
   mobileImageUrl?: string;
+  videoDesktopUrl?: string;
+  videoMobileUrl?: string;
   buttonText: string;
   buttonLink: string;
 }
@@ -228,19 +231,50 @@ export default function HomePageContent({
       {/* HERO SECTION */}
       {hero && (
         <section className="relative min-h-[85vh] lg:min-h-screen w-full overflow-hidden flex flex-col justify-end pt-40 pb-12 lg:pb-16 bg-gray-900">
-            {/* Desktop Image */}
-            <img 
-                src={hero.imageUrl || "https://images.unsplash.com/photo-1519861531473-920026393112?q=80&w=1600"} 
-                className={`absolute inset-0 w-full h-full object-cover ${hero.mobileImageUrl ? 'hidden md:block' : 'block'}`}
-                alt="KK Dinamo Hero"
-            />
-            {/* Mobile Image (Only if available) */}
-            {hero.mobileImageUrl && (
-                <img 
-                    src={hero.mobileImageUrl} 
-                    className="absolute inset-0 w-full h-full object-cover md:hidden"
-                    alt="KK Dinamo Hero Mobile"
-                />
+            {hero.type === 'video' ? (
+                <>
+                    {/* Desktop Video */}
+                    {hero.videoDesktopUrl && (
+                        <video 
+                            autoPlay 
+                            muted 
+                            loop 
+                            playsInline 
+                            className={`absolute inset-0 w-full h-full object-cover ${hero.videoMobileUrl ? 'hidden md:block' : 'block'}`}
+                        >
+                            <source src={hero.videoDesktopUrl} type="video/mp4" />
+                        </video>
+                    )}
+                    {/* Mobile Video (if exists, otherwise desktop video plays everywhere) */}
+                    {hero.videoMobileUrl && (
+                        <video 
+                            autoPlay 
+                            muted 
+                            loop 
+                            playsInline 
+                            className="absolute inset-0 w-full h-full object-cover md:hidden"
+                        >
+                            <source src={hero.videoMobileUrl} type="video/mp4" />
+                        </video>
+                    )}
+                </>
+            ) : (
+                <>
+                    {/* Desktop Image */}
+                    <img 
+                        src={hero.imageUrl || "https://images.unsplash.com/photo-1519861531473-920026393112?q=80&w=1600"} 
+                        className={`absolute inset-0 w-full h-full object-cover ${hero.mobileImageUrl ? 'hidden md:block' : 'block'}`}
+                        alt="KK Dinamo Hero"
+                    />
+                    {/* Mobile Image (Only if available) */}
+                    {hero.mobileImageUrl && (
+                        <img 
+                            src={hero.mobileImageUrl} 
+                            className="absolute inset-0 w-full h-full object-cover md:hidden"
+                            alt="KK Dinamo Hero Mobile"
+                        />
+                    )}
+                </>
             )}
             
             <div className="absolute inset-0 bg-gradient-to-t from-[#001035] from-0% via-[#001035]/60 via-20% to-transparent to-50%"></div>
