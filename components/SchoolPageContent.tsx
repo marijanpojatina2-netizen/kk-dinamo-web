@@ -1,10 +1,10 @@
 
 'use client';
 
-import React, { useRef } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import HeaderV5 from './HeaderV5';
 import FooterV5 from './FooterV5';
-import { ArrowRight, Mail, Phone, MapPin, Calendar, User, ChevronRight, ChevronLeft } from 'lucide-react';
+import { ArrowRight, Mail, Phone, MapPin, Calendar, User, ChevronRight, ChevronLeft, Quote } from 'lucide-react';
 import Link from 'next/link';
 
 interface SchoolPageProps {
@@ -17,6 +17,8 @@ interface SchoolPageProps {
 
 export default function SchoolPageContent({ news, staff, locations, youthTeams, logoUrl }: SchoolPageProps) {
   const sliderRef = useRef<HTMLDivElement>(null);
+  const [isVisible, setIsVisible] = useState(false);
+  const sectionRef = useRef<HTMLDivElement>(null);
 
   const scrollSlider = (dir: 'left' | 'right') => {
       if (sliderRef.current) {
@@ -24,10 +26,43 @@ export default function SchoolPageContent({ news, staff, locations, youthTeams, 
       }
   };
 
-  const headOfAcademy = staff.find(s => s.role && s.role.includes('Voditelj')) || staff[0];
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+        }
+      },
+      { threshold: 0.2 }
+    );
+
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current);
+    }
+
+    return () => {
+      if (sectionRef.current) observer.unobserve(sectionRef.current);
+    };
+  }, []);
 
   return (
     <div className="font-sans text-[#001035] bg-gray-50 w-full overflow-x-hidden selection:bg-[#002060] selection:text-white pt-24">
+      <style jsx global>{`
+        @keyframes fade-in-up {
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes scale-reveal {
+          from { transform: scale(0.95); opacity: 0; }
+          to { transform: scale(1); opacity: 1; }
+        }
+        .animate-fade-up { animation: fade-in-up 0.8s ease-out forwards; }
+        .animate-scale { animation: scale-reveal 1s ease-out forwards; }
+        .delay-200 { animation-delay: 0.2s; }
+        .delay-400 { animation-delay: 0.4s; }
+        .delay-600 { animation-delay: 0.6s; }
+      `}</style>
+
       <HeaderV5 variant="solid" logoUrl={logoUrl} />
 
       {/* --- HERO SECTION --- */}
@@ -60,6 +95,42 @@ export default function SchoolPageContent({ news, staff, locations, youthTeams, 
                   </div>
                   <div className="absolute inset-0 border-4 border-white transform -rotate-2"></div>
               </div>
+          </div>
+      </section>
+
+      {/* --- ACADEMY HEAD STATEMENT (MILAN LIČINA) --- */}
+      <section ref={sectionRef} className="relative bg-[#020617] text-white py-24 lg:py-32 overflow-hidden border-t border-white/10">
+          {/* Animated Background Elements */}
+          <div className="absolute inset-0 overflow-hidden pointer-events-none">
+              <div className="absolute top-1/2 left-1/2 w-[800px] h-[800px] bg-[#002060] rounded-full blur-[150px] opacity-20 -translate-x-1/2 -translate-y-1/2 animate-pulse"></div>
+              <div className="absolute bottom-0 right-0 w-[600px] h-[600px] bg-[#00C2FF] rounded-full blur-[200px] opacity-5"></div>
+              <div className="absolute inset-0 opacity-[0.03]" style={{backgroundImage: 'repeating-linear-gradient(45deg, #fff 0, #fff 1px, transparent 0, transparent 50%)', backgroundSize: '40px 40px'}}></div>
+          </div>
+
+          <div className="max-w-5xl mx-auto px-4 lg:px-12 relative z-10 text-center">
+              
+              {/* Quote Icon */}
+              <div className={`flex justify-center mb-8 ${isVisible ? 'animate-fade-up' : 'opacity-0'}`}>
+                  <div className="w-20 h-20 bg-[#00C2FF]/10 rounded-full flex items-center justify-center border border-[#00C2FF]/20">
+                      <Quote className="w-10 h-10 text-[#00C2FF]" />
+                  </div>
+              </div>
+
+              {/* Statement Text */}
+              <blockquote className={`text-2xl md:text-3xl lg:text-4xl leading-relaxed font-condensed font-medium text-gray-200 mb-12 ${isVisible ? 'animate-fade-up delay-200' : 'opacity-0'}`}>
+                  "Dinamo nije samo klub, to je identitet. U našoj školi košarke fokus nije isključivo na pobjedama, već na razvoju radnih navika, discipline i zajedništva. Želimo da svako dijete koje prođe kroz naš sustav izađe kao bolji sportaš i, što je još važnije, kao bolja osoba."
+              </blockquote>
+
+              {/* Author Block */}
+              <div className={`flex flex-col items-center gap-2 ${isVisible ? 'animate-fade-up delay-400' : 'opacity-0'}`}>
+                  <h3 className="font-condensed font-bold text-4xl uppercase text-white tracking-wide">Milan Ličina</h3>
+                  <div className="flex items-center gap-4">
+                      <div className="h-[2px] w-8 bg-[#00C2FF]"></div>
+                      <span className="text-[#00C2FF] font-bold uppercase tracking-[0.2em] text-sm">Voditelj omladinskog pogona</span>
+                      <div className="h-[2px] w-8 bg-[#00C2FF]"></div>
+                  </div>
+              </div>
+
           </div>
       </section>
 
