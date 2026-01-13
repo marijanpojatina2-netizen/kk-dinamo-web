@@ -1,7 +1,7 @@
 
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import HeaderV5 from './HeaderV5';
 import FooterV5 from './FooterV5';
 import { ArrowRight, Calendar } from 'lucide-react';
@@ -28,7 +28,12 @@ const formatDate = (dateString: string) => {
 };
 
 export default function NewsPageContent({ news, logoUrl }: NewsPageProps) {
+  const [activeCategory, setActiveCategory] = useState('Sve');
   const validNews = Array.isArray(news) ? news : [];
+
+  const filteredNews = activeCategory === 'Sve' 
+    ? validNews 
+    : validNews.filter(item => item.category === activeCategory);
 
   return (
     <div className="font-sans text-[#001035] bg-gray-50 w-full overflow-x-hidden selection:bg-[#002060] selection:text-white pt-24">
@@ -45,55 +50,65 @@ export default function NewsPageContent({ news, logoUrl }: NewsPageProps) {
                   <span className="w-12 h-1 bg-[#00C2FF]"></span>
                   <span className="font-condensed font-bold text-lg uppercase tracking-[0.2em] text-[#00C2FF]">Arhiva Vijesti</span>
               </div>
-              <h1 className="font-condensed font-bold text-7xl lg:text-9xl uppercase leading-none tracking-tighter">
+              {/* Changed leading from none to 1.1 */}
+              <h1 className="font-condensed font-bold text-7xl lg:text-9xl uppercase leading-[1.1] tracking-tighter">
                   Dinamo<br/><span className="text-transparent" style={{ WebkitTextStroke: '2px white' }}>Novosti</span>
               </h1>
-          </div>
-          
-          {/* MOVED FILTERS HERE - BELOW HERO TITLE */}
-          <div className="absolute bottom-0 left-0 w-full px-4 lg:px-12 pb-8 z-20">
-             <div className="max-w-[1400px] mx-auto flex flex-wrap gap-4">
-               {['Sve', 'Utakmice', 'Klub', 'Intervju', 'Škola', 'Ulaznice'].map((tag, i) => (
-                   <button key={tag} className={`px-6 py-2 rounded-full font-condensed font-bold uppercase text-sm transition-all border ${i === 0 ? 'bg-[#00C2FF] text-[#001035] border-[#00C2FF]' : 'bg-white/10 text-white border-white/20 hover:bg-white hover:text-[#001035]'}`}>
-                       {tag}
-                   </button>
-               ))}
-             </div>
           </div>
       </section>
 
       {/* MAIN CONTENT AREA - GRID ONLY */}
-      <section className="max-w-[1400px] mx-auto px-4 lg:px-12 py-20">
+      <section className="max-w-[1400px] mx-auto px-4 lg:px-12 py-12 lg:py-20">
+           
+           {/* FILTERS - MOVED HERE & STYLED FOR LIGHT BACKGROUND */}
+           <div className="flex flex-wrap gap-3 mb-12">
+               {['Sve', 'Utakmice', 'Klub', 'Intervju', 'Škola', 'Ulaznice'].map((tag, i) => (
+                   <button 
+                      key={tag} 
+                      onClick={() => setActiveCategory(tag)}
+                      className={`px-6 py-2 rounded-full font-condensed font-bold uppercase text-sm transition-all border ${activeCategory === tag ? 'bg-[#002060] text-white border-[#002060] shadow-md' : 'bg-white text-gray-500 border-gray-300 hover:border-[#002060] hover:text-[#002060]'}`}
+                   >
+                       {tag}
+                   </button>
+               ))}
+           </div>
+
            {/* NEWS GRID */}
            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
-               {validNews.map((item, i) => (
-                   <Link href={`/vijesti/${item.slug}`} key={i} className="group cursor-pointer flex flex-col h-full bg-white border border-gray-100 shadow-sm hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 relative overflow-hidden">
-                       <div className="aspect-[3/2] overflow-hidden relative bg-gray-100">
-                           <div className="absolute inset-0 bg-[#002060] mix-blend-color opacity-0 group-hover:opacity-30 transition-opacity duration-300 z-10"></div>
-                           {item.imageUrl && (
-                                <img src={item.imageUrl} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt={item.title}/>
-                           )}
-                           <div className="absolute top-4 right-4 z-20">
-                               <span className="bg-white text-[#002060] text-xs font-bold uppercase px-3 py-1 shadow-md">
-                                   {item.category || 'Vijesti'}
-                               </span>
+               {filteredNews.length > 0 ? (
+                   filteredNews.map((item, i) => (
+                       <Link href={`/vijesti/${item.slug}`} key={i} className="group cursor-pointer flex flex-col h-full bg-white border border-gray-100 shadow-sm hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 relative overflow-hidden">
+                           <div className="aspect-[3/2] overflow-hidden relative bg-gray-100">
+                               <div className="absolute inset-0 bg-[#002060] mix-blend-color opacity-0 group-hover:opacity-30 transition-opacity duration-300 z-10"></div>
+                               {item.imageUrl && (
+                                    <img src={item.imageUrl} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt={item.title}/>
+                               )}
+                               <div className="absolute top-4 right-4 z-20">
+                                   <span className="bg-white text-[#002060] text-xs font-bold uppercase px-3 py-1 shadow-md">
+                                       {item.category || 'Vijesti'}
+                                   </span>
+                               </div>
                            </div>
-                       </div>
-                       <div className="p-6 flex flex-col flex-grow relative">
-                           <div className="absolute top-0 left-0 w-0 h-1 bg-[#00C2FF] transition-all duration-500 group-hover:w-full"></div>
-                           <div className="flex items-center gap-2 mb-3 text-xs font-bold text-gray-400 uppercase tracking-widest">
-                               <Calendar size={14} className="text-[#00C2FF]" /> {formatDate(item.publishedAt)}
+                           <div className="p-6 flex flex-col flex-grow relative">
+                               <div className="absolute top-0 left-0 w-0 h-1 bg-[#00C2FF] transition-all duration-500 group-hover:w-full"></div>
+                               <div className="flex items-center gap-2 mb-3 text-xs font-bold text-gray-400 uppercase tracking-widest">
+                                   <Calendar size={14} className="text-[#00C2FF]" /> {formatDate(item.publishedAt)}
+                               </div>
+                               <h3 className="font-condensed font-bold text-2xl text-black uppercase leading-tight mb-4 group-hover:text-[#002060] transition-colors">
+                                   {item.title}
+                               </h3>
+                               <div className="mt-auto flex items-center justify-between pt-4 border-t border-gray-100">
+                                   <span className="text-xs font-bold text-gray-400 uppercase tracking-wider group-hover:text-black transition-colors">Pročitaj članak</span>
+                                   <ArrowRight size={18} className="text-[#00C2FF] transform -translate-x-2 opacity-0 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
+                               </div>
                            </div>
-                           <h3 className="font-condensed font-bold text-2xl text-black uppercase leading-tight mb-4 group-hover:text-[#002060] transition-colors">
-                               {item.title}
-                           </h3>
-                           <div className="mt-auto flex items-center justify-between pt-4 border-t border-gray-100">
-                               <span className="text-xs font-bold text-gray-400 uppercase tracking-wider group-hover:text-black transition-colors">Pročitaj članak</span>
-                               <ArrowRight size={18} className="text-[#00C2FF] transform -translate-x-2 opacity-0 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
-                           </div>
-                       </div>
-                   </Link>
-               ))}
+                       </Link>
+                   ))
+               ) : (
+                   <div className="col-span-full py-12 text-center text-gray-500 font-bold uppercase tracking-widest">
+                       Nema vijesti u ovoj kategoriji.
+                   </div>
+               )}
            </div>
            
            {/* Load More Button */}

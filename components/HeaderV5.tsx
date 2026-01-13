@@ -41,14 +41,12 @@ const HeaderV5: React.FC<HeaderV5Props> = ({ variant = 'solid', logoUrl }) => {
       setIsScrolled(window.scrollY > 50);
     };
     
-    if (variant === 'transparent') {
-      window.addEventListener('scroll', handleScroll);
-    } else {
-      setIsScrolled(true);
-    }
+    // Always check scroll position initially to prevent hydration mismatch or wrong state
+    handleScroll();
 
+    window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [variant]);
+  }, []);
 
   useEffect(() => {
     setIsMenuOpen(false);
@@ -57,11 +55,19 @@ const HeaderV5: React.FC<HeaderV5Props> = ({ variant = 'solid', logoUrl }) => {
   const textColorClass = variant === 'transparent' && !isScrolled ? 'text-white' : 'text-[#002060]';
   const buttonBorderClass = variant === 'transparent' && !isScrolled ? 'border-white text-white hover:bg-[#002060] hover:border-[#002060]' : 'border-[#002060] text-[#002060] hover:bg-[#002060] hover:text-white';
 
+  // Logic for Logo Visibility:
+  // Logo is only visible when the user scrolls down (and the white background appears).
+  // It is hidden in the initial view (top of page).
+  const isLogoVisible = isScrolled;
+
   return (
     <>
       <header className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${isScrolled ? 'bg-white shadow-md py-2' : 'bg-transparent py-4'}`}>
         <div className="max-w-[1920px] mx-auto px-4 lg:px-12 flex items-center justify-between">
-            <Link href="/" className="w-12 h-12 lg:w-20 lg:h-20 relative z-50 block hover:scale-105 transition-transform">
+            <Link 
+              href="/" 
+              className={`w-12 h-12 lg:w-20 lg:h-20 relative z-50 block hover:scale-105 transition-all duration-300 ${isLogoVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4 pointer-events-none'}`}
+            >
                 <img 
                   src={displayLogo} 
                   alt="KK Dinamo" 
