@@ -28,12 +28,12 @@ export const homepageQuery = groq`*[_type == "homepage"][0] {
   }
 }`;
 
-// NOVO: Query za globalne postavke (Logo) koje se koriste na podstranicama
+// Query za globalne postavke (Logo)
 export const globalConfigQuery = groq`*[_type == "homepage"][0] {
   "logoUrl": logo.asset->url
 }`;
 
-// Query za Vijesti (zadnjih 6) - koristi se na naslovnici
+// Query za Vijesti (zadnjih 6)
 export const newsQuery = groq`*[_type == "news"] | order(publishedAt desc)[0...6] {
   title,
   "slug": slug.current,
@@ -55,7 +55,7 @@ export const allNewsQuery = groq`*[_type == "news"] | order(publishedAt desc)[0.
   isFeatured
 }`;
 
-// NOVO: Query za pojedinačnu vijest
+// Query za pojedinačnu vijest
 export const singleNewsQuery = groq`*[_type == "news" && slug.current == $slug][0] {
   title,
   publishedAt,
@@ -79,8 +79,8 @@ export const playersQuery = groq`*[_type == "player"] | order(number asc) {
   "imageUrl": image.asset->url
 }`;
 
-// Query za Stručni stožer
-export const staffQuery = groq`*[_type == "staff"] {
+// Query za Stručni stožer (Samo kategorija Seniori ili ako nije definirano)
+export const staffQuery = groq`*[_type == "staff" && (category == "Seniori" || !defined(category))] {
   _id,
   name,
   lastname,
@@ -92,7 +92,7 @@ export const staffQuery = groq`*[_type == "staff"] {
   "imageUrl": image.asset->url
 }`;
 
-// Query za Utakmice (Raspored i Rezultati)
+// Query za Utakmice
 export const matchesQuery = groq`*[_type == "match"] | order(date asc) {
   homeTeam,
   "homeTeamLogo": homeTeamLogo.asset->url,
@@ -130,8 +130,8 @@ export const shopQuery = groq`*[_type == "shopItem"] {
   link
 }`;
 
-// Query za Sponzore
-export const sponsorsQuery = groq`*[_type == "sponsor"] {
+// NOVO: Query za Sponzore (Iz Singletona)
+export const sponsorsQuery = groq`*[_type == "sponsorsPage"][0].sponsorsList[] {
   name,
   "logoUrl": logo.asset->url,
   websiteUrl,
@@ -144,16 +144,40 @@ export const clubInfoQuery = groq`*[_type == "clubInfo"][0] {
   "historyImageUrl": historyImage.asset->url
 }`;
 
-// NOVO: Query za Lokacije Treninga
-export const locationsQuery = groq`*[_type == "trainingLocation"] {
+// NOVO: Query za ŠKOLU (Sve iz singletona)
+export const schoolPageQuery = groq`*[_type == "schoolPage"][0] {
+  introTitle,
+  introText,
+  headOfAcademy {
+    name,
+    role,
+    quote,
+    "imageUrl": image.asset->url
+  },
+  selections[] {
+    title,
+    coach,
+    "imageUrl": image.asset->url,
+    schedule
+  },
+  locations[] {
+    name,
+    address,
+    "imageUrl": image.asset->url,
+    mapLink
+  }
+}`;
+
+// Zadržavamo stare exporte ali prazne ili preusmjerene ako treba, 
+// ali stranica škole sada koristi schoolPageQuery
+export const locationsQuery = groq`*[_type == "schoolPage"][0].locations[] {
   name,
   address,
   "imageUrl": image.asset->url,
   mapLink
 }`;
 
-// NOVO: Query za Omladinske Selekcije
-export const youthTeamsQuery = groq`*[_type == "youthTeam"] {
+export const youthTeamsQuery = groq`*[_type == "schoolPage"][0].selections[] {
   title,
   coach,
   "imageUrl": image.asset->url,

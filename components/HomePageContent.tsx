@@ -458,7 +458,8 @@ export default function HomePageContent({
           <div className="grid grid-cols-1 lg:grid-cols-2">
               
               {/* Left Side: Big Promo Banner */}
-              <div className={`relative h-[600px] lg:h-auto overflow-hidden group ${hasShopImage ? 'bg-[#002060]' : 'bg-white'}`}>
+              {/* Always Blue Background now per user request */}
+              <div className="relative h-[600px] lg:h-auto overflow-hidden group bg-[#002060]">
                   
                   {hasShopImage ? (
                       // IMAGE MODE
@@ -472,10 +473,10 @@ export default function HomePageContent({
                       </>
                   ) : (
                       // FALLBACK MODE (Ticker)
-                      <div className="absolute inset-0 flex flex-col justify-center items-center opacity-10 pointer-events-none select-none overflow-hidden transform -rotate-12 scale-150">
+                      <div className="absolute inset-0 flex flex-col justify-center items-center opacity-20 pointer-events-none select-none overflow-hidden transform -rotate-12 scale-150">
                            <div className="animate-marquee whitespace-nowrap flex items-center gap-16 mb-12">
                               {[...Array(8)].map((_, i) => (
-                                  <div key={`r1-${i}`} className="flex items-center gap-16 text-[#002060]">
+                                  <div key={`r1-${i}`} className="flex items-center gap-16 text-[#4285F4]">
                                       <span className="font-condensed font-bold text-9xl">SHOP</span>
                                       <ShoppingBag size={80} strokeWidth={2.5} />
                                   </div>
@@ -483,7 +484,7 @@ export default function HomePageContent({
                            </div>
                            <div className="animate-marquee-rev whitespace-nowrap flex items-center gap-16">
                               {[...Array(8)].map((_, i) => (
-                                  <div key={`r2-${i}`} className="flex items-center gap-16 text-[#002060]">
+                                  <div key={`r2-${i}`} className="flex items-center gap-16 text-[#4285F4]">
                                       <span className="font-condensed font-bold text-9xl">SHOP</span>
                                       <ShoppingBag size={80} strokeWidth={2.5} />
                                   </div>
@@ -492,7 +493,8 @@ export default function HomePageContent({
                       </div>
                   )}
                   
-                  <div className={`relative z-10 h-full flex flex-col justify-end p-8 lg:p-16 ${hasShopImage ? 'text-white' : 'text-[#001035]'}`}>
+                  {/* Content - Always White Text now since background is always dark/blue */}
+                  <div className="relative z-10 h-full flex flex-col justify-end p-8 lg:p-16 text-white">
                       <div className="mb-6">
                           <h2 className="font-condensed font-black text-6xl lg:text-8xl uppercase leading-[0.9] tracking-tighter">
                               {shopConfig?.title || "Proud to be\nDinamo"}
@@ -501,11 +503,7 @@ export default function HomePageContent({
                       <a 
                         href={shopConfig?.buttonLink || "https://shop.kkdinamo.hr"} 
                         target="_blank"
-                        className={`inline-flex items-center gap-4 px-8 py-4 w-fit font-condensed font-bold text-xl uppercase transition-colors ${
-                            hasShopImage 
-                            ? 'bg-white text-[#002060] hover:bg-[#00C2FF] hover:text-white' 
-                            : 'bg-[#002060] text-white hover:bg-[#00C2FF] hover:text-[#001035]'
-                        }`}
+                        className="inline-flex items-center gap-4 px-8 py-4 w-fit font-condensed font-bold text-xl uppercase transition-colors bg-white text-[#002060] hover:bg-[#00C2FF] hover:text-white"
                       >
                           {shopConfig?.buttonText || "Posjeti Webshop"} <ArrowRight size={24} />
                       </a>

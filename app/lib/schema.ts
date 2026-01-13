@@ -31,9 +31,10 @@ const player = {
 }
 
 // 2. OSOBLJE (Staff - Treneri i voditelji)
+// Promijenjen naziv da bude jasnije da je za sve
 const staff = {
   name: 'staff',
-  title: 'Stručni Stožer & Škola',
+  title: 'Osoblje (Treneri)', 
   type: 'document',
   fields: [
     { name: 'name', title: 'Ime', type: 'string' },
@@ -43,7 +44,8 @@ const staff = {
       name: 'category', 
       title: 'Kategorija', 
       type: 'string', 
-      options: { list: ['Seniori', 'Škola Košarke'] }
+      options: { list: ['Seniori', 'Škola Košarke'] },
+      initialValue: 'Seniori'
     },
     { name: 'image', title: 'Slika', type: 'image', options: { hotspot: true } },
   ]
@@ -61,7 +63,6 @@ const news = {
     { name: 'category', title: 'Kategorija', type: 'string', options: { list: ['Utakmice', 'Klub', 'Intervju', 'Škola', 'Ulaznice'] } },
     { name: 'image', title: 'Glavna slika', type: 'image', options: { hotspot: true } },
     { name: 'excerpt', title: 'Kratki uvod (za naslovnicu)', type: 'text', rows: 3 },
-    // UPDATE: Added image support to body
     { 
       name: 'body', 
       title: 'Tekst članka', 
@@ -88,7 +89,6 @@ const match = {
     { name: 'homeScore', title: 'Poeni Domaćin', type: 'number' },
     { name: 'awayScore', title: 'Poeni Gost', type: 'number' },
     { name: 'date', title: 'Datum i vrijeme', type: 'datetime' },
-    // UPDATE: Added location field
     { name: 'location', title: 'Lokacija (Dvorana)', type: 'string', initialValue: 'KC Dražen Petrović' },
     { name: 'league', title: 'Liga', type: 'string', initialValue: 'Premijer Liga' },
     { name: 'leagueLogo', title: 'Logo Lige/Natjecanja', type: 'image' },
@@ -96,7 +96,23 @@ const match = {
     { name: 'isFinished', title: 'Završena utakmica', type: 'boolean' },
     { name: 'ticketLink', title: 'Link na ulaznice (ako je buduća)', type: 'url', validation: urlValidation },
     { name: 'isBigAnnouncement', title: 'Prikaži kao Glavnu Najavu', type: 'boolean' }, 
-  ]
+  ],
+  // FIX: Better Preview in CMS List
+  preview: {
+    select: {
+      home: 'homeTeam',
+      away: 'awayTeam',
+      date: 'date'
+    },
+    prepare(selection: any) {
+      const {home, away, date} = selection;
+      const d = date ? new Date(date).toLocaleDateString('hr-HR') : 'Datum nije upisan';
+      return {
+        title: `${home} vs ${away}`,
+        subtitle: d
+      }
+    }
+  }
 }
 
 // 5. SHOP ARTIKLI
@@ -112,15 +128,14 @@ const shopItem = {
   ]
 }
 
-// 6. SPONZORI
+// 6. SPONZORI (Zastarjelo - koristi se novi Sponsors Page singleton, ali ostavljamo da ne puca baza odmah)
 const sponsor = {
   name: 'sponsor',
-  title: 'Sponzori',
+  title: 'Sponzori (Pojedinačni)',
   type: 'document',
   fields: [
     { name: 'name', title: 'Naziv firme', type: 'string' },
     { name: 'logo', title: 'Logo', type: 'image' },
-    // UPDATE: Added website URL
     { name: 'websiteUrl', title: 'Web Stranica', type: 'url', validation: urlValidation },
     { 
       name: 'tier', 
@@ -242,7 +257,7 @@ const homepage = {
           name: 'sofascoreEmbedUrl',
           title: 'Sofascore Embed URL',
           type: 'url',
-          description: 'Otiđite na Sofascore, nađite Premijer Ligu, kliknite na "Tablica", pa "Dodaj tablicu na web". Kopirajte onaj link unutar src="..." dijela. Primjer: https://www.sofascore.com/tournament/basketball/croatia/a1-liga/182/standings/tables/embed',
+          description: 'Otiđite na Sofascore, nađite Premijer Ligu, kliknite na "Tablica", pa "Dodaj tablicu na web". Kopirajte onaj link unutar src="..." dijela.',
           hidden: ({ parent }: any) => parent?.source !== 'sofascore'
         }
       ]
@@ -252,10 +267,10 @@ const homepage = {
       title: 'Webshop Sekcija (Banner)',
       type: 'object',
       fields: [
-        { name: 'title', title: 'Naslov bannera (npr. Proud to be Dinamo)', type: 'string' },
+        { name: 'title', title: 'Naslov bannera', type: 'string' },
         { name: 'buttonText', title: 'Tekst gumba', type: 'string' },
         { name: 'buttonLink', title: 'Link na shop', type: 'url', validation: urlValidation },
-        { name: 'image', title: 'Pozadinska slika bannera', type: 'image', description: 'Preporučeno vertikalna ili kvadratna slika visoke kvalitete.' }
+        { name: 'image', title: 'Pozadinska slika bannera', type: 'image' }
       ]
     }
   ]
@@ -272,39 +287,116 @@ const clubInfo = {
   ]
 }
 
-// 10. LOKACIJE TRENINGA (Škola košarke)
-const trainingLocation = {
-  name: 'trainingLocation',
-  title: 'Lokacije Treninga',
+// --- NOVE STRANICE (SINGLETONS) ZA LAKŠE UREĐIVANJE ---
+
+// 10. POSTAVKE ŠKOLE KOŠARKE (Sve na jednom mjestu)
+const schoolPage = {
+  name: 'schoolPage',
+  title: 'Postavke Škole',
   type: 'document',
   fields: [
-    { name: 'name', title: 'Naziv Škole/Dvorane', type: 'string' },
-    { name: 'address', title: 'Adresa', type: 'string' },
-    { name: 'image', title: 'Slika škole', type: 'image' },
-    { name: 'mapLink', title: 'Google Maps Link', type: 'url', validation: urlValidation }
+    {
+      name: 'introTitle',
+      title: 'Glavni Naslov (Hero)',
+      type: 'string',
+      initialValue: 'Budućnost Počinje Ovdje'
+    },
+    {
+      name: 'introText',
+      title: 'Uvodni Tekst',
+      type: 'text',
+      rows: 3
+    },
+    {
+      name: 'headOfAcademy',
+      title: 'Voditelj Omladinskog Pogona',
+      type: 'object',
+      fields: [
+        {name: 'name', type: 'string', title: 'Ime i Prezime'},
+        {name: 'role', type: 'string', title: 'Titula', initialValue: 'Voditelj omladinskog pogona'},
+        {name: 'quote', type: 'text', title: 'Izjava/Citat'},
+        {name: 'image', type: 'image', title: 'Slika voditelja'}
+      ]
+    },
+    {
+      name: 'selections',
+      title: 'Selekcije (Ekipe)',
+      type: 'array',
+      description: 'Dodajte sve omladinske ekipe ovdje.',
+      of: [{
+        type: 'object',
+        title: 'Ekipa',
+        fields: [
+          {name: 'title', type: 'string', title: 'Naziv Selekcije (npr. JUNIORI)'},
+          {name: 'coach', type: 'string', title: 'Glavni Trener'},
+          {name: 'image', type: 'image', title: 'Slika Ekipe'},
+          {
+            name: 'schedule', 
+            title: 'Nadolazeće Utakmice', 
+            type: 'array', 
+            of: [{ 
+              type: 'object',
+              fields: [
+                { name: 'opponent', title: 'Protivnik', type: 'string' },
+                { name: 'date', title: 'Datum i Vrijeme', type: 'datetime' },
+                { name: 'location', title: 'Mjesto', type: 'string' }
+              ]
+            }]
+          }
+        ]
+      }]
+    },
+    {
+      name: 'locations',
+      title: 'Lokacije Treninga',
+      type: 'array',
+      of: [{
+        type: 'object',
+        title: 'Lokacija',
+        fields: [
+          { name: 'name', title: 'Naziv Škole/Dvorane', type: 'string' },
+          { name: 'address', title: 'Adresa', type: 'string' },
+          { name: 'image', title: 'Slika škole', type: 'image' },
+          { name: 'mapLink', title: 'Google Maps Link', type: 'url', validation: urlValidation }
+        ]
+      }]
+    }
   ]
 }
 
-// 11. OMLADINSKE EKIPE (Selekcije)
-const youthTeam = {
-  name: 'youthTeam',
-  title: 'Omladinske Selekcije',
+// 11. POSTAVKE SPONZORA (Svi u jednom fajlu)
+const sponsorsPage = {
+  name: 'sponsorsPage',
+  title: 'Postavke Sponzora',
   type: 'document',
   fields: [
-    { name: 'title', title: 'Naziv Selekcije (npr. Juniori)', type: 'string' },
-    { name: 'coach', title: 'Glavni Trener', type: 'string' },
-    { name: 'image', title: 'Timska Slika', type: 'image', options: { hotspot: true } },
-    { 
-      name: 'schedule', 
-      title: 'Nadolazeće Utakmice', 
-      type: 'array', 
-      of: [{ 
+    {
+      name: 'sponsorsList',
+      title: 'Lista Sponzora',
+      type: 'array',
+      description: 'Ovdje dodajte sve sponzore na jednom mjestu.',
+      of: [{
         type: 'object',
+        title: 'Sponzor',
         fields: [
-          { name: 'opponent', title: 'Protivnik', type: 'string' },
-          { name: 'date', title: 'Datum i Vrijeme', type: 'datetime' },
-          { name: 'location', title: 'Mjesto', type: 'string' }
-        ]
+          { name: 'name', title: 'Naziv firme', type: 'string' },
+          { name: 'logo', title: 'Logo', type: 'image' },
+          { name: 'websiteUrl', title: 'Web Stranica', type: 'url', validation: urlValidation },
+          { name: 'address', title: 'Adresa', type: 'string' },
+          { 
+            name: 'tier', 
+            title: 'Razina sponzorstva', 
+            type: 'string',
+            options: { list: ['Generalni', 'Platinum', 'Gold', 'Silver', 'Bronze', 'Media'] }
+          },
+        ],
+        preview: {
+          select: {
+            title: 'name',
+            subtitle: 'tier',
+            media: 'logo'
+          }
+        }
       }]
     }
   ]
@@ -312,14 +404,14 @@ const youthTeam = {
 
 export const schemaTypes = [
   homepage,
+  schoolPage, // NOVO
+  sponsorsPage, // NOVO
+  clubInfo,
   news,
   match,
   player,
   staff,
   shopItem,
-  sponsor,
+  sponsor, // Zadržano radi backward compatibility, ali sakrit ćemo u desku
   standing,
-  clubInfo,
-  trainingLocation,
-  youthTeam
 ]
