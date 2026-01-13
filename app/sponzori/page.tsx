@@ -12,17 +12,18 @@ export default async function SponsorsPage() {
 
   try {
     const [s, g] = await Promise.all([
-      client.fetch(sponsorsQuery),
+      client.fetch(sponsorsQuery).catch(() => null),
       client.fetch(globalConfigQuery).catch(() => null)
     ]);
-    sponsors = s;
+    // FIX: Osiguravamo da je sponsors niz, čak i ako Sanity vrati null
+    sponsors = s || []; 
     if (g) logoUrl = g.logoUrl;
   } catch (error) {
     console.error("Greška pri dohvatu sponzora:", error);
   }
 
-  // Fallback ako nema CMS podataka
-  if (sponsors.length === 0) {
+  // Fallback ako nema CMS podataka ili je niz prazan
+  if (!sponsors || sponsors.length === 0) {
       sponsors = staticSponsors.map((s: any) => ({
           name: s.name,
           tier: s.tier,
