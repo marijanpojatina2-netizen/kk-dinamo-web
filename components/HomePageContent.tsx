@@ -236,6 +236,8 @@ export default function HomePageContent({
   const featuredNews = news && news.length > 0 ? news[0] : null;
   const gridNews = news && news.length > 1 ? news.slice(1, 5) : [];
 
+  const hasShopImage = !!shopConfig?.imageUrl;
+
   return (
     <div className="font-sans text-[#001035] bg-white w-full overflow-x-hidden selection:bg-[#002060] selection:text-white">
       <HeaderV5 variant="transparent" logoUrl={logoUrl} />
@@ -263,7 +265,6 @@ export default function HomePageContent({
                 </>
             )}
             
-            {/* UPDATED GRADIENT: Mobile (Bottom->Top), Desktop (Left->Right), Reduced Intensity */}
             <div className="absolute inset-0 bg-gradient-to-t from-[#001035]/80 via-[#001035]/30 to-transparent lg:bg-gradient-to-r lg:from-[#001035]/80 lg:via-[#001035]/30 lg:to-transparent z-10"></div>
 
             <div className="relative z-20 max-w-[1920px] mx-auto px-6 lg:px-12 w-full text-left">
@@ -389,7 +390,6 @@ export default function HomePageContent({
                                 {formatDateTime(featuredMatch.date)}
                             </span>
                             
-                            {/* MATCH LOCATION VISIBLE HERE */}
                             <span className="font-condensed font-bold text-lg uppercase tracking-wider mb-6 text-white/80">
                                 <MapPin size={16} className="inline mr-1 -mt-1"/> {featuredMatch.location || 'KC Dražen Petrović'}
                             </span>
@@ -421,7 +421,6 @@ export default function HomePageContent({
             <div className="w-full bg-gray-100 p-12 text-center"><p>Trenutno nema najavljenih utakmica.</p></div>
           )}
 
-          {/* Ticker - REDESIGNED */}
           <div className="w-full bg-gray-100 border-t border-gray-200 relative">
               <button onClick={() => scrollContainer(tickerRef, 'left')} className="absolute left-0 top-1/2 -translate-y-1/2 bg-[#002060] text-white p-3 rounded-full -ml-6 shadow-xl z-20 hidden lg:flex hover:scale-110 transition-transform"><ChevronLeft size={24} /></button>
               <div ref={tickerRef} className="flex overflow-x-auto no-scrollbar divide-x divide-gray-300">
@@ -459,15 +458,41 @@ export default function HomePageContent({
           <div className="grid grid-cols-1 lg:grid-cols-2">
               
               {/* Left Side: Big Promo Banner */}
-              <div className="relative h-[600px] lg:h-auto bg-[#002060] overflow-hidden group">
-                  <img 
-                    src={shopConfig?.imageUrl || "https://images.unsplash.com/photo-1556821840-3a63f95609a7?q=80&w=1200"} 
-                    className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:opacity-40 transition-opacity duration-700"
-                    alt="Shop Promo"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#002060] via-transparent to-transparent"></div>
+              <div className={`relative h-[600px] lg:h-auto overflow-hidden group ${hasShopImage ? 'bg-[#002060]' : 'bg-white'}`}>
                   
-                  <div className="relative z-10 h-full flex flex-col justify-end p-8 lg:p-16 text-white">
+                  {hasShopImage ? (
+                      // IMAGE MODE
+                      <>
+                          <img 
+                            src={shopConfig!.imageUrl} 
+                            className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:opacity-40 transition-opacity duration-700"
+                            alt="Shop Promo"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-[#002060] via-transparent to-transparent"></div>
+                      </>
+                  ) : (
+                      // FALLBACK MODE (Ticker)
+                      <div className="absolute inset-0 flex flex-col justify-center items-center opacity-10 pointer-events-none select-none overflow-hidden transform -rotate-12 scale-150">
+                           <div className="animate-marquee whitespace-nowrap flex items-center gap-16 mb-12">
+                              {[...Array(8)].map((_, i) => (
+                                  <div key={`r1-${i}`} className="flex items-center gap-16 text-[#002060]">
+                                      <span className="font-condensed font-bold text-9xl">SHOP</span>
+                                      <ShoppingBag size={80} strokeWidth={2.5} />
+                                  </div>
+                              ))}
+                           </div>
+                           <div className="animate-marquee-rev whitespace-nowrap flex items-center gap-16">
+                              {[...Array(8)].map((_, i) => (
+                                  <div key={`r2-${i}`} className="flex items-center gap-16 text-[#002060]">
+                                      <span className="font-condensed font-bold text-9xl">SHOP</span>
+                                      <ShoppingBag size={80} strokeWidth={2.5} />
+                                  </div>
+                              ))}
+                           </div>
+                      </div>
+                  )}
+                  
+                  <div className={`relative z-10 h-full flex flex-col justify-end p-8 lg:p-16 ${hasShopImage ? 'text-white' : 'text-[#001035]'}`}>
                       <div className="mb-6">
                           <h2 className="font-condensed font-black text-6xl lg:text-8xl uppercase leading-[0.9] tracking-tighter">
                               {shopConfig?.title || "Proud to be\nDinamo"}
@@ -476,7 +501,11 @@ export default function HomePageContent({
                       <a 
                         href={shopConfig?.buttonLink || "https://shop.kkdinamo.hr"} 
                         target="_blank"
-                        className="inline-flex items-center gap-4 bg-white text-[#002060] px-8 py-4 w-fit font-condensed font-bold text-xl uppercase hover:bg-[#00C2FF] hover:text-white transition-colors"
+                        className={`inline-flex items-center gap-4 px-8 py-4 w-fit font-condensed font-bold text-xl uppercase transition-colors ${
+                            hasShopImage 
+                            ? 'bg-white text-[#002060] hover:bg-[#00C2FF] hover:text-white' 
+                            : 'bg-[#002060] text-white hover:bg-[#00C2FF] hover:text-[#001035]'
+                        }`}
                       >
                           {shopConfig?.buttonText || "Posjeti Webshop"} <ArrowRight size={24} />
                       </a>
