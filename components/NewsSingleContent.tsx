@@ -47,6 +47,31 @@ const PortableTextImage = ({ value }: any) => {
 };
 
 export default function NewsSingleContent({ article, relatedNews, logoUrl }: NewsSingleContentProps) {
+  
+  // Funkcija za dijeljenje na društvenim mrežama
+  const handleShare = (platform: 'facebook' | 'twitter' | 'linkedin') => {
+    if (typeof window === 'undefined') return;
+
+    const url = window.location.href; // Trenutni URL stranice
+    const text = article?.title || 'KK Dinamo Zagreb';
+    let shareUrl = '';
+
+    switch (platform) {
+      case 'facebook':
+        shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
+        break;
+      case 'twitter':
+        shareUrl = `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`;
+        break;
+      case 'linkedin':
+        shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`;
+        break;
+    }
+
+    // Otvori u novom prozoru
+    window.open(shareUrl, '_blank', 'width=600,height=400,noopener,noreferrer');
+  };
+
   if (!article) return null;
 
   return (
@@ -103,9 +128,30 @@ export default function NewsSingleContent({ article, relatedNews, logoUrl }: New
               <div className="hidden lg:flex lg:col-span-1 flex-col items-center gap-6 sticky top-32 h-fit">
                   {/* Fixed rotation */}
                   <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">Podijeli</span>
-                  <button className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center text-gray-400 hover:bg-[#1877F2] hover:text-white hover:border-[#1877F2] transition-colors"><Facebook size={18} /></button>
-                  <button className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center text-gray-400 hover:bg-[#1DA1F2] hover:text-white hover:border-[#1DA1F2] transition-colors"><Twitter size={18} /></button>
-                  <button className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center text-gray-400 hover:bg-[#0A66C2] hover:text-white hover:border-[#0A66C2] transition-colors"><Linkedin size={18} /></button>
+                  
+                  <button 
+                    onClick={() => handleShare('facebook')}
+                    className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center text-gray-400 hover:bg-[#1877F2] hover:text-white hover:border-[#1877F2] transition-colors"
+                    aria-label="Podijeli na Facebooku"
+                  >
+                    <Facebook size={18} />
+                  </button>
+                  
+                  <button 
+                    onClick={() => handleShare('twitter')}
+                    className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center text-gray-400 hover:bg-[#000000] hover:text-white hover:border-[#000000] transition-colors"
+                    aria-label="Podijeli na X (Twitteru)"
+                  >
+                    <Twitter size={18} />
+                  </button>
+                  
+                  <button 
+                    onClick={() => handleShare('linkedin')}
+                    className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center text-gray-400 hover:bg-[#0A66C2] hover:text-white hover:border-[#0A66C2] transition-colors"
+                    aria-label="Podijeli na LinkedInu"
+                  >
+                    <Linkedin size={18} />
+                  </button>
               </div>
 
               {/* ARTICLE BODY - WIDER */}

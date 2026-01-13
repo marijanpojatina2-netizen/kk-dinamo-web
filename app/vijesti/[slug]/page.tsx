@@ -3,6 +3,7 @@ import { client } from "../../lib/sanity";
 import { singleNewsQuery, newsQuery, globalConfigQuery } from "../../lib/queries";
 import NewsSingleContent from "../../../components/NewsSingleContent";
 import { newsItems } from "../../data/siteData";
+import { Metadata } from 'next';
 
 export const revalidate = 60;
 
@@ -10,6 +11,51 @@ type Props = {
   params: Promise<{ slug: string }>;
 }
 
+// 1. GENERATE METADATA (Za Facebook, WhatsApp, Google)
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = await params;
+  
+  // Dohvati samo osnovne podatke potrebne za SEO da bude brzo
+  const article = await client.fetch(
+    `*[_type == "news" && slug.current == $slug][0]{ title, excerpt, "imageUrl": image.asset->url }`,
+    { slug }
+  ).catch(() => null);
+
+  if (!article) {
+    return {
+      title: 'Vijest nije pronađena | KK Dinamo Zagreb',
+    };
+  }
+
+  return {
+    title: `${article.title} | KK Dinamo Zagreb`,
+    description: article.excerpt || `Pročitajte najnovije vijesti o KK Dinamo Zagreb: ${article.title}`,
+    openGraph: {
+      title: article.title,
+      description: article.excerpt || 'Službena stranica KK Dinamo Zagreb',
+      url: `https://www.kkdinamo.hr/vijesti/${slug}`,
+      siteName: 'KK Dinamo Zagreb',
+      images: [
+        {
+          url: article.imageUrl || 'https://shop.kkdinamo.hr/wp-content/uploads/2022/09/grb-dinamo.png',
+          width: 1200,
+          height: 630,
+          alt: article.title,
+        },
+      ],
+      locale: 'hr_HR',
+      type: 'article',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: article.title,
+      description: article.excerpt,
+      images: [article.imageUrl || ''],
+    },
+  };
+}
+
+// 2. MAIN PAGE COMPONENT
 export default async function NewsSinglePage({ params }: Props) {
   const { slug } = await params;
   
@@ -18,7 +64,6 @@ export default async function NewsSinglePage({ params }: Props) {
   let logoUrl: string | undefined;
 
   try {
-    // 1. Fetch main article, related news and global config (logo) in parallel
     const [fetchedArticle, allNews, globalConfig] = await Promise.all([
       client.fetch(singleNewsQuery, { slug }),
       client.fetch(newsQuery),
