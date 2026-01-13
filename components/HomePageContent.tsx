@@ -263,8 +263,8 @@ export default function HomePageContent({
                 </>
             )}
             
-            {/* UPDATED GRADIENT: Left to right, z-index adjusted */}
-            <div className="absolute inset-0 bg-gradient-to-r from-[#001035] via-[#001035]/60 to-transparent z-10"></div>
+            {/* UPDATED GRADIENT: Mobile (Bottom->Top), Desktop (Left->Right), Reduced Intensity */}
+            <div className="absolute inset-0 bg-gradient-to-t from-[#001035]/80 via-[#001035]/30 to-transparent lg:bg-gradient-to-r lg:from-[#001035]/80 lg:via-[#001035]/30 lg:to-transparent z-10"></div>
 
             <div className="relative z-20 max-w-[1920px] mx-auto px-6 lg:px-12 w-full text-left">
                 <span className="font-condensed font-bold text-white text-xl lg:text-3xl uppercase tracking-wider mb-2 block drop-shadow-md">
@@ -283,10 +283,10 @@ export default function HomePageContent({
       )}
 
       {/* MARQUEE */}
-      <div className="bg-gray-100 border-b border-gray-200 overflow-hidden py-4 lg:py-8 whitespace-nowrap relative z-20">
+      <div className="bg-gray-100 border-b border-gray-200 overflow-hidden py-3 lg:py-6 whitespace-nowrap relative z-20">
           <div className="animate-marquee inline-block">
              {[1,2,3,4].map(i => (
-                <span key={i} className="font-condensed font-bold text-[12vw] lg:text-[9vw] uppercase text-black leading-none tracking-tight">
+                <span key={i} className="font-condensed font-bold text-[9vw] lg:text-[7vw] uppercase text-black leading-none tracking-tight">
                     &nbsp;{mainTicker || "KK DINAMO ZAGREB /// PONOS GRADA"} <span className="text-[#002060]">///</span>
                 </span>
              ))}
@@ -294,10 +294,10 @@ export default function HomePageContent({
       </div>
 
       {/* NEWS SECTION */}
-      <section className="max-w-[1920px] mx-auto px-4 lg:px-12 py-12 lg:py-20 pb-0 lg:pb-0">
+      <section className="max-w-[1920px] mx-auto px-4 lg:px-12 py-6 lg:py-10 pb-0 lg:pb-0">
           {featuredNews && (
-            <Link href={`/vijesti/${featuredNews.slug}`} className="flex flex-col lg:grid lg:grid-cols-2 gap-0 mb-12 lg:mb-24 group cursor-pointer shadow-lg lg:shadow-none block">
-                <div className="order-1 relative aspect-video lg:aspect-auto min-h-[250px] lg:min-h-[600px] overflow-hidden">
+            <Link href={`/vijesti/${featuredNews.slug}`} className="flex flex-col lg:grid lg:grid-cols-2 gap-0 mb-4 lg:mb-4 group cursor-pointer shadow-lg lg:shadow-none block">
+                <div className="order-1 relative aspect-video lg:aspect-auto min-h-[250px] lg:min-h-[340px] overflow-hidden">
                     <img src={featuredNews.imageUrl} className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105" alt={featuredNews.title}/>
                 </div>
                 <div className="order-2 bg-white p-6 lg:p-12 flex flex-col justify-center border-b lg:border-b-0 lg:border-l border-gray-100">
@@ -334,7 +334,7 @@ export default function HomePageContent({
               ))}
           </div>
           
-          <div className="flex justify-center mt-12 mb-4">
+          <div className="flex justify-center mt-4 mb-0">
               <Link href="/vijesti" className="inline-block border-2 border-gray-300 px-8 py-3 text-sm font-bold uppercase tracking-widest hover:border-[#002060] hover:text-[#002060] transition-colors">
                   Arhiva Vijesti
               </Link>
@@ -342,7 +342,7 @@ export default function HomePageContent({
       </section>
 
       {/* MATCH CENTER */}
-      <section className="max-w-[1920px] mx-auto px-4 lg:px-12 py-8 lg:py-16">
+      <section className="max-w-[1920px] mx-auto px-4 lg:px-12 py-6 lg:py-8">
           <h2 className="font-condensed font-bold text-5xl md:text-8xl uppercase text-black leading-none mb-8 tracking-tighter">Raspored</h2>
           
           {featuredMatch ? (
