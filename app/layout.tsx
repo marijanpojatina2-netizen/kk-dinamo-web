@@ -39,6 +39,36 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
+  // Strukturirani podaci za Sportski Klub (Google SEO)
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'SportsTeam',
+    name: 'KK Dinamo Zagreb',
+    sport: 'Basketball',
+    logo: 'https://shop.kkdinamo.hr/wp-content/uploads/2022/09/grb-dinamo.png',
+    url: 'https://www.kkdinamo.hr',
+    location: {
+      '@type': 'Place',
+      name: 'KC Dražen Petrović',
+      address: {
+        '@type': 'PostalAddress',
+        streetAddress: 'Savska cesta 30',
+        addressLocality: 'Zagreb',
+        postalCode: '10000',
+        addressCountry: 'HR'
+      }
+    },
+    sameAs: [
+      'https://www.facebook.com/kkdinamo',
+      'https://www.instagram.com/kk_dinamo',
+      'https://twitter.com/kkdinamo',
+      'https://www.youtube.com/@kkdinamo'
+    ]
+  }
+
+  const gaId = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS;
+  const fbPixelId = process.env.NEXT_PUBLIC_FACEBOOK_PIXEL;
+
   return (
     <html lang="hr">
       <head>
@@ -51,54 +81,58 @@ export default function RootLayout({
             --font-antonio: 'Antonio', sans-serif;
           }
         `}} />
+        {/* Inject JSON-LD Schema */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
       </head>
       <body className={`font-sans antialiased`}>
-        {/* 
-          GOOGLE ANALYTICS (GA4)
-          Zamijenite 'G-XXXXXXXXXX' sa svojim Measurement ID-om
-        */}
-        <Script
-          src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"
-          strategy="afterInteractive"
-        />
-        <Script id="google-analytics" strategy="afterInteractive">
-          {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
+        {/* GOOGLE ANALYTICS (Load only if ID is present) */}
+        {gaId && (
+          <>
+            <Script
+              src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}
+              strategy="afterInteractive"
+            />
+            <Script id="google-analytics" strategy="afterInteractive">
+              {`
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', '${gaId}');
+              `}
+            </Script>
+          </>
+        )}
 
-            gtag('config', 'G-XXXXXXXXXX');
-          `}
-        </Script>
-
-        {/* 
-          META PIXEL (Facebook)
-          Zamijenite 'YOUR_PIXEL_ID' sa svojim Pixel ID-om
-        */}
-        <Script id="meta-pixel" strategy="afterInteractive">
-          {`
-            !function(f,b,e,v,n,t,s)
-            {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-            n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-            if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-            n.queue=[];t=b.createElement(e);t.async=!0;
-            t.src=v;s=b.getElementsByTagName(e)[0];
-            s.parentNode.insertBefore(t,s)}(window, document,'script',
-            'https://connect.facebook.net/en_US/fbevents.js');
-            fbq('init', 'YOUR_PIXEL_ID');
-            fbq('track', 'PageView');
-          `}
-        </Script>
+        {/* META PIXEL (Load only if ID is present) */}
+        {fbPixelId && (
+          <>
+            <Script id="meta-pixel" strategy="afterInteractive">
+              {`
+                !function(f,b,e,v,n,t,s)
+                {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+                n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+                if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+                n.queue=[];t=b.createElement(e);t.async=!0;
+                t.src=v;s=b.getElementsByTagName(e)[0];
+                s.parentNode.insertBefore(t,s)}(window, document,'script',
+                'https://connect.facebook.net/en_US/fbevents.js');
+                fbq('init', '${fbPixelId}');
+                fbq('track', 'PageView');
+              `}
+            </Script>
+            <noscript>
+              <img height="1" width="1" style={{display: 'none'}}
+              src={`https://www.facebook.com/tr?id=${fbPixelId}&ev=PageView&noscript=1`}
+              alt="Meta Pixel"
+              />
+            </noscript>
+          </>
+        )}
 
         {children}
-        
-        {/* Meta Pixel NoScript Fallback */}
-        <noscript>
-          <img height="1" width="1" style={{display: 'none'}}
-          src="https://www.facebook.com/tr?id=YOUR_PIXEL_ID&ev=PageView&noscript=1"
-          alt="Meta Pixel"
-          />
-        </noscript>
       </body>
     </html>
   )

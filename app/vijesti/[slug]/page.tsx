@@ -11,11 +11,9 @@ type Props = {
   params: Promise<{ slug: string }>;
 }
 
-// 1. GENERATE METADATA (Za Facebook, WhatsApp, Google)
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   
-  // Dohvati samo osnovne podatke potrebne za SEO da bude brzo
   const article = await client.fetch(
     `*[_type == "news" && slug.current == $slug][0]{ title, excerpt, "imageUrl": image.asset->url }`,
     { slug }
@@ -55,7 +53,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-// 2. MAIN PAGE COMPONENT
 export default async function NewsSinglePage({ params }: Props) {
   const { slug } = await params;
   
@@ -99,7 +96,28 @@ export default async function NewsSinglePage({ params }: Props) {
       }));
   }
 
+  // JSON-LD za Vijest (NewsArticle)
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'NewsArticle',
+    headline: article.title,
+    image: [article.imageUrl],
+    datePublished: article.publishedAt,
+    dateModified: article.publishedAt,
+    author: [{
+      '@type': 'Organization',
+      name: 'KK Dinamo Press',
+      url: 'https://www.kkdinamo.hr'
+    }]
+  };
+
   return (
-    <NewsSingleContent article={article} relatedNews={relatedNews} logoUrl={logoUrl} />
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <NewsSingleContent article={article} relatedNews={relatedNews} logoUrl={logoUrl} />
+    </>
   );
 }
