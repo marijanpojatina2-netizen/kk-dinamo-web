@@ -26,7 +26,13 @@ const player = {
     { name: 'weight', title: 'Težina (kg)', type: 'string' },
     { name: 'dob', title: 'Datum rođenja', type: 'string' },
     { name: 'city', title: 'Mjesto rođenja', type: 'string' },
-    { name: 'image', title: 'Slika igrača', type: 'image', options: { hotspot: true } },
+    { 
+      name: 'image', 
+      title: 'Slika igrača', 
+      type: 'image', 
+      options: { hotspot: true },
+      description: 'Preporučeno: 600x800px (Portret format). Slika mora biti kvalitetna izrezana glava i ramena ili do pasa.'
+    },
   ]
 }
 
@@ -47,7 +53,13 @@ const staff = {
       options: { list: ['Seniori', 'Škola Košarke'] },
       initialValue: 'Seniori'
     },
-    { name: 'image', title: 'Slika', type: 'image', options: { hotspot: true } },
+    { 
+      name: 'image', 
+      title: 'Slika', 
+      type: 'image', 
+      options: { hotspot: true },
+      description: 'Preporučeno: 600x800px (Portret format).'
+    },
   ]
 }
 
@@ -61,7 +73,13 @@ const news = {
     { name: 'slug', title: 'Slug (URL)', type: 'slug', options: { source: 'title' } },
     { name: 'publishedAt', title: 'Datum objave', type: 'datetime' },
     { name: 'category', title: 'Kategorija', type: 'string', options: { list: ['Utakmice', 'Klub', 'Intervju', 'Škola', 'Ulaznice'] } },
-    { name: 'image', title: 'Glavna slika', type: 'image', options: { hotspot: true } },
+    { 
+      name: 'image', 
+      title: 'Glavna slika', 
+      type: 'image', 
+      options: { hotspot: true },
+      description: 'Preporučeno: 1920x1080px (16:9 Landscape format). Ovo je glavna slika vijesti.'
+    },
     { name: 'excerpt', title: 'Kratki uvod (za naslovnicu)', type: 'text', rows: 3 },
     { 
       name: 'body', 
@@ -69,7 +87,13 @@ const news = {
       type: 'array', 
       of: [
         {type: 'block'},
-        {type: 'image', options: { hotspot: true }, fields: [{name: 'caption', type: 'string', title: 'Opis slike'}]}
+        {
+          type: 'image', 
+          options: { hotspot: true }, 
+          fields: [{name: 'caption', type: 'string', title: 'Opis slike'}],
+          title: 'Slika u tekstu',
+          description: 'Preporučeno: minimalno 1200px širine.'
+        }
       ] 
     },
     { name: 'isFeatured', title: 'Izdvojeno na naslovnici (Velika slika)', type: 'boolean' },
@@ -83,15 +107,30 @@ const match = {
   type: 'document',
   fields: [
     { name: 'homeTeam', title: 'Domaćin', type: 'string' },
-    { name: 'homeTeamLogo', title: 'Grb Domaćina', type: 'image' }, 
+    { 
+      name: 'homeTeamLogo', 
+      title: 'Grb Domaćina', 
+      type: 'image',
+      description: 'Preporučeno: 500x500px (Transparent PNG).' 
+    }, 
     { name: 'awayTeam', title: 'Gost', type: 'string' },
-    { name: 'awayTeamLogo', title: 'Grb Gosta', type: 'image' },
+    { 
+      name: 'awayTeamLogo', 
+      title: 'Grb Gosta', 
+      type: 'image',
+      description: 'Preporučeno: 500x500px (Transparent PNG).' 
+    },
     { name: 'homeScore', title: 'Poeni Domaćin', type: 'number' },
     { name: 'awayScore', title: 'Poeni Gost', type: 'number' },
     { name: 'date', title: 'Datum i vrijeme', type: 'datetime' },
     { name: 'location', title: 'Lokacija (Dvorana)', type: 'string', initialValue: 'KC Dražen Petrović' },
     { name: 'league', title: 'Liga', type: 'string', initialValue: 'Premijer Liga' },
-    { name: 'leagueLogo', title: 'Logo Lige/Natjecanja', type: 'image' },
+    { 
+      name: 'leagueLogo', 
+      title: 'Logo Lige/Natjecanja', 
+      type: 'image',
+      description: 'Preporučeno: 100x100px ili slično (Transparent PNG).'
+    },
     { name: 'round', title: 'Kolo', type: 'string' },
     { name: 'isFinished', title: 'Završena utakmica', type: 'boolean' },
     { name: 'ticketLink', title: 'Link na ulaznice (ako je buduća)', type: 'url', validation: urlValidation },
@@ -123,7 +162,12 @@ const shopItem = {
   fields: [
     { name: 'name', title: 'Naziv artikla', type: 'string' },
     { name: 'price', title: 'Cijena', type: 'string' },
-    { name: 'image', title: 'Slika artikla', type: 'image' },
+    { 
+      name: 'image', 
+      title: 'Slika artikla', 
+      type: 'image',
+      description: 'Preporučeno: 800x800px (Kvadrat) ili 800x1000px (Portret). Bijela ili prozirna pozadina.'
+    },
     { name: 'link', title: 'Link na Webshop', type: 'url', validation: urlValidation },
   ]
 }
@@ -135,7 +179,12 @@ const sponsor = {
   type: 'document',
   fields: [
     { name: 'name', title: 'Naziv firme', type: 'string' },
-    { name: 'logo', title: 'Logo', type: 'image' },
+    { 
+      name: 'logo', 
+      title: 'Logo', 
+      type: 'image',
+      description: 'Preporučeno: 400x200px (Transparent PNG).'
+    },
     { name: 'websiteUrl', title: 'Web Stranica', type: 'url', validation: urlValidation },
     { 
       name: 'tier', 
@@ -199,14 +248,14 @@ const homepage = {
           name: 'image', 
           title: 'Desktop Slika (Landscape)', 
           type: 'image', 
-          description: 'Preporučeno: 1920x1080px',
+          description: 'Preporučeno: 1920x1080px (16:9 format). Visoka kvaliteta.',
           hidden: ({parent}: any) => parent?.type === 'video'
         },
         { 
           name: 'mobileImage', 
           title: 'Mobilna Slika (Portrait)', 
           type: 'image', 
-          description: 'Preporučeno: 1080x1920px (Story format).',
+          description: 'Preporučeno: 1080x1920px (9:16 Story format) ili 800x1200px.',
           hidden: ({parent}: any) => parent?.type === 'video'
         },
         {
@@ -214,7 +263,7 @@ const homepage = {
           title: 'Desktop Video (Landscape)',
           type: 'file',
           options: { accept: 'video/*' },
-          description: 'MP4 format, max 10MB preporučeno.',
+          description: 'MP4 format, 1920x1080px. Preporučeno max 10MB radi brzine.',
           hidden: ({parent}: any) => parent?.type !== 'video'
         },
         {
@@ -222,7 +271,7 @@ const homepage = {
           title: 'Mobilni Video (Portrait)',
           type: 'file',
           options: { accept: 'video/*' },
-          description: 'MP4 format, vertikalni video.',
+          description: 'MP4 format, 1080x1920px (Vertikalni).',
           hidden: ({parent}: any) => parent?.type !== 'video'
         },
         { name: 'buttonText', title: 'Tekst na gumbu', type: 'string' },
@@ -270,7 +319,12 @@ const homepage = {
         { name: 'title', title: 'Naslov bannera', type: 'string' },
         { name: 'buttonText', title: 'Tekst gumba', type: 'string' },
         { name: 'buttonLink', title: 'Link na shop', type: 'url', validation: urlValidation },
-        { name: 'image', title: 'Pozadinska slika bannera', type: 'image' }
+        { 
+          name: 'image', 
+          title: 'Pozadinska slika bannera', 
+          type: 'image',
+          description: 'Preporučeno: 1920x1080px. Slika će biti potamnjena pa tekst ostaje čitljiv.'
+        }
       ]
     }
   ]
@@ -283,7 +337,12 @@ const clubInfo = {
   type: 'document',
   fields: [
     { name: 'history', title: 'Povijest kluba', type: 'array', of: [{type: 'block'}] },
-    { name: 'historyImage', title: 'Slika za povijest', type: 'image' },
+    { 
+      name: 'historyImage', 
+      title: 'Slika za povijest', 
+      type: 'image',
+      description: 'Preporučeno: 800x1000px (Vertikalno/Portret) ili 800x800px.'
+    },
   ]
 }
 
@@ -315,7 +374,12 @@ const schoolPage = {
         {name: 'name', type: 'string', title: 'Ime i Prezime'},
         {name: 'role', type: 'string', title: 'Titula', initialValue: 'Voditelj omladinskog pogona'},
         {name: 'quote', type: 'text', title: 'Izjava/Citat'},
-        {name: 'image', type: 'image', title: 'Slika voditelja'}
+        {
+          name: 'image', 
+          type: 'image', 
+          title: 'Slika voditelja',
+          description: 'Preporučeno: 600x800px (Portret).'
+        }
       ]
     },
     {
@@ -329,7 +393,12 @@ const schoolPage = {
         fields: [
           {name: 'title', type: 'string', title: 'Naziv Selekcije (npr. JUNIORI)'},
           {name: 'coach', type: 'string', title: 'Glavni Trener'},
-          {name: 'image', type: 'image', title: 'Slika Ekipe'},
+          {
+            name: 'image', 
+            type: 'image', 
+            title: 'Slika Ekipe',
+            description: 'Preporučeno: 1200x800px (Grupna slika - Landscape).'
+          },
           {
             name: 'schedule', 
             title: 'Nadolazeće Utakmice', 
@@ -356,7 +425,12 @@ const schoolPage = {
         fields: [
           { name: 'name', title: 'Naziv Škole/Dvorane', type: 'string' },
           { name: 'address', title: 'Adresa', type: 'string' },
-          { name: 'image', title: 'Slika škole', type: 'image' },
+          { 
+            name: 'image', 
+            title: 'Slika škole', 
+            type: 'image',
+            description: 'Preporučeno: 800x600px ili 800x800px.'
+          },
           { name: 'mapLink', title: 'Google Maps Link', type: 'url', validation: urlValidation }
         ]
       }]
@@ -380,7 +454,12 @@ const sponsorsPage = {
         title: 'Sponzor',
         fields: [
           { name: 'name', title: 'Naziv firme', type: 'string' },
-          { name: 'logo', title: 'Logo', type: 'image' },
+          { 
+            name: 'logo', 
+            title: 'Logo', 
+            type: 'image',
+            description: 'Preporučeno: 400x200px (Transparent PNG). Za generalnog sponzora može veće.'
+          },
           { name: 'websiteUrl', title: 'Web Stranica', type: 'url', validation: urlValidation },
           { name: 'address', title: 'Adresa', type: 'string' },
           { 
