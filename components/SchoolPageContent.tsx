@@ -47,27 +47,10 @@ export default function SchoolPageContent({ news, staff, locations, youthTeams, 
 
   return (
     <div className="font-sans text-[#001035] bg-gray-50 w-full overflow-x-hidden selection:bg-[#002060] selection:text-white pt-24">
-      <style jsx global>{`
-        @keyframes fade-in-up {
-          from { opacity: 0; transform: translateY(20px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes scale-reveal {
-          from { transform: scale(0.95); opacity: 0; }
-          to { transform: scale(1); opacity: 1; }
-        }
-        .animate-fade-up { animation: fade-in-up 0.8s ease-out forwards; }
-        .animate-scale { animation: scale-reveal 1s ease-out forwards; }
-        .delay-200 { animation-delay: 0.2s; }
-        .delay-400 { animation-delay: 0.4s; }
-        .delay-600 { animation-delay: 0.6s; }
-      `}</style>
-
       <HeaderV5 variant="solid" logoUrl={logoUrl} />
 
       {/* --- HERO SECTION --- */}
       <section className="relative bg-[#001035] text-white py-24 lg:py-32 overflow-hidden">
-          {/* Abstract pattern */}
           <div className="absolute top-0 right-0 w-full h-full opacity-10 pointer-events-none">
               <div className="absolute right-0 top-0 w-[600px] h-[600px] bg-[#00C2FF] rounded-full blur-[150px] transform translate-x-1/2 -translate-y-1/2"></div>
           </div>
@@ -98,9 +81,8 @@ export default function SchoolPageContent({ news, staff, locations, youthTeams, 
           </div>
       </section>
 
-      {/* --- ACADEMY HEAD STATEMENT (MILAN LIČINA) --- */}
+      {/* --- ACADEMY HEAD STATEMENT --- */}
       <section ref={sectionRef} className="relative bg-[#020617] text-white py-24 lg:py-32 overflow-hidden border-t border-white/10">
-          {/* Animated Background Elements */}
           <div className="absolute inset-0 overflow-hidden pointer-events-none">
               <div className="absolute top-1/2 left-1/2 w-[800px] h-[800px] bg-[#002060] rounded-full blur-[150px] opacity-20 -translate-x-1/2 -translate-y-1/2 animate-pulse"></div>
               <div className="absolute bottom-0 right-0 w-[600px] h-[600px] bg-[#00C2FF] rounded-full blur-[200px] opacity-5"></div>
@@ -108,20 +90,14 @@ export default function SchoolPageContent({ news, staff, locations, youthTeams, 
           </div>
 
           <div className="max-w-5xl mx-auto px-4 lg:px-12 relative z-10 text-center">
-              
-              {/* Quote Icon */}
               <div className={`flex justify-center mb-8 ${isVisible ? 'animate-fade-up' : 'opacity-0'}`}>
                   <div className="w-20 h-20 bg-[#00C2FF]/10 rounded-full flex items-center justify-center border border-[#00C2FF]/20">
                       <Quote className="w-10 h-10 text-[#00C2FF]" />
                   </div>
               </div>
-
-              {/* Statement Text */}
               <blockquote className={`text-2xl md:text-3xl lg:text-4xl leading-relaxed font-condensed font-medium text-gray-200 mb-12 ${isVisible ? 'animate-fade-up delay-200' : 'opacity-0'}`}>
-                  "Dinamo nije samo klub, to je identitet. U našoj školi košarke fokus nije isključivo na pobjedama, već na razvoju radnih navika, discipline i zajedništva. Želimo da svako dijete koje prođe kroz naš sustav izađe kao bolji sportaš i, što je još važnije, kao bolja osoba."
+                  "Dinamo nije samo klub, to je identitet. U našoj školi košarke fokus nije isključivo na pobjedama, već na razvoju radnih navika, discipline i zajedništva."
               </blockquote>
-
-              {/* Author Block */}
               <div className={`flex flex-col items-center gap-2 ${isVisible ? 'animate-fade-up delay-400' : 'opacity-0'}`}>
                   <h3 className="font-condensed font-bold text-4xl uppercase text-white tracking-wide">Milan Ličina</h3>
                   <div className="flex items-center gap-4">
@@ -130,11 +106,10 @@ export default function SchoolPageContent({ news, staff, locations, youthTeams, 
                       <div className="h-[2px] w-8 bg-[#00C2FF]"></div>
                   </div>
               </div>
-
           </div>
       </section>
 
-      {/* --- TEAM SLIDER (SELEKCIJE) --- */}
+      {/* --- TEAM SLIDER (SELEKCIJE) - REDESIGNED --- */}
       <section className="py-20 bg-white border-b border-gray-200">
           <div className="max-w-[1400px] mx-auto px-4 lg:px-12 mb-12 flex justify-between items-end">
               <div>
@@ -149,27 +124,25 @@ export default function SchoolPageContent({ news, staff, locations, youthTeams, 
 
           <div ref={sliderRef} className="flex overflow-x-auto no-scrollbar gap-6 px-4 lg:px-12 snap-x snap-mandatory pb-8">
               {youthTeams.map((team, i) => (
-                  <div key={i} className="min-w-[350px] md:min-w-[500px] snap-center flex-shrink-0 group relative overflow-hidden bg-[#001035] text-white shadow-xl rounded-sm">
-                      {/* Image Area */}
-                      <div className="aspect-[16/10] relative overflow-hidden">
-                          <img src={team.imageUrl} alt={team.title} className="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity duration-500 transform group-hover:scale-105" />
+                  <div key={i} className="min-w-[300px] max-w-[350px] snap-center flex-shrink-0 group relative overflow-hidden bg-[#001035] text-white shadow-xl rounded-sm">
+                      <div className="aspect-[4/3] relative overflow-hidden bg-gray-900">
+                          <img src={team.imageUrl} alt={team.title} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-500 transform group-hover:scale-105" />
                           <div className="absolute inset-0 bg-gradient-to-t from-[#001035] via-transparent to-transparent"></div>
                           <div className="absolute bottom-4 left-6">
-                              <h3 className="font-condensed font-bold text-4xl uppercase">{team.title}</h3>
-                              <span className="text-[#00C2FF] font-bold uppercase text-sm tracking-widest">Trener: {team.coach}</span>
+                              <h3 className="font-condensed font-bold text-3xl uppercase">{team.title}</h3>
+                              <span className="text-[#00C2FF] font-bold uppercase text-xs tracking-widest">Trener: {team.coach}</span>
                           </div>
                       </div>
                       
-                      {/* Schedule Area */}
                       <div className="p-6 bg-[#001540] border-t border-white/10">
-                          <h4 className="font-condensed font-bold text-lg uppercase mb-4 flex items-center gap-2">
-                              <Calendar size={18} className="text-[#00C2FF]" /> Nadolazeće Utakmice
+                          <h4 className="font-condensed font-bold text-md uppercase mb-4 flex items-center gap-2">
+                              <Calendar size={16} className="text-[#00C2FF]" /> Nadolazeće Utakmice
                           </h4>
                           {team.schedule && team.schedule.length > 0 ? (
                               <div className="space-y-3">
                                   {team.schedule.map((game: any, idx: number) => (
                                       <div key={idx} className="flex justify-between items-center text-sm border-b border-white/10 pb-2 last:border-0 last:pb-0">
-                                          <span className="font-bold text-white/90">vs {game.opponent}</span>
+                                          <span className="font-bold text-white/90 text-xs">vs {game.opponent}</span>
                                           <div className="text-right">
                                               <span className="block text-[#00C2FF] font-bold text-xs">{new Date(game.date).toLocaleDateString('hr-HR', {day: '2-digit', month: '2-digit'})}</span>
                                               <span className="block text-white/50 text-[10px] uppercase">{game.location}</span>
@@ -178,7 +151,7 @@ export default function SchoolPageContent({ news, staff, locations, youthTeams, 
                                   ))}
                               </div>
                           ) : (
-                              <p className="text-white/40 text-sm italic">Nema najavljenih utakmica.</p>
+                              <p className="text-white/40 text-xs italic">Nema najavljenih utakmica.</p>
                           )}
                       </div>
                   </div>
@@ -186,7 +159,7 @@ export default function SchoolPageContent({ news, staff, locations, youthTeams, 
           </div>
       </section>
 
-      {/* --- TRAINING LOCATIONS (GRID) --- */}
+      {/* --- TRAINING LOCATIONS --- */}
       <section className="py-20 lg:py-32 bg-gray-100">
           <div className="max-w-[1400px] mx-auto px-4 lg:px-12">
               <div className="text-center mb-16">
@@ -218,11 +191,8 @@ export default function SchoolPageContent({ news, staff, locations, youthTeams, 
           </div>
       </section>
 
-      {/* --- REGISTRATION FORM (EXPANDED) --- */}
+      {/* --- REGISTRATION FORM (RESTORED FULL) --- */}
       <section id="upisi-form" className="bg-[#002060] py-20 lg:py-32 text-white relative overflow-hidden">
-          {/* Background Elements */}
-          <div className="absolute top-0 left-0 w-64 h-64 bg-[#00C2FF] rounded-full blur-[120px] opacity-20 -translate-x-1/2 -translate-y-1/2 pointer-events-none"></div>
-          
           <div className="max-w-[1400px] mx-auto px-4 lg:px-12 relative z-10">
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-start">
                   
@@ -256,7 +226,7 @@ export default function SchoolPageContent({ news, staff, locations, youthTeams, 
                       </div>
                   </div>
 
-                  {/* Right Form */}
+                  {/* Right Form - FULL VERSION */}
                   <div className="lg:col-span-7 bg-white p-8 lg:p-12 text-[#001035] shadow-2xl rounded-sm">
                       <form className="space-y-8">
                           

@@ -2,7 +2,7 @@
 'use client';
 
 import React, { useRef, useState } from 'react';
-import { ChevronRight, ChevronLeft, ShoppingBag, ArrowRight, Play, Pause } from 'lucide-react';
+import { ChevronRight, ChevronLeft, ShoppingBag, ArrowRight, Play, Pause, MapPin, Calendar, Clock } from 'lucide-react';
 import Link from 'next/link';
 import HeaderV5 from './HeaderV5';
 import FooterV5 from './FooterV5';
@@ -36,6 +36,7 @@ interface MatchItem {
   homeScore?: number;
   awayScore?: number;
   date: string;
+  location?: string;
   league: string;
   leagueLogo?: string;
   round: string;
@@ -107,6 +108,12 @@ const formatDate = (dateString: string) => {
   return `${date.getDate().toString().padStart(2, '0')}.${(date.getMonth() + 1).toString().padStart(2, '0')}.`;
 };
 
+const formatTime = (dateString: string) => {
+  if (!dateString) return "";
+  const date = new Date(dateString);
+  return `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
+}
+
 const formatDateTime = (dateString: string) => {
   if (!dateString) return "";
   const date = new Date(dateString);
@@ -133,7 +140,6 @@ const PlayerFlipCard: React.FC<{ player: PlayerItem }> = ({ player }) => {
       onClick={() => setIsFlipped(!isFlipped)}
     >
         <div className={`relative h-full w-full transition-all duration-700 [transform-style:preserve-3d] shadow-lg ${isFlipped ? '[transform:rotateY(180deg)]' : ''}`}>
-            
             {/* FRONT */}
             <div className="absolute inset-0 h-full w-full bg-white [backface-visibility:hidden]">
                 <div className="relative h-full w-full overflow-hidden bg-gray-100">
@@ -147,18 +153,15 @@ const PlayerFlipCard: React.FC<{ player: PlayerItem }> = ({ player }) => {
                     <div className="absolute top-0 right-0 p-4">
                       <span className="font-condensed font-bold text-7xl text-white drop-shadow-md opacity-80">{player.number}</span>
                     </div>
-                    
                     <div className="absolute bottom-0 left-0 w-full bg-white p-6 border-b-8 border-[#002060]">
                         <span className="block font-body text-sm font-bold text-gray-400 uppercase tracking-widest">{player.name}</span>
                         <span className="block font-condensed text-5xl font-bold text-[#002060] uppercase mt-1">{player.lastname}</span>
                     </div>
                 </div>
             </div>
-
             {/* BACK */}
             <div className="absolute inset-0 h-full w-full bg-[#002060] [transform:rotateY(180deg)] [backface-visibility:hidden] p-8 flex flex-col justify-center border border-white/10 text-white">
                 <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10"></div>
-                
                 <div className="relative z-10">
                     <div className="mb-10">
                         <h4 className="font-condensed font-bold text-3xl text-blue-300 uppercase mb-4 tracking-wide border-b border-white/20 pb-2">Profil</h4>
@@ -172,7 +175,6 @@ const PlayerFlipCard: React.FC<{ player: PlayerItem }> = ({ player }) => {
                             <p className="text-xl font-bold text-blue-200 uppercase tracking-widest mt-4">{player.position}</p>
                         </div>
                     </div>
-
                     <div>
                         <h4 className="font-condensed font-bold text-3xl text-blue-300 uppercase mb-4 tracking-wide border-b border-white/20 pb-2">Info</h4>
                         <div className="space-y-4">
@@ -187,13 +189,10 @@ const PlayerFlipCard: React.FC<{ player: PlayerItem }> = ({ player }) => {
                         </div>
                     </div>
                 </div>
-                
-                {/* Decorative Number on Back */}
                 <div className="absolute bottom-[-20px] right-[-10px] text-[8rem] font-condensed font-bold text-white opacity-5 select-none leading-none">
                     {player.number}
                 </div>
             </div>
-
         </div>
     </div>
   );
@@ -214,10 +213,23 @@ export default function HomePageContent({
 }: HomePageProps) {
   const rosterRef = useRef<HTMLDivElement>(null);
   const tickerRef = useRef<HTMLDivElement>(null);
+  const [email, setEmail] = useState('');
+  const [emailError, setEmailError] = useState(false);
 
   const scrollContainer = (ref: React.RefObject<HTMLDivElement | null>, dir: 'left' | 'right') => {
     if (ref.current) {
         ref.current.scrollBy({ left: dir === 'left' ? -300 : 300, behavior: 'smooth' });
+    }
+  };
+
+  const handleNewsletterSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email || !email.includes('@')) {
+      setEmailError(true);
+    } else {
+      setEmailError(false);
+      alert('Hvala na prijavi!');
+      setEmail('');
     }
   };
 
@@ -233,53 +245,28 @@ export default function HomePageContent({
         <section className="relative min-h-[85vh] lg:min-h-screen w-full overflow-hidden flex flex-col justify-end pt-40 pb-12 lg:pb-16 bg-gray-900">
             {hero.type === 'video' ? (
                 <>
-                    {/* Desktop Video */}
                     {hero.videoDesktopUrl && (
-                        <video 
-                            autoPlay 
-                            muted 
-                            loop 
-                            playsInline 
-                            className={`absolute inset-0 w-full h-full object-cover ${hero.videoMobileUrl ? 'hidden md:block' : 'block'}`}
-                        >
+                        <video autoPlay muted loop playsInline className={`absolute inset-0 w-full h-full object-cover ${hero.videoMobileUrl ? 'hidden md:block' : 'block'}`}>
                             <source src={hero.videoDesktopUrl} type="video/mp4" />
                         </video>
                     )}
-                    {/* Mobile Video (if exists, otherwise desktop video plays everywhere) */}
                     {hero.videoMobileUrl && (
-                        <video 
-                            autoPlay 
-                            muted 
-                            loop 
-                            playsInline 
-                            className="absolute inset-0 w-full h-full object-cover md:hidden"
-                        >
+                        <video autoPlay muted loop playsInline className="absolute inset-0 w-full h-full object-cover md:hidden">
                             <source src={hero.videoMobileUrl} type="video/mp4" />
                         </video>
                     )}
                 </>
             ) : (
                 <>
-                    {/* Desktop Image */}
-                    <img 
-                        src={hero.imageUrl || "https://images.unsplash.com/photo-1519861531473-920026393112?q=80&w=1600"} 
-                        className={`absolute inset-0 w-full h-full object-cover ${hero.mobileImageUrl ? 'hidden md:block' : 'block'}`}
-                        alt="KK Dinamo Hero"
-                    />
-                    {/* Mobile Image (Only if available) */}
-                    {hero.mobileImageUrl && (
-                        <img 
-                            src={hero.mobileImageUrl} 
-                            className="absolute inset-0 w-full h-full object-cover md:hidden"
-                            alt="KK Dinamo Hero Mobile"
-                        />
-                    )}
+                    <img src={hero.imageUrl || "https://images.unsplash.com/photo-1519861531473-920026393112?q=80&w=1600"} className={`absolute inset-0 w-full h-full object-cover ${hero.mobileImageUrl ? 'hidden md:block' : 'block'}`} alt="KK Dinamo Hero" />
+                    {hero.mobileImageUrl && <img src={hero.mobileImageUrl} className="absolute inset-0 w-full h-full object-cover md:hidden" alt="KK Dinamo Hero Mobile" />}
                 </>
             )}
             
-            <div className="absolute inset-0 bg-gradient-to-t from-[#001035] from-0% via-[#001035]/60 via-20% to-transparent to-50%"></div>
+            {/* UPDATED GRADIENT: Left to right, z-index adjusted */}
+            <div className="absolute inset-0 bg-gradient-to-r from-[#001035] via-[#001035]/60 to-transparent z-10"></div>
 
-            <div className="relative z-10 max-w-[1920px] mx-auto px-6 lg:px-12 w-full text-left">
+            <div className="relative z-20 max-w-[1920px] mx-auto px-6 lg:px-12 w-full text-left">
                 <span className="font-condensed font-bold text-white text-xl lg:text-3xl uppercase tracking-wider mb-2 block drop-shadow-md">
                     {hero.subtitle}
                 </span>
@@ -307,10 +294,9 @@ export default function HomePageContent({
       </div>
 
       {/* NEWS SECTION */}
-      <section className="max-w-[1920px] mx-auto px-4 lg:px-12 py-12 lg:py-20">
-          {/* Main Article */}
+      <section className="max-w-[1920px] mx-auto px-4 lg:px-12 py-12 lg:py-20 pb-0 lg:pb-0">
           {featuredNews && (
-            <Link href={`/vijesti`} className="flex flex-col lg:grid lg:grid-cols-2 gap-0 mb-12 lg:mb-24 group cursor-pointer shadow-lg lg:shadow-none block">
+            <Link href={`/vijesti/${featuredNews.slug}`} className="flex flex-col lg:grid lg:grid-cols-2 gap-0 mb-12 lg:mb-24 group cursor-pointer shadow-lg lg:shadow-none block">
                 <div className="order-1 relative aspect-video lg:aspect-auto min-h-[250px] lg:min-h-[600px] overflow-hidden">
                     <img src={featuredNews.imageUrl} className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105" alt={featuredNews.title}/>
                 </div>
@@ -319,13 +305,11 @@ export default function HomePageContent({
                     <h2 className="font-condensed font-bold text-4xl lg:text-[6.5rem] xl:text-[8rem] text-black uppercase leading-[0.9] tracking-tighter transition-colors duration-500 group-hover:text-[#002060]">
                         {featuredNews.title}
                     </h2>
-                    
                     {featuredNews.excerpt && (
                         <p className="font-body text-lg text-gray-600 mt-6 leading-relaxed line-clamp-3">
                             {featuredNews.excerpt}
                         </p>
                     )}
-
                     <div className="relative w-full mt-8 h-2">
                         <div className="absolute bottom-0 left-0 w-full h-0.5 bg-black z-0"></div>
                         <div className="absolute bottom-0 left-0 w-full h-full bg-[#002060] z-10 origin-left transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 ease-out"></div>
@@ -334,10 +318,9 @@ export default function HomePageContent({
             </Link>
           )}
 
-          {/* Sub Articles */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-12">
               {gridNews.map((newsItem, i) => (
-                  <Link href="/vijesti" key={i} className="group cursor-pointer flex flex-col block">
+                  <Link href={`/vijesti/${newsItem.slug}`} key={i} className="group cursor-pointer flex flex-col block">
                       <div className="overflow-hidden aspect-[16/10] mb-6 bg-gray-100">
                           {newsItem.imageUrl && (
                             <img src={newsItem.imageUrl} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" alt={newsItem.title}/>
@@ -350,10 +333,16 @@ export default function HomePageContent({
                   </Link>
               ))}
           </div>
+          
+          <div className="flex justify-center mt-12 mb-4">
+              <Link href="/vijesti" className="inline-block border-2 border-gray-300 px-8 py-3 text-sm font-bold uppercase tracking-widest hover:border-[#002060] hover:text-[#002060] transition-colors">
+                  Arhiva Vijesti
+              </Link>
+          </div>
       </section>
 
       {/* MATCH CENTER */}
-      <section className="max-w-[1920px] mx-auto px-4 lg:px-12 py-8 lg:py-24">
+      <section className="max-w-[1920px] mx-auto px-4 lg:px-12 py-8 lg:py-16">
           <h2 className="font-condensed font-bold text-5xl md:text-8xl uppercase text-black leading-none mb-8 tracking-tighter">Raspored</h2>
           
           {featuredMatch ? (
@@ -378,12 +367,8 @@ export default function HomePageContent({
                     </div>
 
                     <div className="relative z-10 w-full max-w-[1600px] mx-auto flex flex-col md:flex-row items-center justify-center gap-4 md:gap-8 lg:gap-12 px-2 md:px-4">
-                        {/* Home Team */}
                         <div className="flex flex-col md:flex-row items-center gap-4 text-center md:text-right flex-1 justify-end min-w-0">
-                            <span className="hidden md:block font-condensed font-bold text-3xl md:text-4xl lg:text-5xl xl:text-6xl uppercase leading-[0.9] tracking-tight">
-                                {featuredMatch.homeTeam}
-                            </span>
-                            
+                            <span className="hidden md:block font-condensed font-bold text-3xl md:text-4xl lg:text-5xl xl:text-6xl uppercase leading-[0.9] tracking-tight">{featuredMatch.homeTeam}</span>
                             {featuredMatch.homeTeamLogo ? (
                                 <div className="w-20 h-20 md:w-24 md:h-24 lg:w-32 lg:h-32 xl:w-40 xl:h-40 shrink-0 flex items-center justify-center">
                                     <img src={featuredMatch.homeTeamLogo} className="w-full h-full object-contain drop-shadow-lg" alt={featuredMatch.homeTeam} />
@@ -393,18 +378,22 @@ export default function HomePageContent({
                                     <span className="font-condensed font-bold text-3xl md:text-4xl lg:text-5xl xl:text-6xl">{featuredMatch.homeTeam.substring(0,1)}</span>
                                 </div>
                             )}
-                            
                             <span className="md:hidden font-condensed font-bold text-4xl uppercase mt-2">{featuredMatch.homeTeam}</span>
                         </div>
 
-                        {/* Center Info */}
                         <div className="flex flex-col items-center text-center shrink-0 mx-2 lg:mx-6">
                             <span className="font-condensed font-bold text-6xl md:text-7xl lg:text-8xl xl:text-9xl leading-none mb-2 tracking-tighter whitespace-nowrap">
                                 {formatDate(featuredMatch.date).slice(0, -1)}
                             </span>
-                            <span className="font-condensed font-bold text-xl lg:text-3xl uppercase tracking-widest mb-6 lg:mb-10 text-blue-200">
+                            <span className="font-condensed font-bold text-xl lg:text-3xl uppercase tracking-widest mb-2 lg:mb-4 text-blue-200">
                                 {formatDateTime(featuredMatch.date)}
                             </span>
+                            
+                            {/* MATCH LOCATION VISIBLE HERE */}
+                            <span className="font-condensed font-bold text-lg uppercase tracking-wider mb-6 text-white/80">
+                                <MapPin size={16} className="inline mr-1 -mt-1"/> {featuredMatch.location || 'KC Dražen Petrović'}
+                            </span>
+                            
                             {featuredMatch.ticketLink && (
                                 <a href={featuredMatch.ticketLink} className="bg-white text-[#002060] px-8 py-3 lg:px-10 lg:py-4 font-condensed font-bold text-lg lg:text-2xl uppercase hover:scale-105 transition-transform skew-x-[-10deg]">
                                     <span className="skew-x-[10deg] inline-block">Ulaznice</span>
@@ -412,12 +401,8 @@ export default function HomePageContent({
                             )}
                         </div>
 
-                        {/* Away Team */}
                         <div className="flex flex-col md:flex-row-reverse items-center gap-4 text-center md:text-left flex-1 justify-end min-w-0">
-                            <span className="hidden md:block font-condensed font-bold text-3xl md:text-4xl lg:text-5xl xl:text-6xl uppercase leading-[0.9] tracking-tight">
-                                {featuredMatch.awayTeam}
-                            </span>
-                            
+                            <span className="hidden md:block font-condensed font-bold text-3xl md:text-4xl lg:text-5xl xl:text-6xl uppercase leading-[0.9] tracking-tight">{featuredMatch.awayTeam}</span>
                             {featuredMatch.awayTeamLogo ? (
                                 <div className="w-20 h-20 md:w-24 md:h-24 lg:w-32 lg:h-32 xl:w-40 xl:h-40 shrink-0 flex items-center justify-center">
                                     <img src={featuredMatch.awayTeamLogo} className="w-full h-full object-contain drop-shadow-lg" alt={featuredMatch.awayTeam} />
@@ -427,7 +412,6 @@ export default function HomePageContent({
                                     <span className="font-condensed font-bold text-3xl md:text-4xl lg:text-5xl xl:text-6xl">{featuredMatch.awayTeam.substring(0,1)}</span>
                                 </div>
                             )}
-
                             <span className="md:hidden font-condensed font-bold text-4xl uppercase mt-2">{featuredMatch.awayTeam}</span>
                         </div>
                     </div>
@@ -437,20 +421,32 @@ export default function HomePageContent({
             <div className="w-full bg-gray-100 p-12 text-center"><p>Trenutno nema najavljenih utakmica.</p></div>
           )}
 
-          {/* Ticker */}
+          {/* Ticker - REDESIGNED */}
           <div className="w-full bg-gray-100 border-t border-gray-200 relative">
               <button onClick={() => scrollContainer(tickerRef, 'left')} className="absolute left-0 top-1/2 -translate-y-1/2 bg-[#002060] text-white p-3 rounded-full -ml-6 shadow-xl z-20 hidden lg:flex hover:scale-110 transition-transform"><ChevronLeft size={24} /></button>
               <div ref={tickerRef} className="flex overflow-x-auto no-scrollbar divide-x divide-gray-300">
                   {matches.map((g, i) => (
-                      <div key={i} className="flex-none w-[280px] md:w-[320px] py-4 px-6 flex flex-col items-center justify-center gap-2 hover:bg-white transition-colors cursor-pointer">
-                          <div className="flex items-center justify-between w-full font-condensed font-bold text-2xl lg:text-3xl text-gray-800">
-                              <span>{g.homeTeam.substring(0,3).toUpperCase()}</span>
-                              <span className={`text-xl ${g.isFinished ? 'text-[#002060]' : 'text-gray-400'}`}>
-                                {g.isFinished ? `${g.homeScore} : ${g.awayScore}` : 'VS'}
-                              </span>
-                              <span>{g.awayTeam.substring(0,3).toUpperCase()}</span>
+                      <div key={i} className="flex-none w-[320px] md:w-[380px] py-6 px-8 flex flex-col justify-center gap-3 hover:bg-white transition-colors cursor-pointer group">
+                          <div className="flex justify-between text-xs font-bold text-gray-400 uppercase tracking-widest border-b border-gray-200 pb-2 mb-1 group-hover:border-[#002060] transition-colors">
+                              <span className="flex items-center gap-1"><Calendar size={12}/> {formatDate(g.date)}</span>
+                              <span className="flex items-center gap-1"><Clock size={12}/> {formatTime(g.date)}</span>
                           </div>
-                          <span className="text-xs font-bold text-gray-400 uppercase tracking-widest mt-1">{formatDate(g.date)}</span>
+                          
+                          <div className="flex items-center justify-between w-full font-condensed font-bold text-3xl text-gray-800">
+                              <div className="flex items-center gap-3">
+                                <span className="uppercase">{g.homeTeam.substring(0,3)}</span>
+                              </div>
+                              <span className={`text-2xl px-3 py-1 rounded ${g.isFinished ? 'bg-[#002060] text-white' : 'bg-gray-200 text-gray-500'}`}>
+                                {g.isFinished ? `${g.homeScore}:${g.awayScore}` : 'VS'}
+                              </span>
+                              <div className="flex items-center gap-3">
+                                <span className="uppercase">{g.awayTeam.substring(0,3)}</span>
+                              </div>
+                          </div>
+                          
+                          <div className="flex items-center gap-1 text-[10px] uppercase font-bold text-gray-400 tracking-wider">
+                              <MapPin size={12}/> {g.location || 'KC Dražen Petrović'}
+                          </div>
                       </div>
                   ))}
               </div>
@@ -536,7 +532,7 @@ export default function HomePageContent({
               <div className="flex-1 text-center md:text-left">
                   <div className="flex items-center justify-center md:justify-start gap-4 mb-6">
                       <SpotifyIcon />
-                      <span className="text-[#1DB954] font-bold tracking-widest uppercase text-sm">Službena Playlist</span>
+                      <span className="text-[#1DB954] font-bold tracking-widest uppercase text-sm">SLUŽBENA PLAYLISTA</span>
                   </div>
                   <h2 className="font-condensed font-black text-6xl lg:text-8xl uppercase leading-none mb-8">
                       Ritam <br/> <span className="text-transparent" style={{ WebkitTextStroke: '1px #fff' }}>Tribine</span>
@@ -545,7 +541,7 @@ export default function HomePageContent({
                       Pripremi se za utakmicu uz službenu playlistu KK Dinama. Najveći hitovi s tribina i svlačionice na jednom mjestu.
                   </p>
                   <a href="https://open.spotify.com" target="_blank" className="inline-flex items-center gap-3 bg-[#1DB954] text-black px-8 py-4 rounded-full font-bold uppercase tracking-wider hover:scale-105 transition-transform">
-                      <Play fill="black" size={20} /> Slušaj na Spotify-u
+                      <Play fill="black" size={20} /> SLUŠAJ NA SPOTIFYU
                   </a>
               </div>
 
@@ -575,23 +571,11 @@ export default function HomePageContent({
                 </div>
 
                 {standingsConfig?.source === 'sofascore' && standingsConfig.sofascoreEmbedUrl ? (
-                  // SOFASCORE WIDGET EMBED
                   <div className="w-full h-[600px]">
-                    <iframe 
-                      width="100%" 
-                      height="100%" 
-                      src={standingsConfig.sofascoreEmbedUrl} 
-                      frameBorder="0" 
-                      scrolling="no" 
-                      className="w-full h-full"
-                      style={{ border: 'none' }}
-                    ></iframe>
-                    <div className="text-[10px] text-gray-400 mt-2 text-right uppercase tracking-widest">
-                        Powered by Sofascore
-                    </div>
+                    <iframe width="100%" height="100%" src={standingsConfig.sofascoreEmbedUrl} frameBorder="0" scrolling="no" className="w-full h-full" style={{ border: 'none' }}></iframe>
+                    <div className="text-[10px] text-gray-400 mt-2 text-right uppercase tracking-widest">Powered by Sofascore</div>
                   </div>
                 ) : (
-                  // MANUAL TABLE (Fallback)
                   <>
                     <div className="grid grid-cols-12 gap-2 text-sm font-bold font-body text-gray-500 uppercase tracking-wider mb-4 px-2">
                         <div className="col-span-1">PL</div><div className="col-span-5">KLUB</div><div className="col-span-1 text-center">U</div><div className="col-span-1 text-center">P</div><div className="col-span-1 text-center">I</div><div className="col-span-2 text-center">PTS</div><div className="col-span-1 text-center">+/-</div>
@@ -612,14 +596,38 @@ export default function HomePageContent({
 
            <div className="w-full lg:w-1/2 bg-[#002060] p-8 lg:p-24 flex flex-col justify-center text-white">
                 <h2 className="font-condensed font-bold text-5xl md:text-7xl uppercase leading-none mb-10 tracking-tighter">NEWSLETTER</h2>
-                <form className="flex flex-col gap-6 w-full max-w-lg">
-                    <div className="flex flex-col gap-2"><label className="font-condensed font-bold text-2xl uppercase">IME</label><input type="text" className="bg-transparent border border-white p-4 text-white placeholder-white/50 focus:outline-none focus:bg-white/10" /></div>
-                    <div className="flex flex-col gap-2"><label className="font-condensed font-bold text-2xl uppercase">PREZIME</label><input type="text" className="bg-transparent border border-white p-4 text-white placeholder-white/50 focus:outline-none focus:bg-white/10" /></div>
-                    <div className="flex flex-col gap-2"><label className="font-condensed font-bold text-2xl uppercase">E-MAIL *</label><input type="email" placeholder="name@example.com" className="bg-transparent border border-white p-4 text-white placeholder-white/50 focus:outline-none focus:bg-white/10" /></div>
-                    <div className="flex flex-col gap-4 mt-4">
-                        <label className="flex items-start gap-4 cursor-pointer group"><div className="relative w-6 h-6 border border-white flex-shrink-0 mt-1 flex items-center justify-center"><input type="checkbox" className="peer opacity-0 absolute inset-0 cursor-pointer"/><div className="w-3 h-3 bg-white opacity-0 peer-checked:opacity-100 transition-opacity"></div></div><span className="text-sm font-body leading-tight opacity-80 group-hover:opacity-100">Želim primati Dinamo Fan-Newsletter.</span></label>
+                <form className="flex flex-col gap-6 w-full max-w-lg" onSubmit={handleNewsletterSubmit}>
+                    <div className="flex flex-col gap-2">
+                        <label className="font-condensed font-bold text-2xl uppercase">IME</label>
+                        <input type="text" className="bg-transparent border border-white p-4 text-white placeholder-white/50 focus:outline-none focus:bg-white/10" />
                     </div>
-                    <button className="mt-8 bg-white text-[#002060] font-condensed font-bold text-2xl uppercase py-4 px-10 self-start hover:scale-105 transition-transform">PRIJAVI SE</button>
+                    <div className="flex flex-col gap-2">
+                        <label className="font-condensed font-bold text-2xl uppercase">PREZIME</label>
+                        <input type="text" className="bg-transparent border border-white p-4 text-white placeholder-white/50 focus:outline-none focus:bg-white/10" />
+                    </div>
+                    <div className="flex flex-col gap-2">
+                        <label className="font-condensed font-bold text-2xl uppercase">E-MAIL</label>
+                        <input 
+                            type="email" 
+                            placeholder="name@example.com" 
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            className={`bg-transparent border p-4 text-white placeholder-white/50 focus:outline-none focus:bg-white/10 ${emailError ? 'border-red-500' : 'border-white'}`} 
+                        />
+                        {emailError && <span className="text-red-500 text-sm font-bold">Molimo unesite ispravnu email adresu.</span>}
+                    </div>
+                    <div className="flex flex-col gap-4 mt-4">
+                        <label className="flex items-start gap-4 cursor-pointer group">
+                            <div className="relative w-6 h-6 border border-white flex-shrink-0 mt-1 flex items-center justify-center">
+                                <input type="checkbox" required className="peer opacity-0 absolute inset-0 cursor-pointer"/>
+                                <div className="w-3 h-3 bg-white opacity-0 peer-checked:opacity-100 transition-opacity"></div>
+                            </div>
+                            <span className="text-sm font-body leading-tight opacity-80 group-hover:opacity-100">
+                                Slažem se s obradom svojih osobnih podataka u svrhu primanja Dinamo Fan-Newslettera, u skladu s Politikom privatnosti.
+                            </span>
+                        </label>
+                    </div>
+                    <button type="submit" className="mt-8 bg-white text-[#002060] font-condensed font-bold text-2xl uppercase py-4 px-10 self-start hover:scale-105 transition-transform">PRIJAVI SE</button>
                 </form>
            </div>
       </section>

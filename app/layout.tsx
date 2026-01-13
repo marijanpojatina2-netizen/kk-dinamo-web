@@ -1,20 +1,6 @@
 import React from 'react';
 import type { Metadata } from 'next'
-import { Inter, Antonio } from 'next/font/google'
 import './globals.css'
-
-const inter = Inter({ 
-  subsets: ['latin'],
-  variable: '--font-inter',
-  display: 'swap',
-})
-
-const antonio = Antonio({ 
-  subsets: ['latin'],
-  weight: ['100', '200', '300', '400', '500', '600', '700'],
-  variable: '--font-antonio',
-  display: 'swap',
-})
 
 export const metadata: Metadata = {
   title: 'KK Dinamo Zagreb',
@@ -28,7 +14,18 @@ export default function RootLayout({
 }) {
   return (
     <html lang="hr">
-      <body className={`${inter.variable} ${antonio.variable} font-sans antialiased`}>
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link href="https://fonts.googleapis.com/css2?family=Antonio:wght@100..700&family=Inter:wght@100..900&display=swap" rel="stylesheet" />
+        <style dangerouslySetInnerHTML={{__html: `
+          :root {
+            --font-inter: 'Inter', sans-serif;
+            --font-antonio: 'Antonio', sans-serif;
+          }
+        `}} />
+      </head>
+      <body className={`font-sans antialiased`}>
         {children}
       </body>
     </html>

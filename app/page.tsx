@@ -104,6 +104,7 @@ export default async function Home() {
           date: parseDate(r.date + "2024"),
           league: "Premijer Liga",
           round: "Kolo X",
+          location: "KC Dražen Petrović", // Default Fallback location
           isFinished: r.score.includes(":"),
       }));
 
@@ -117,7 +118,8 @@ export default async function Home() {
           round: matchCenter.round,
           isFinished: false,
           ticketLink: matchCenter.ticketLink,
-          isBigAnnouncement: true
+          isBigAnnouncement: true,
+          location: "KC Dražen Petrović" // Fallback Location
       };
   }
 

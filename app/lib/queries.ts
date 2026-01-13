@@ -101,6 +101,7 @@ export const matchesQuery = groq`*[_type == "match"] | order(date asc) {
   homeScore,
   awayScore,
   date,
+  location, 
   league,
   "leagueLogo": leagueLogo.asset->url,
   round,
@@ -133,6 +134,7 @@ export const shopQuery = groq`*[_type == "shopItem"] {
 export const sponsorsQuery = groq`*[_type == "sponsor"] {
   name,
   "logoUrl": logo.asset->url,
+  websiteUrl,
   tier
 }`;
 

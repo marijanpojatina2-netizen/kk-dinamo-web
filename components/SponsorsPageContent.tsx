@@ -9,8 +9,9 @@ import { Mail, Phone, ArrowRight, Handshake } from 'lucide-react';
 interface Sponsor {
   name: string;
   tier: string;
-  logoUrl?: string; // URL from CMS
-  textClass?: string; // For static text-based logos (fallback)
+  logoUrl?: string; 
+  textClass?: string;
+  websiteUrl?: string; // NOVO: URL sponzora
 }
 
 interface SponsorsPageProps {
@@ -66,7 +67,11 @@ export default function SponsorsPageContent({ sponsors, logoUrl }: SponsorsPageP
                         <div className="absolute -bottom-2 left-0 w-full h-1 bg-[#00C2FF]"></div>
                     </h2>
                     <div className="flex justify-center">
-                         <div className="w-full max-w-2xl aspect-[3/1] bg-gray-50 border-2 border-gray-100 flex items-center justify-center p-12 hover:shadow-2xl transition-all duration-500 group cursor-pointer overflow-hidden">
+                         <a 
+                            href={generalSponsor.websiteUrl || '#'} 
+                            target="_blank" 
+                            className="w-full max-w-2xl aspect-[3/1] bg-gray-50 border-2 border-gray-100 flex items-center justify-center p-12 hover:shadow-2xl transition-all duration-500 group cursor-pointer overflow-hidden relative"
+                         >
                              {generalSponsor.logoUrl ? (
                                 <img src={generalSponsor.logoUrl} alt={generalSponsor.name} className="w-full h-full object-contain group-hover:scale-110 transition-transform" />
                              ) : (
@@ -74,14 +79,20 @@ export default function SponsorsPageContent({ sponsors, logoUrl }: SponsorsPageP
                                     {generalSponsor.name}
                                 </span>
                              )}
-                         </div>
+                             {generalSponsor.websiteUrl && <span className="absolute bottom-4 right-4 text-xs font-bold text-[#00C2FF] uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">Posjeti Web &rarr;</span>}
+                         </a>
                     </div>
                 </div>
               )}
 
               {/* Standard Grid */}
               {otherSponsors.map((s, i) => (
-                  <div key={i} className="aspect-[3/2] bg-white border border-gray-200 flex flex-col items-center justify-center p-8 hover:border-[#002060] transition-all duration-300 group hover:-translate-y-2 hover:shadow-lg overflow-hidden">
+                  <a 
+                    key={i} 
+                    href={s.websiteUrl || '#'} 
+                    target="_blank" 
+                    className="aspect-[3/2] bg-white border border-gray-200 flex flex-col items-center justify-center p-8 hover:border-[#002060] transition-all duration-300 group hover:-translate-y-2 hover:shadow-lg overflow-hidden relative cursor-pointer"
+                  >
                       {s.logoUrl ? (
                           <img src={s.logoUrl} alt={s.name} className="w-full h-full object-contain grayscale group-hover:grayscale-0 transition-all duration-500" />
                       ) : (
@@ -92,14 +103,13 @@ export default function SponsorsPageContent({ sponsors, logoUrl }: SponsorsPageP
                       <span className="mt-4 text-xs font-bold uppercase tracking-widest text-[#00C2FF] opacity-0 group-hover:opacity-100 transition-opacity">
                           {s.tier} Partner
                       </span>
-                  </div>
+                  </a>
               ))}
           </div>
       </section>
 
       {/* --- BECOME A PARTNER CTA --- */}
       <section className="bg-[#002060] text-white py-24 relative overflow-hidden">
-          {/* Background Graphic */}
           <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[#00C2FF] rounded-full blur-[150px] opacity-10 translate-x-1/3 -translate-y-1/3 pointer-events-none"></div>
 
           <div className="max-w-[1400px] mx-auto px-4 lg:px-12 relative z-10">
@@ -113,15 +123,12 @@ export default function SponsorsPageContent({ sponsors, logoUrl }: SponsorsPageP
                           Postani Dio <br/> Pobjedničkog Tima
                       </h2>
                       <p className="text-lg text-blue-200 leading-relaxed mb-8 max-w-lg">
-                          Povežite svoj brend s vrijednostima sporta, upornosti i zajedništva. Nudimo razne pakete sponzorstva prilagođene vašim poslovnim ciljevima, od vidljivosti na dresovima do digitalnih kampanja.
+                          Povežite svoj brend s vrijednostima sporta, upornosti i zajedništva.
                       </p>
                       
                       <div className="flex flex-col sm:flex-row gap-4">
                           <button onClick={() => window.location.href='mailto:marketing@kkdinamo.hr'} className="px-8 py-4 bg-[#00C2FF] text-[#001035] font-condensed font-bold text-xl uppercase hover:bg-white transition-colors flex items-center justify-center gap-2">
                               Kontaktiraj Marketing <ArrowRight size={20} />
-                          </button>
-                          <button className="px-8 py-4 border-2 border-white text-white font-condensed font-bold text-xl uppercase hover:bg-white hover:text-[#002060] transition-colors">
-                              Preuzmi Brošuru
                           </button>
                       </div>
                   </div>
@@ -137,20 +144,6 @@ export default function SponsorsPageContent({ sponsors, logoUrl }: SponsorsPageP
                                   <span className="block text-xs font-bold uppercase tracking-widest text-white/50 mb-1">Email za partnere</span>
                                   <a href="mailto:marketing@kkdinamo.hr" className="text-xl font-bold hover:text-[#00C2FF] transition-colors">marketing@kkdinamo.hr</a>
                               </div>
-                          </div>
-                          <div className="flex items-start gap-4">
-                              <div className="w-12 h-12 bg-[#001035] flex items-center justify-center text-[#00C2FF] flex-shrink-0">
-                                  <Phone size={24} />
-                              </div>
-                              <div>
-                                  <span className="block text-xs font-bold uppercase tracking-widest text-white/50 mb-1">Ured Uprave</span>
-                                  <a href="tel:+38512345678" className="text-xl font-bold hover:text-[#00C2FF] transition-colors">+385 1 234 5678</a>
-                              </div>
-                          </div>
-                          <div className="mt-8 pt-8 border-t border-white/10">
-                              <p className="text-sm text-white/60">
-                                  Naš tim stoji vam na raspolaganju za sve upite i kreiranje individualiziranih ponuda.
-                              </p>
                           </div>
                       </div>
                   </div>

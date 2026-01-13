@@ -2,7 +2,7 @@
 'use client';
 
 import React from 'react';
-import { Instagram, Facebook } from 'lucide-react';
+import { Instagram, Facebook, Linkedin } from 'lucide-react';
 import Link from 'next/link';
 import { sponsors } from '../app/data/siteData';
 
@@ -70,14 +70,17 @@ const FooterV5: React.FC<FooterV5Props> = ({ logoUrl }) => {
             <div className="max-w-[1920px] mx-auto px-4 lg:px-12">
                 <div className="grid grid-cols-1 lg:grid-cols-4 gap-12 pt-0">
                     <div>
-                        <img 
-                          src={displayLogo} 
-                          className="w-20 h-20 mb-6 brightness-0 invert object-contain" 
-                          alt="Logo"
-                          onError={(e) => {
-                            e.currentTarget.style.display = 'none';
-                          }}
-                        />
+                        {/* Removed bg-white wrapper */}
+                        <div className="w-20 h-20 mb-6 relative">
+                            <img 
+                            src={displayLogo} 
+                            className="w-full h-full object-contain" 
+                            alt="Logo"
+                            onError={(e) => {
+                                e.currentTarget.style.display = 'none';
+                            }}
+                            />
+                        </div>
                         <address className="not-italic text-base text-blue-200 font-body">KK Dinamo Zagreb<br/>Rudeška 71, Zagreb</address>
                         <p className="text-white/60 mt-4 text-sm">info@kkdinamo.hr</p>
                     </div>
@@ -90,10 +93,10 @@ const FooterV5: React.FC<FooterV5Props> = ({ logoUrl }) => {
                             <li><Link href="/klub" className="hover:text-blue-300 transition-colors">Klub</Link></li>
                         </ul>
                         <ul className="space-y-4 text-white/70">
+                            <li><Link href="/press" className="hover:text-white transition-colors">Press</Link></li>
                             <li><Link href="#" className="hover:text-white transition-colors">Impresum</Link></li>
                             <li><Link href="#" className="hover:text-white transition-colors">Politika Privatnosti</Link></li>
                             <li><Link href="/sponzori" className="hover:text-white transition-colors">Kontakt</Link></li>
-                            <li><Link href="#" className="hover:text-white transition-colors">Dokumenti</Link></li>
                         </ul>
                     </div>
 
@@ -107,6 +110,9 @@ const FooterV5: React.FC<FooterV5Props> = ({ logoUrl }) => {
                             </a>
                             <a href="https://www.tiktok.com/@kk_dinamo" target="_blank" rel="noopener noreferrer">
                               <TikTokIcon size={30} className="hover:text-blue-300 cursor-pointer transition-colors" />
+                            </a>
+                            <a href="https://hr.linkedin.com/company/kkdinamozagreb" target="_blank" rel="noopener noreferrer">
+                              <Linkedin size={30} className="hover:text-blue-300 cursor-pointer transition-colors" />
                             </a>
                         </div>
                         <p className="text-sm text-blue-300 font-body">© 2025 KK Dinamo Zagreb</p>

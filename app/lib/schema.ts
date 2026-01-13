@@ -61,7 +61,16 @@ const news = {
     { name: 'category', title: 'Kategorija', type: 'string', options: { list: ['Utakmice', 'Klub', 'Intervju', 'Škola', 'Ulaznice'] } },
     { name: 'image', title: 'Glavna slika', type: 'image', options: { hotspot: true } },
     { name: 'excerpt', title: 'Kratki uvod (za naslovnicu)', type: 'text', rows: 3 },
-    { name: 'body', title: 'Tekst članka', type: 'array', of: [{type: 'block'}] },
+    // UPDATE: Added image support to body
+    { 
+      name: 'body', 
+      title: 'Tekst članka', 
+      type: 'array', 
+      of: [
+        {type: 'block'},
+        {type: 'image', options: { hotspot: true }, fields: [{name: 'caption', type: 'string', title: 'Opis slike'}]}
+      ] 
+    },
     { name: 'isFeatured', title: 'Izdvojeno na naslovnici (Velika slika)', type: 'boolean' },
   ]
 }
@@ -79,6 +88,8 @@ const match = {
     { name: 'homeScore', title: 'Poeni Domaćin', type: 'number' },
     { name: 'awayScore', title: 'Poeni Gost', type: 'number' },
     { name: 'date', title: 'Datum i vrijeme', type: 'datetime' },
+    // UPDATE: Added location field
+    { name: 'location', title: 'Lokacija (Dvorana)', type: 'string', initialValue: 'KC Dražen Petrović' },
     { name: 'league', title: 'Liga', type: 'string', initialValue: 'Premijer Liga' },
     { name: 'leagueLogo', title: 'Logo Lige/Natjecanja', type: 'image' },
     { name: 'round', title: 'Kolo', type: 'string' },
@@ -109,6 +120,8 @@ const sponsor = {
   fields: [
     { name: 'name', title: 'Naziv firme', type: 'string' },
     { name: 'logo', title: 'Logo', type: 'image' },
+    // UPDATE: Added website URL
+    { name: 'websiteUrl', title: 'Web Stranica', type: 'url', validation: urlValidation },
     { 
       name: 'tier', 
       title: 'Razina sponzorstva', 

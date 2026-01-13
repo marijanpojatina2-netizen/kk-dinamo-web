@@ -2,7 +2,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Menu, X, ShoppingBag, Ticket, Instagram, Facebook } from 'lucide-react';
+import { Menu, X, ShoppingBag, Ticket, Instagram, Facebook, Linkedin } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
@@ -85,7 +85,7 @@ const HeaderV5: React.FC<HeaderV5Props> = ({ variant = 'solid', logoUrl }) => {
                 </nav>
                 <div className={`w-[1px] h-8 mx-2 opacity-30 ${isScrolled ? 'bg-[#002060]' : 'bg-white'}`}></div>
                 <div className="flex items-center gap-4">
-                    <a href="https://ulaznice.hr" target="_blank" className={`flex items-center gap-2 px-5 py-2 border-2 skew-x-[-10deg] transition-all hover:scale-105 bg-[#002060] border-[#002060] text-white ${isScrolled ? 'hover:bg-transparent hover:text-[#002060]' : 'hover:bg-transparent hover:text-white hover:border-white'}`}>
+                    <a href="https://core-event.co/organizers/kk-dinamo-zagreb-b746/" target="_blank" className={`flex items-center gap-2 px-5 py-2 border-2 skew-x-[-10deg] transition-all hover:scale-105 bg-[#002060] border-[#002060] text-white ${isScrolled ? 'hover:bg-transparent hover:text-[#002060]' : 'hover:bg-transparent hover:text-white hover:border-white'}`}>
                         <Ticket size={18} className="skew-x-[10deg]" /> 
                         <span className="font-condensed font-bold text-xl uppercase skew-x-[10deg]">Ulaznice</span>
                     </a>
@@ -99,13 +99,16 @@ const HeaderV5: React.FC<HeaderV5Props> = ({ variant = 'solid', logoUrl }) => {
             <div className={`flex items-center gap-6 ${textColorClass}`}>
                 <div className="hidden lg:flex gap-5">
                     <a href="https://www.instagram.com/kk_dinamo/" target="_blank" rel="noopener noreferrer">
-                      <Instagram size={30} className="hover:scale-110 cursor-pointer transition-transform"/>
+                      <Instagram size={24} className="hover:scale-110 cursor-pointer transition-transform"/>
                     </a>
                     <a href="https://www.facebook.com/kkdinamo/" target="_blank" rel="noopener noreferrer">
-                      <Facebook size={30} className="hover:scale-110 cursor-pointer transition-transform"/>
+                      <Facebook size={24} className="hover:scale-110 cursor-pointer transition-transform"/>
                     </a>
                     <a href="https://www.tiktok.com/@kk_dinamo" target="_blank" rel="noopener noreferrer">
-                      <TikTokIcon size={30} className="hover:scale-110 cursor-pointer transition-transform"/>
+                      <TikTokIcon size={24} className="hover:scale-110 cursor-pointer transition-transform"/>
+                    </a>
+                    <a href="https://hr.linkedin.com/company/kkdinamozagreb" target="_blank" rel="noopener noreferrer">
+                      <Linkedin size={24} className="hover:scale-110 cursor-pointer transition-transform"/>
                     </a>
                 </div>
                 <div className="lg:hidden cursor-pointer hover:opacity-70" onClick={() => setIsMenuOpen(true)}>
@@ -139,7 +142,7 @@ const HeaderV5: React.FC<HeaderV5Props> = ({ variant = 'solid', logoUrl }) => {
 
               {/* CTAs for Mobile - High Contrast Buttons - Placed BELOW menu */}
               <div className="flex flex-col gap-4 mt-8 pt-6 border-t border-white/10">
-                  <a href="https://ulaznice.hr" target="_blank" className="flex items-center justify-center gap-3 w-full py-4 bg-white text-[#002060] font-condensed font-bold text-xl uppercase tracking-wider hover:bg-gray-100 transition-colors shadow-lg active:scale-95 transition-transform">
+                  <a href="https://core-event.co/organizers/kk-dinamo-zagreb-b746/" target="_blank" className="flex items-center justify-center gap-3 w-full py-4 bg-white text-[#002060] font-condensed font-bold text-xl uppercase tracking-wider hover:bg-gray-100 transition-colors shadow-lg active:scale-95 transition-transform">
                       <Ticket size={22} /> Ulaznice
                   </a>
                   <a href="https://shop.kkdinamo.hr" target="_blank" className="flex items-center justify-center gap-3 w-full py-4 bg-[#00C2FF] text-[#001035] font-condensed font-bold text-xl uppercase tracking-wider hover:bg-white transition-colors shadow-lg active:scale-95 transition-transform">
@@ -149,10 +152,11 @@ const HeaderV5: React.FC<HeaderV5Props> = ({ variant = 'solid', logoUrl }) => {
 
               {/* Social Icons - Placed BELOW CTAs */}
               <div className="mt-8 mb-12">
-                  <div className="flex gap-6 text-white">
+                  <div className="flex gap-6 text-white justify-center">
                       <a href="https://www.instagram.com/kk_dinamo/" target="_blank" rel="noopener noreferrer"><Instagram size={28} /></a>
                       <a href="https://www.facebook.com/kkdinamo/" target="_blank" rel="noopener noreferrer"><Facebook size={28} /></a>
                       <a href="https://www.tiktok.com/@kk_dinamo" target="_blank" rel="noopener noreferrer"><TikTokIcon size={28} /></a>
+                      <a href="https://hr.linkedin.com/company/kkdinamozagreb" target="_blank" rel="noopener noreferrer"><Linkedin size={28} /></a>
                   </div>
               </div>
           </div>
