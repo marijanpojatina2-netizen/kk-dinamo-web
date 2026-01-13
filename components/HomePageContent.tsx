@@ -244,34 +244,46 @@ export default function HomePageContent({
 
       {/* HERO SECTION */}
       {hero && (
-        <section className="relative min-h-[85vh] lg:min-h-screen w-full overflow-hidden flex flex-col justify-end pt-40 pb-12 lg:pb-16 bg-gray-900">
+        <section className="relative min-h-[85vh] lg:min-h-screen w-full overflow-hidden flex flex-col justify-end pt-40 pb-12 lg:pb-16 bg-[#001035] m-0 p-0">
             {hero.type === 'video' ? (
                 <>
                     {hero.videoDesktopUrl && (
-                        <video autoPlay muted loop playsInline className={`absolute inset-0 w-full h-full object-cover ${hero.videoMobileUrl ? 'hidden md:block' : 'block'}`}>
+                        <video autoPlay muted loop playsInline className={`absolute top-0 left-1/2 -translate-x-1/2 min-w-full w-[105%] h-full object-cover ${hero.videoMobileUrl ? 'hidden md:block' : 'block'}`}>
                             <source src={hero.videoDesktopUrl} type="video/mp4" />
                         </video>
                     )}
                     {hero.videoMobileUrl && (
-                        <video autoPlay muted loop playsInline className="absolute inset-0 w-full h-full object-cover md:hidden">
+                        <video autoPlay muted loop playsInline className="absolute top-0 left-1/2 -translate-x-1/2 min-w-full w-[105%] h-full object-cover md:hidden">
                             <source src={hero.videoMobileUrl} type="video/mp4" />
                         </video>
                     )}
                 </>
             ) : (
                 <>
-                    <img src={hero.imageUrl || "https://images.unsplash.com/photo-1519861531473-920026393112?q=80&w=1600"} className={`absolute inset-0 w-full h-full object-cover ${hero.mobileImageUrl ? 'hidden md:block' : 'block'}`} alt="KK Dinamo Hero" />
-                    {hero.mobileImageUrl && <img src={hero.mobileImageUrl} className="absolute inset-0 w-full h-full object-cover md:hidden" alt="KK Dinamo Hero Mobile" />}
+                    <img 
+                      src={hero.imageUrl || "https://images.unsplash.com/photo-1519861531473-920026393112?q=80&w=1600"} 
+                      className={`absolute top-0 left-1/2 -translate-x-1/2 min-w-full w-[105%] h-full object-cover z-0 ${hero.mobileImageUrl ? 'hidden md:block' : 'block'}`} 
+                      alt="KK Dinamo Hero" 
+                    />
+                    {hero.mobileImageUrl && (
+                      <img 
+                        src={hero.mobileImageUrl} 
+                        className="absolute top-0 left-1/2 -translate-x-1/2 min-w-full w-[105%] h-full object-cover md:hidden z-0" 
+                        alt="KK Dinamo Hero Mobile" 
+                      />
+                    )}
                 </>
             )}
             
-            <div className="absolute inset-0 bg-gradient-to-t from-[#001035]/80 via-[#001035]/30 to-transparent lg:bg-gradient-to-r lg:from-[#001035]/80 lg:via-[#001035]/30 lg:to-transparent z-10"></div>
+            {/* Gradient Overlay must also stretch to ensure no gaps */}
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[105%] h-full bg-gradient-to-t from-[#001035]/80 via-[#001035]/30 to-transparent lg:bg-gradient-to-r lg:from-[#001035]/80 lg:via-[#001035]/30 lg:to-transparent z-10 pointer-events-none"></div>
 
             <div className="relative z-20 max-w-[1920px] mx-auto px-6 lg:px-12 w-full text-left">
                 <span className="font-condensed font-bold text-white text-xl lg:text-3xl uppercase tracking-wider mb-2 block drop-shadow-md">
                     {hero.subtitle}
                 </span>
-                <h1 className="font-condensed font-bold text-[11vw] lg:text-[10vw] text-white uppercase leading-[0.9] mb-6 drop-shadow-lg tracking-tighter whitespace-pre-line">
+                {/* Changed leading from 0.9 to 1.1 to fix diacritics */}
+                <h1 className="font-condensed font-bold text-[11vw] lg:text-[10vw] text-white uppercase leading-[1.1] mb-6 drop-shadow-lg tracking-tighter whitespace-pre-line">
                     {hero.title}
                 </h1>
                 {hero.buttonLink && (
@@ -303,7 +315,8 @@ export default function HomePageContent({
                 </div>
                 <div className="order-2 bg-white p-6 lg:p-12 flex flex-col justify-center border-b lg:border-b-0 lg:border-l border-gray-100">
                     <span className="font-body text-sm font-bold text-gray-500 mb-4 uppercase tracking-widest">{formatDate(featuredNews.publishedAt)}</span>
-                    <h2 className="font-condensed font-bold text-4xl lg:text-[6.5rem] xl:text-[8rem] text-black uppercase leading-[0.9] tracking-tighter transition-colors duration-500 group-hover:text-[#002060]">
+                    {/* Changed leading from 0.9 to 1.1 */}
+                    <h2 className="font-condensed font-bold text-4xl lg:text-[6.5rem] xl:text-[8rem] text-black uppercase leading-[1.1] tracking-tighter transition-colors duration-500 group-hover:text-[#002060]">
                         {featuredNews.title}
                     </h2>
                     {featuredNews.excerpt && (
@@ -369,7 +382,8 @@ export default function HomePageContent({
 
                     <div className="relative z-10 w-full max-w-[1600px] mx-auto flex flex-col md:flex-row items-center justify-center gap-4 md:gap-8 lg:gap-12 px-2 md:px-4">
                         <div className="flex flex-col md:flex-row items-center gap-4 text-center md:text-right flex-1 justify-end min-w-0">
-                            <span className="hidden md:block font-condensed font-bold text-3xl md:text-4xl lg:text-5xl xl:text-6xl uppercase leading-[0.9] tracking-tight">{featuredMatch.homeTeam}</span>
+                            {/* Changed leading from 0.9 to 1.1 */}
+                            <span className="hidden md:block font-condensed font-bold text-3xl md:text-4xl lg:text-5xl xl:text-6xl uppercase leading-[1.1] tracking-tight">{featuredMatch.homeTeam}</span>
                             {featuredMatch.homeTeamLogo ? (
                                 <div className="w-20 h-20 md:w-24 md:h-24 lg:w-32 lg:h-32 xl:w-40 xl:h-40 shrink-0 flex items-center justify-center">
                                     <img src={featuredMatch.homeTeamLogo} className="w-full h-full object-contain drop-shadow-lg" alt={featuredMatch.homeTeam} />
@@ -383,7 +397,8 @@ export default function HomePageContent({
                         </div>
 
                         <div className="flex flex-col items-center text-center shrink-0 mx-2 lg:mx-6">
-                            <span className="font-condensed font-bold text-6xl md:text-7xl lg:text-8xl xl:text-9xl leading-none mb-2 tracking-tighter whitespace-nowrap">
+                            {/* Changed leading from none to tight */}
+                            <span className="font-condensed font-bold text-6xl md:text-7xl lg:text-8xl xl:text-9xl leading-tight mb-2 tracking-tighter whitespace-nowrap">
                                 {formatDate(featuredMatch.date).slice(0, -1)}
                             </span>
                             <span className="font-condensed font-bold text-xl lg:text-3xl uppercase tracking-widest mb-2 lg:mb-4 text-blue-200">
@@ -402,7 +417,8 @@ export default function HomePageContent({
                         </div>
 
                         <div className="flex flex-col md:flex-row-reverse items-center gap-4 text-center md:text-left flex-1 justify-end min-w-0">
-                            <span className="hidden md:block font-condensed font-bold text-3xl md:text-4xl lg:text-5xl xl:text-6xl uppercase leading-[0.9] tracking-tight">{featuredMatch.awayTeam}</span>
+                            {/* Changed leading from 0.9 to 1.1 */}
+                            <span className="hidden md:block font-condensed font-bold text-3xl md:text-4xl lg:text-5xl xl:text-6xl uppercase leading-[1.1] tracking-tight">{featuredMatch.awayTeam}</span>
                             {featuredMatch.awayTeamLogo ? (
                                 <div className="w-20 h-20 md:w-24 md:h-24 lg:w-32 lg:h-32 xl:w-40 xl:h-40 shrink-0 flex items-center justify-center">
                                     <img src={featuredMatch.awayTeamLogo} className="w-full h-full object-contain drop-shadow-lg" alt={featuredMatch.awayTeam} />
@@ -458,7 +474,6 @@ export default function HomePageContent({
           <div className="grid grid-cols-1 lg:grid-cols-2">
               
               {/* Left Side: Big Promo Banner */}
-              {/* Always Blue Background now per user request */}
               <div className="relative h-[600px] lg:h-auto overflow-hidden group bg-[#002060]">
                   
                   {hasShopImage ? (
@@ -493,10 +508,11 @@ export default function HomePageContent({
                       </div>
                   )}
                   
-                  {/* Content - Always White Text now since background is always dark/blue */}
+                  {/* Content */}
                   <div className="relative z-10 h-full flex flex-col justify-end p-8 lg:p-16 text-white">
                       <div className="mb-6">
-                          <h2 className="font-condensed font-black text-6xl lg:text-8xl uppercase leading-[0.9] tracking-tighter">
+                          {/* Changed leading from 0.9 to 1.1 */}
+                          <h2 className="font-condensed font-black text-6xl lg:text-8xl uppercase leading-[1.1] tracking-tighter">
                               {shopConfig?.title || "Proud to be\nDinamo"}
                           </h2>
                       </div>
@@ -561,7 +577,8 @@ export default function HomePageContent({
                       <SpotifyIcon />
                       <span className="text-[#1DB954] font-bold tracking-widest uppercase text-sm">SLUŽBENA PLAYLISTA</span>
                   </div>
-                  <h2 className="font-condensed font-black text-6xl lg:text-8xl uppercase leading-none mb-8">
+                  {/* Changed leading to tight */}
+                  <h2 className="font-condensed font-black text-6xl lg:text-8xl uppercase leading-[1.1] mb-8">
                       Ritam <br/> <span className="text-transparent" style={{ WebkitTextStroke: '1px #fff' }}>Tribine</span>
                   </h2>
                   <p className="text-gray-400 text-lg mb-8 max-w-md mx-auto md:mx-0">
@@ -591,7 +608,8 @@ export default function HomePageContent({
       {/* STANDINGS & NEWSLETTER */}
       <section className="flex flex-col lg:flex-row w-full max-w-[1920px] mx-auto border-t border-gray-200">
            <div className="w-full lg:w-1/2 bg-[#F8F8F6] p-8 lg:p-24 flex flex-col">
-                <h2 className="font-condensed font-bold text-5xl md:text-7xl text-black uppercase leading-none mb-10 tracking-tighter">LJESTVICA</h2>
+                {/* Changed leading to tight */}
+                <h2 className="font-condensed font-bold text-5xl md:text-7xl text-black uppercase leading-[1.1] mb-10 tracking-tighter">LJESTVICA</h2>
                 <div className="flex gap-8 mb-8 font-condensed font-bold uppercase text-2xl text-gray-400">
                     <span className="text-black border-b-2 border-black pb-1 cursor-pointer">PREMIJER LIGA</span>
                     <span className="cursor-pointer hover:text-black transition-colors">KUP</span>
@@ -622,7 +640,8 @@ export default function HomePageContent({
            </div>
 
            <div className="w-full lg:w-1/2 bg-[#002060] p-8 lg:p-24 flex flex-col justify-center text-white">
-                <h2 className="font-condensed font-bold text-5xl md:text-7xl uppercase leading-none mb-10 tracking-tighter">NEWSLETTER</h2>
+                {/* Changed leading to tight */}
+                <h2 className="font-condensed font-bold text-5xl md:text-7xl uppercase leading-[1.1] mb-10 tracking-tighter">NEWSLETTER</h2>
                 <form className="flex flex-col gap-6 w-full max-w-lg" onSubmit={handleNewsletterSubmit}>
                     <div className="flex flex-col gap-2">
                         <label className="font-condensed font-bold text-2xl uppercase">IME</label>
