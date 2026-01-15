@@ -62,6 +62,7 @@ export default function SchoolPageContent({ news, staff, locations, youthTeams, 
                            Omladinski Pogon
                        </div>
                    </div>
+                   {/* Changed leading to 1.1 */}
                    <h1 className="font-condensed font-bold text-6xl lg:text-8xl uppercase leading-[1.1] mb-8">
                        Budućnost <br/> <span className="text-transparent" style={{ WebkitTextStroke: '2px #fff' }}>Počinje Ovdje</span>
                    </h1>
@@ -109,11 +110,11 @@ export default function SchoolPageContent({ news, staff, locations, youthTeams, 
           </div>
       </section>
 
-      {/* --- TEAM SLIDER (SELEKCIJE) - REDESIGNED --- */}
+      {/* --- TEAM SLIDER (SELEKCIJE) --- */}
       <section className="py-20 bg-white border-b border-gray-200">
           <div className="max-w-[1400px] mx-auto px-4 lg:px-12 mb-12 flex justify-between items-end">
               <div>
-                  <h2 className="font-condensed font-bold text-5xl uppercase text-[#001035] leading-none mb-2">Naše <span className="text-[#00C2FF]">Ekipe</span></h2>
+                  <h2 className="font-condensed font-bold text-5xl uppercase text-[#001035] leading-[1.1] mb-2">Naše <span className="text-[#00C2FF]">Ekipe</span></h2>
                   <p className="text-gray-500 font-bold uppercase tracking-widest text-sm">Od škole košarke do seniora B</p>
               </div>
               <div className="flex gap-2">
@@ -136,11 +137,12 @@ export default function SchoolPageContent({ news, staff, locations, youthTeams, 
                       
                       <div className="p-6 bg-[#001540] border-t border-white/10">
                           <h4 className="font-condensed font-bold text-md uppercase mb-4 flex items-center gap-2">
-                              <Calendar size={16} className="text-[#00C2FF]" /> Nadolazeće Utakmice
+                              <Calendar size={16} className="text-[#00C2FF]" /> Nadolazeća Utakmica
                           </h4>
+                          {/* Limit to 1 match as requested */}
                           {team.schedule && team.schedule.length > 0 ? (
                               <div className="space-y-3">
-                                  {team.schedule.map((game: any, idx: number) => (
+                                  {team.schedule.slice(0, 1).map((game: any, idx: number) => (
                                       <div key={idx} className="flex justify-between items-center text-sm border-b border-white/10 pb-2 last:border-0 last:pb-0">
                                           <span className="font-bold text-white/90 text-xs">vs {game.opponent}</span>
                                           <div className="text-right">
@@ -164,7 +166,7 @@ export default function SchoolPageContent({ news, staff, locations, youthTeams, 
           <div className="max-w-[1400px] mx-auto px-4 lg:px-12">
               <div className="text-center mb-16">
                   <span className="text-[#00C2FF] font-bold uppercase tracking-widest text-sm mb-2 block">Gdje treniramo?</span>
-                  <h2 className="font-condensed font-bold text-5xl lg:text-7xl uppercase text-[#001035] leading-none">Lokacije <br/> Škola</h2>
+                  <h2 className="font-condensed font-bold text-5xl lg:text-7xl uppercase text-[#001035] leading-[1.1]">Lokacije <br/> Škola</h2>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -191,14 +193,14 @@ export default function SchoolPageContent({ news, staff, locations, youthTeams, 
           </div>
       </section>
 
-      {/* --- REGISTRATION FORM (RESTORED FULL) --- */}
+      {/* --- REGISTRATION FORM --- */}
       <section id="upisi-form" className="bg-[#002060] py-20 lg:py-32 text-white relative overflow-hidden">
           <div className="max-w-[1400px] mx-auto px-4 lg:px-12 relative z-10">
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-start">
                   
                   {/* Left Info */}
                   <div className="lg:col-span-5">
-                      <h2 className="font-condensed font-bold text-6xl lg:text-7xl uppercase leading-none mb-8 tracking-tighter">
+                      <h2 className="font-condensed font-bold text-6xl lg:text-7xl uppercase leading-[1.1] mb-8 tracking-tighter">
                           Postani Dio <br/><span className="text-[#00C2FF]">Dinamo Obitelji</span>
                       </h2>
                       <p className="text-xl text-blue-100 mb-12 font-body leading-relaxed">
@@ -226,7 +228,7 @@ export default function SchoolPageContent({ news, staff, locations, youthTeams, 
                       </div>
                   </div>
 
-                  {/* Right Form - FULL VERSION */}
+                  {/* Right Form */}
                   <div className="lg:col-span-7 bg-white p-8 lg:p-12 text-[#001035] shadow-2xl rounded-sm">
                       <form className="space-y-8">
                           

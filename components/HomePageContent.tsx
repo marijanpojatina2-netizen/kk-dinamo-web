@@ -213,8 +213,13 @@ export default function HomePageContent({
 }: HomePageProps) {
   const rosterRef = useRef<HTMLDivElement>(null);
   const tickerRef = useRef<HTMLDivElement>(null);
+  
+  // Newsletter States
   const [email, setEmail] = useState('');
-  const [emailError, setEmailError] = useState(false);
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [message, setMessage] = useState('');
 
   const scrollContainer = (ref: React.RefObject<HTMLDivElement | null>, dir: 'left' | 'right') => {
     if (ref.current) {
@@ -222,14 +227,33 @@ export default function HomePageContent({
     }
   };
 
-  const handleNewsletterSubmit = (e: React.FormEvent) => {
+  const handleNewsletterSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email || !email.includes('@')) {
-      setEmailError(true);
-    } else {
-      setEmailError(false);
-      alert('Hvala na prijavi!');
-      setEmail('');
+    setStatus('loading');
+    setMessage('');
+
+    try {
+      const res = await fetch('/api/newsletter/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, firstName, lastName }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        setStatus('success');
+        setMessage(data.message || 'Hvala na prijavi!');
+        setEmail('');
+        setFirstName('');
+        setLastName('');
+      } else {
+        setStatus('error');
+        setMessage(data.error || 'Došlo je do greške.');
+      }
+    } catch (error) {
+      setStatus('error');
+      setMessage('Greška u komunikaciji sa serverom.');
     }
   };
 
@@ -309,14 +333,19 @@ export default function HomePageContent({
       {/* NEWS SECTION */}
       <section className="max-w-[1920px] mx-auto px-4 lg:px-12 py-6 lg:py-10 pb-0 lg:pb-0">
           {featuredNews && (
-            <Link href={`/vijesti/${featuredNews.slug}`} className="flex flex-col lg:grid lg:grid-cols-2 gap-0 mb-4 lg:mb-4 group cursor-pointer shadow-lg lg:shadow-none block">
-                <div className="order-1 relative aspect-video lg:aspect-auto min-h-[250px] lg:min-h-[340px] overflow-hidden">
+            <Link href={`/vijesti/${featuredNews.slug}`} className="flex flex-col lg:grid lg:grid-cols-2 gap-0 lg:gap-x-8 mb-4 lg:mb-4 group cursor-pointer shadow-lg lg:shadow-none block">
+                {/* 
+                   UPDATED: Main News Image Alignment
+                   Added lg:gap-x-8 to parent grid to align image with the 4-col grid below.
+                   Removed lg:border-l from text container since gap provides separation.
+                */}
+                <div className="order-1 relative aspect-video lg:aspect-[21/9] min-h-[250px] lg:min-h-0 lg:max-h-[450px] overflow-hidden">
                     <img src={featuredNews.imageUrl} className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105" alt={featuredNews.title}/>
                 </div>
-                <div className="order-2 bg-white p-6 lg:p-12 flex flex-col justify-center border-b lg:border-b-0 lg:border-l border-gray-100">
+                {/* UPDATED: Added h-full to match the image height automatically */}
+                <div className="order-2 bg-white p-6 lg:p-8 xl:p-12 flex flex-col justify-center border-b lg:border-b-0 border-gray-100 h-full">
                     <span className="font-body text-sm font-bold text-gray-500 mb-4 uppercase tracking-widest">{formatDate(featuredNews.publishedAt)}</span>
-                    {/* Changed leading from 0.9 to 1.1 */}
-                    <h2 className="font-condensed font-bold text-4xl lg:text-[6.5rem] xl:text-[8rem] text-black uppercase leading-[1.1] tracking-tighter transition-colors duration-500 group-hover:text-[#002060]">
+                    <h2 className="font-condensed font-bold text-4xl lg:text-6xl xl:text-7xl text-black uppercase leading-[1.1] tracking-tighter transition-colors duration-500 group-hover:text-[#002060]">
                         {featuredNews.title}
                     </h2>
                     {featuredNews.excerpt && (
@@ -341,14 +370,14 @@ export default function HomePageContent({
                           )}
                       </div>
                       <span className="font-body text-xs font-bold text-gray-400 uppercase tracking-widest block mb-3">{formatDate(newsItem.publishedAt)}</span>
-                      <h3 className="font-condensed font-bold text-2xl lg:text-4xl text-black uppercase leading-tight group-hover:text-[#002060] transition-colors tracking-tight">
+                      <h3 className="font-condensed font-bold text-2xl lg:text-3xl text-black uppercase leading-tight group-hover:text-[#002060] transition-colors tracking-tight">
                           {newsItem.title}
                       </h3>
                   </Link>
               ))}
           </div>
           
-          <div className="flex justify-center mt-4 mb-0">
+          <div className="flex justify-center mt-8 mb-0">
               <Link href="/vijesti" className="inline-block border-2 border-gray-300 px-8 py-3 text-sm font-bold uppercase tracking-widest hover:border-[#002060] hover:text-[#002060] transition-colors">
                   Arhiva Vijesti
               </Link>
@@ -582,7 +611,7 @@ export default function HomePageContent({
                       Ritam <br/> <span className="text-transparent" style={{ WebkitTextStroke: '1px #fff' }}>Tribine</span>
                   </h2>
                   <p className="text-gray-400 text-lg mb-8 max-w-md mx-auto md:mx-0">
-                      Pripremi se za utakmicu uz službenu playlistu KK Dinama. Najveći hitovi s tribina i svlačionice na jednom mjestu.
+                      Pripremi se za utakmicu uz službenu playlistu KK Dinama. Najveći hitovi s tribina i iz svlačionice na jednom mjestu.
                   </p>
                   <a href="https://open.spotify.com" target="_blank" className="inline-flex items-center gap-3 bg-[#1DB954] text-black px-8 py-4 rounded-full font-bold uppercase tracking-wider hover:scale-105 transition-transform">
                       <Play fill="black" size={20} /> SLUŠAJ NA SPOTIFYU
@@ -616,7 +645,7 @@ export default function HomePageContent({
                 </div>
 
                 {standingsConfig?.source === 'sofascore' && standingsConfig.sofascoreEmbedUrl ? (
-                  <div className="w-full h-[600px]">
+                  <div className="w-full h-[900px]">
                     <iframe width="100%" height="100%" src={standingsConfig.sofascoreEmbedUrl} frameBorder="0" scrolling="no" className="w-full h-full" style={{ border: 'none' }}></iframe>
                     <div className="text-[10px] text-gray-400 mt-2 text-right uppercase tracking-widest">Powered by Sofascore</div>
                   </div>
@@ -645,11 +674,21 @@ export default function HomePageContent({
                 <form className="flex flex-col gap-6 w-full max-w-lg" onSubmit={handleNewsletterSubmit}>
                     <div className="flex flex-col gap-2">
                         <label className="font-condensed font-bold text-2xl uppercase">IME</label>
-                        <input type="text" className="bg-transparent border border-white p-4 text-white placeholder-white/50 focus:outline-none focus:bg-white/10" />
+                        <input 
+                          type="text" 
+                          value={firstName} 
+                          onChange={(e) => setFirstName(e.target.value)}
+                          className="bg-transparent border border-white p-4 text-white placeholder-white/50 focus:outline-none focus:bg-white/10" 
+                        />
                     </div>
                     <div className="flex flex-col gap-2">
                         <label className="font-condensed font-bold text-2xl uppercase">PREZIME</label>
-                        <input type="text" className="bg-transparent border border-white p-4 text-white placeholder-white/50 focus:outline-none focus:bg-white/10" />
+                        <input 
+                          type="text" 
+                          value={lastName}
+                          onChange={(e) => setLastName(e.target.value)}
+                          className="bg-transparent border border-white p-4 text-white placeholder-white/50 focus:outline-none focus:bg-white/10" 
+                        />
                     </div>
                     <div className="flex flex-col gap-2">
                         <label className="font-condensed font-bold text-2xl uppercase">E-MAIL</label>
@@ -658,10 +697,17 @@ export default function HomePageContent({
                             placeholder="name@example.com" 
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            className={`bg-transparent border p-4 text-white placeholder-white/50 focus:outline-none focus:bg-white/10 ${emailError ? 'border-red-500' : 'border-white'}`} 
+                            className={`bg-transparent border p-4 text-white placeholder-white/50 focus:outline-none focus:bg-white/10 ${status === 'error' ? 'border-red-500' : 'border-white'}`} 
                         />
-                        {emailError && <span className="text-red-500 text-sm font-bold">Molimo unesite ispravnu email adresu.</span>}
                     </div>
+                    
+                    {/* Status Message */}
+                    {message && (
+                        <div className={`text-sm font-bold ${status === 'error' ? 'text-red-400' : 'text-green-400'}`}>
+                            {message}
+                        </div>
+                    )}
+
                     <div className="flex flex-col gap-4 mt-4">
                         <label className="flex items-start gap-4 cursor-pointer group">
                             <div className="relative w-6 h-6 border border-white flex-shrink-0 mt-1 flex items-center justify-center">
@@ -673,7 +719,13 @@ export default function HomePageContent({
                             </span>
                         </label>
                     </div>
-                    <button type="submit" className="mt-8 bg-white text-[#002060] font-condensed font-bold text-2xl uppercase py-4 px-10 self-start hover:scale-105 transition-transform">PRIJAVI SE</button>
+                    <button 
+                      type="submit" 
+                      disabled={status === 'loading'}
+                      className="mt-8 bg-white text-[#002060] font-condensed font-bold text-2xl uppercase py-4 px-10 self-start hover:scale-105 transition-transform disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        {status === 'loading' ? 'ŠALJEM...' : 'PRIJAVI SE'}
+                    </button>
                 </form>
            </div>
       </section>

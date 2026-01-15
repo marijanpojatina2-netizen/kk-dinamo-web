@@ -1,15 +1,26 @@
 
-'use client';
-
 import React from 'react';
 import HeaderV5 from '../../components/HeaderV5';
 import FooterV5 from '../../components/FooterV5';
-import { Mail, ArrowRight } from 'lucide-react';
+import { Mail } from 'lucide-react';
+import { client } from '../lib/sanity';
+import { globalConfigQuery } from '../lib/queries';
 
-export default function PressPage() {
+export const revalidate = 60;
+
+export default async function PressPage() {
+  let logoUrl: string | undefined;
+
+  try {
+    const globalConfig = await client.fetch(globalConfigQuery).catch(() => null);
+    if (globalConfig) logoUrl = globalConfig.logoUrl;
+  } catch (error) {
+    console.error("Error fetching logo:", error);
+  }
+
   return (
     <div className="font-sans text-[#001035] bg-white w-full overflow-x-hidden selection:bg-[#002060] selection:text-white pt-24">
-      <HeaderV5 variant="solid" />
+      <HeaderV5 variant="solid" logoUrl={logoUrl} />
 
       <section className="relative py-24 bg-[#001035] text-white">
           <div className="max-w-[1400px] mx-auto px-4 lg:px-12">
@@ -50,7 +61,7 @@ export default function PressPage() {
           </div>
       </section>
 
-      <FooterV5 />
+      <FooterV5 logoUrl={logoUrl} />
     </div>
   );
 }

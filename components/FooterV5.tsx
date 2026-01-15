@@ -1,7 +1,7 @@
 
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Instagram, Facebook, Linkedin } from 'lucide-react';
 import Link from 'next/link';
 import { sponsors } from '../app/data/siteData';

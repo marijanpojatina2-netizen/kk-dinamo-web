@@ -37,7 +37,6 @@ const player = {
 }
 
 // 2. OSOBLJE (Staff - Treneri i voditelji)
-// Promijenjen naziv da bude jasnije da je za sve
 const staff = {
   name: 'staff',
   title: 'Osoblje (Treneri)', 
@@ -63,7 +62,7 @@ const staff = {
   ]
 }
 
-// 3. VIJESTI (News)
+// 3. VIJESTI (News) - PROŠIRENI EDITOR
 const news = {
   name: 'news',
   title: 'Vijesti',
@@ -86,13 +85,105 @@ const news = {
       title: 'Tekst članka', 
       type: 'array', 
       of: [
-        {type: 'block'},
+        {
+          type: 'block',
+          // Dodatni stilovi
+          styles: [
+            {title: 'Normal', value: 'normal'},
+            {title: 'Naslov 2', value: 'h2'},
+            {title: 'Naslov 3', value: 'h3'},
+            {title: 'Citat', value: 'blockquote'},
+          ],
+          // Dodatni dekoratori (Bold, Italic, itd.)
+          marks: {
+            decorators: [
+              { title: 'Bold', value: 'strong' },
+              { title: 'Italic', value: 'em' },
+              { title: 'Underline', value: 'underline' },
+              { title: 'Strike', value: 'strike-through' }
+            ],
+            annotations: [
+              {
+                name: 'link',
+                type: 'object',
+                title: 'Link',
+                fields: [
+                  {
+                    name: 'href',
+                    type: 'url',
+                    title: 'URL',
+                    validation: urlValidation
+                  },
+                  {
+                    name: 'blank',
+                    type: 'boolean',
+                    title: 'Otvori u novom tabu',
+                    initialValue: true
+                  }
+                ]
+              },
+              {
+                name: 'align',
+                type: 'object',
+                title: 'Poravnanje',
+                fields: [
+                  {
+                    name: 'alignment',
+                    type: 'string',
+                    options: {
+                      list: [
+                        {title: 'Lijevo', value: 'left'},
+                        {title: 'Centar', value: 'center'},
+                        {title: 'Desno', value: 'right'}
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        // Slika u tekstu
         {
           type: 'image', 
           options: { hotspot: true }, 
           fields: [{name: 'caption', type: 'string', title: 'Opis slike'}],
-          title: 'Slika u tekstu',
-          description: 'Preporučeno: minimalno 1200px širine.'
+          title: 'Slika u tekstu'
+        },
+        // Horizontalni Separator (Divider)
+        {
+          type: 'object',
+          name: 'divider',
+          title: 'Horizontalna Linija (Separator)',
+          fields: [
+            {
+              name: 'style',
+              type: 'string',
+              title: 'Stil',
+              options: {
+                list: [
+                  {title: 'Puna Linija', value: 'solid'},
+                  {title: 'Isprekidana', value: 'dashed'},
+                  {title: 'Prazan Prostor', value: 'spacer'}
+                ],
+                layout: 'radio'
+              },
+              initialValue: 'solid'
+            }
+          ]
+        },
+        // YouTube Embed
+        {
+          type: 'object',
+          name: 'youtube',
+          title: 'YouTube Video',
+          fields: [
+            {
+              name: 'url',
+              type: 'url',
+              title: 'YouTube Video URL'
+            }
+          ]
         }
       ] 
     },
@@ -136,7 +227,6 @@ const match = {
     { name: 'ticketLink', title: 'Link na ulaznice (ako je buduća)', type: 'url', validation: urlValidation },
     { name: 'isBigAnnouncement', title: 'Prikaži kao Glavnu Najavu', type: 'boolean' }, 
   ],
-  // FIX: Better Preview in CMS List
   preview: {
     select: {
       home: 'homeTeam',
@@ -172,7 +262,7 @@ const shopItem = {
   ]
 }
 
-// 6. SPONZORI (Zastarjelo - koristi se novi Sponsors Page singleton, ali ostavljamo da ne puca baza odmah)
+// 6. SPONZORI (Zastarjelo)
 const sponsor = {
   name: 'sponsor',
   title: 'Sponzori (Pojedinačni)',
@@ -346,9 +436,7 @@ const clubInfo = {
   ]
 }
 
-// --- NOVE STRANICE (SINGLETONS) ZA LAKŠE UREĐIVANJE ---
-
-// 10. POSTAVKE ŠKOLE KOŠARKE (Sve na jednom mjestu)
+// 10. POSTAVKE ŠKOLE KOŠARKE
 const schoolPage = {
   name: 'schoolPage',
   title: 'Postavke Škole',
@@ -438,7 +526,7 @@ const schoolPage = {
   ]
 }
 
-// 11. POSTAVKE SPONZORA (Svi u jednom fajlu)
+// 11. POSTAVKE SPONZORA
 const sponsorsPage = {
   name: 'sponsorsPage',
   title: 'Postavke Sponzora',
@@ -483,14 +571,14 @@ const sponsorsPage = {
 
 export const schemaTypes = [
   homepage,
-  schoolPage, // NOVO
-  sponsorsPage, // NOVO
+  schoolPage, 
+  sponsorsPage, 
   clubInfo,
   news,
   match,
   player,
   staff,
   shopItem,
-  sponsor, // Zadržano radi backward compatibility, ali sakrit ćemo u desku
+  sponsor, 
   standing,
 ]
