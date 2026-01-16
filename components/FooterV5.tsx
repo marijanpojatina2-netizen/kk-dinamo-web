@@ -1,13 +1,12 @@
 
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Instagram, Facebook, Linkedin } from 'lucide-react';
 import Link from 'next/link';
 import { sponsors } from '../app/data/siteData';
 
-// Custom TikTok Icon (Lucide doesn't have it)
-const TikTokIcon = ({ size = 24, className = "" }) => (
+const TikTokIcon = ({ size = 24, className = "" }: {size?: number, className?: string}) => (
   <svg 
     width={size} 
     height={size} 
@@ -35,7 +34,6 @@ const FooterV5: React.FC<FooterV5Props> = ({ logoUrl }) => {
   const repeatRow1 = [...firstRow, ...firstRow, ...firstRow];
   const repeatRow2 = [...secondRow, ...secondRow, ...secondRow];
 
-  // Fallback logo if CMS url is missing
   const displayLogo = logoUrl || "https://upload.wikimedia.org/wikipedia/hr/thumb/2/23/KK_Dinamo_Zagreb.png/260px-KK_Dinamo_Zagreb.png";
 
   return (
@@ -70,7 +68,6 @@ const FooterV5: React.FC<FooterV5Props> = ({ logoUrl }) => {
             <div className="max-w-[1920px] mx-auto px-4 lg:px-12">
                 <div className="grid grid-cols-1 lg:grid-cols-4 gap-12 pt-0">
                     <div>
-                        {/* Removed bg-white wrapper */}
                         <div className="w-20 h-20 mb-6 relative">
                             <img 
                             src={displayLogo} 
@@ -88,32 +85,24 @@ const FooterV5: React.FC<FooterV5Props> = ({ logoUrl }) => {
                     <div className="col-span-1 lg:col-span-2 flex flex-col md:flex-row gap-8 lg:gap-32 font-bold text-white uppercase text-lg font-condensed">
                         <ul className="space-y-4">
                             <li><Link href="/vijesti" className="hover:text-blue-300 transition-colors">Vijesti</Link></li>
-                            <li><Link href="/momcad" className="hover:text-blue-300 transition-colors">Momčad</Link></li>
+                            <li><Link href="/klub/momcad" className="hover:text-blue-300 transition-colors">Momčad</Link></li>
                             <li><Link href="/skola" className="hover:text-blue-300 transition-colors">Škola</Link></li>
                             <li><Link href="/klub" className="hover:text-blue-300 transition-colors">Klub</Link></li>
                         </ul>
                         <ul className="space-y-4 text-white/70">
                             <li><Link href="/press" className="hover:text-white transition-colors">Press</Link></li>
-                            <li><Link href="#" className="hover:text-white transition-colors">Impresum</Link></li>
-                            <li><Link href="#" className="hover:text-white transition-colors">Politika Privatnosti</Link></li>
-                            <li><Link href="/sponzori" className="hover:text-white transition-colors">Kontakt</Link></li>
+                            <li><Link href="/impresum" className="hover:text-white transition-colors">Impresum</Link></li>
+                            <li><Link href="/politika-privatnosti" className="hover:text-white transition-colors">Politika Privatnosti</Link></li>
+                            <li><Link href="/kontakt" className="hover:text-white transition-colors">Kontakt</Link></li>
                         </ul>
                     </div>
 
                     <div className="flex flex-col items-start lg:items-end">
                         <div className="flex gap-6 mb-6 text-white">
-                            <a href="https://www.instagram.com/kk_dinamo/" target="_blank" rel="noopener noreferrer">
-                              <Instagram size={30} className="hover:text-blue-300 cursor-pointer transition-colors" />
-                            </a>
-                            <a href="https://www.facebook.com/kkdinamo/" target="_blank" rel="noopener noreferrer">
-                              <Facebook size={30} className="hover:text-blue-300 cursor-pointer transition-colors" />
-                            </a>
-                            <a href="https://www.tiktok.com/@kk_dinamo" target="_blank" rel="noopener noreferrer">
-                              <TikTokIcon size={30} className="hover:text-blue-300 cursor-pointer transition-colors" />
-                            </a>
-                            <a href="https://hr.linkedin.com/company/kkdinamozagreb" target="_blank" rel="noopener noreferrer">
-                              <Linkedin size={30} className="hover:text-blue-300 cursor-pointer transition-colors" />
-                            </a>
+                            <a href="https://www.instagram.com/kk_dinamo/" target="_blank" rel="noopener noreferrer"><Instagram size={30} className="hover:text-blue-300 cursor-pointer transition-colors" /></a>
+                            <a href="https://www.facebook.com/kkdinamo/" target="_blank" rel="noopener noreferrer"><Facebook size={30} className="hover:text-blue-300 cursor-pointer transition-colors" /></a>
+                            <a href="https://www.tiktok.com/@kk_dinamo" target="_blank" rel="noopener noreferrer"><TikTokIcon size={30} className="hover:text-blue-300 cursor-pointer transition-colors" /></a>
+                            <a href="https://hr.linkedin.com/company/kkdinamozagreb" target="_blank" rel="noopener noreferrer"><Linkedin size={30} className="hover:text-blue-300 cursor-pointer transition-colors" /></a>
                         </div>
                         <p className="text-sm text-blue-300 font-body">© 2025 KK Dinamo Zagreb</p>
                     </div>
