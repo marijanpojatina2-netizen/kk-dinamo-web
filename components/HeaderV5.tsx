@@ -23,7 +23,7 @@ const TikTokIcon = ({ size = 24, className = "" }: {size?: number, className?: s
 );
 
 interface HeaderV5Props {
-  variant?: 'transparent' | 'solid'; // Ostavljamo prop radi kompatibilnosti, ali logika se bazira na pathu
+  variant?: 'transparent' | 'solid';
   logoUrl?: string;
 }
 
@@ -50,29 +50,46 @@ const HeaderV5: React.FC<HeaderV5Props> = ({ logoUrl }) => {
     setIsMenuOpen(false);
   }, [pathname]);
 
-  // LOGIKA PRIKAZA HEADERA:
-  // 1. Ako je Homepage: Početno skriven (ili transparentan bez sadržaja), prikazuje se tek na scroll.
-  // 2. Ostale stranice: Uvijek vidljiv, uvijek bijela pozadina (kao da je scrollan).
-  
-  const headerVisibleClass = isHomePage 
-    ? (isScrolled ? 'translate-y-0 bg-white shadow-md py-2' : '-translate-y-full py-4 opacity-0 pointer-events-none') 
-    : 'translate-y-0 bg-white shadow-md py-2';
+  // LOGIKA IZGLEDA:
+  // Transparentno stanje vrijedi SAMO ako smo na naslovnici I nismo skrolali.
+  // U suprotnom (unutarnje stranice ili scroll na naslovnici), header je "Solid" (bijeli).
+  const isTransparent = isHomePage && !isScrolled;
 
-  // Text color is always dark blue if visible (since visible means white background on home scroll OR solid on other pages)
-  const textColorClass = 'text-[#002060]';
-  
-  // Button logic: Always solid/dark because header is white when visible
-  // Hover effect: Outline blue, Text Blue
-  const shopButtonClass = 'border-[#002060] text-[#002060] hover:bg-[#002060] hover:text-white';
-  const ticketButtonClass = 'bg-[#002060] border-[#002060] text-white hover:bg-white hover:text-[#002060]';
+  // 1. Kontejner Headera
+  const headerClasses = isTransparent 
+    ? 'bg-transparent py-6 border-b border-white/10' // Transparent, veći padding, suptilni border
+    : 'bg-white shadow-md py-2'; // Bijela, manji padding, sjena
+
+  // 2. Boja teksta i ikona
+  const textColorClass = isTransparent 
+    ? 'text-white' 
+    : 'text-[#002060]';
+
+  // 3. Vidljivost Loga (na transparentnom headeru logo je sakriven)
+  const logoClasses = isTransparent
+    ? 'opacity-0 invisible -translate-x-4 scale-90'
+    : 'opacity-100 visible translate-x-0 scale-100';
+
+  // 4. Stilovi gumba
+  // Shop gumb (Outline)
+  const shopButtonClass = isTransparent
+    ? 'border-white text-white hover:bg-white hover:text-[#002060]'
+    : 'border-[#002060] text-[#002060] hover:bg-[#002060] hover:text-white';
+
+  // Ticket gumb (Solid/Filled)
+  const ticketButtonClass = isTransparent
+    ? 'bg-white border-white text-[#002060] hover:bg-transparent hover:text-white'
+    : 'bg-[#002060] border-[#002060] text-white hover:bg-white hover:text-[#002060]';
 
   return (
     <>
-      <header className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 transform ${headerVisibleClass}`}>
+      <header className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 transform translate-y-0 ${headerClasses}`}>
         <div className="max-w-[1920px] mx-auto px-4 lg:px-12 flex items-center justify-between">
+            
+            {/* LOGO LINK */}
             <Link 
               href="/" 
-              className="w-12 h-12 lg:w-20 lg:h-20 relative z-50 block hover:scale-105 transition-all duration-300"
+              className={`w-12 h-12 lg:w-20 lg:h-20 relative z-50 block transition-all duration-500 ease-out ${logoClasses}`}
             >
                 <img 
                   src={displayLogo} 
@@ -86,35 +103,42 @@ const HeaderV5: React.FC<HeaderV5Props> = ({ logoUrl }) => {
                 />
             </Link>
 
+            {/* DESKTOP NAV */}
             <div className="hidden lg:flex items-center gap-8">
-                <nav className={`flex items-center gap-6 xl:gap-8 font-condensed text-xl xl:text-2xl font-bold uppercase ${textColorClass}`}>
+                <nav className={`flex items-center gap-6 xl:gap-8 font-condensed text-xl xl:text-2xl font-bold uppercase transition-colors duration-300 ${textColorClass}`}>
                     <Link href="/vijesti" className="hover:opacity-70 transition-opacity">Vijesti</Link>
                     <Link href="/klub/momcad" className="hover:opacity-70 transition-opacity">Momčad</Link>
                     <Link href="/skola" className="hover:opacity-70 transition-opacity">Škola Košarke</Link>
                     <Link href="/sponzori" className="hover:opacity-70 transition-opacity">Sponzori</Link>
                     <Link href="/klub" className="hover:opacity-70 transition-opacity">Klub</Link>
                 </nav>
-                <div className={`w-[1px] h-8 mx-2 opacity-30 bg-[#002060]`}></div>
+                
+                {/* Divider Line */}
+                <div className={`w-[1px] h-8 mx-2 opacity-30 ${isTransparent ? 'bg-white' : 'bg-[#002060]'}`}></div>
+                
                 <div className="flex items-center gap-4">
-                    {/* GUMB ULAZNICE - POPRAVLJEN HOVER */}
-                    <a href="https://core-event.co/organizers/kk-dinamo-zagreb-b746/" target="_blank" className={`flex items-center gap-2 px-5 py-2 border-2 skew-x-[-10deg] transition-all hover:scale-105 ${ticketButtonClass}`}>
+                    {/* GUMB ULAZNICE */}
+                    <a href="https://core-event.co/organizers/kk-dinamo-zagreb-b746/" target="_blank" className={`flex items-center gap-2 px-5 py-2 border-2 skew-x-[-10deg] transition-all duration-300 hover:scale-105 ${ticketButtonClass}`}>
                         <Ticket size={18} className="skew-x-[10deg]" /> 
                         <span className="font-condensed font-bold text-xl uppercase skew-x-[10deg]">Ulaznice</span>
                     </a>
-                    <a href="https://shop.kkdinamo.hr" target="_blank" className={`flex items-center gap-2 px-5 py-2 border-2 skew-x-[-10deg] transition-all hover:scale-105 ${shopButtonClass}`}>
+                    {/* GUMB SHOP */}
+                    <a href="https://shop.kkdinamo.hr" target="_blank" className={`flex items-center gap-2 px-5 py-2 border-2 skew-x-[-10deg] transition-all duration-300 hover:scale-105 ${shopButtonClass}`}>
                         <ShoppingBag size={18} className="skew-x-[10deg]" /> 
                         <span className="font-condensed font-bold text-xl uppercase skew-x-[10deg]">Shop</span>
                     </a>
                 </div>
             </div>
 
-            <div className={`flex items-center gap-6 ${textColorClass}`}>
+            {/* SOCIAL ICONS & MOBILE HAMBURGER */}
+            <div className={`flex items-center gap-6 transition-colors duration-300 ${textColorClass}`}>
                 <div className="hidden lg:flex gap-5">
                     <a href="https://www.instagram.com/kk_dinamo/" target="_blank" rel="noopener noreferrer"><Instagram size={24} className="hover:scale-110 cursor-pointer transition-transform"/></a>
                     <a href="https://www.facebook.com/kkdinamo/" target="_blank" rel="noopener noreferrer"><Facebook size={24} className="hover:scale-110 cursor-pointer transition-transform"/></a>
                     <a href="https://www.tiktok.com/@kk_dinamo" target="_blank" rel="noopener noreferrer"><TikTokIcon size={24} className="hover:scale-110 cursor-pointer transition-transform"/></a>
                     <a href="https://hr.linkedin.com/company/kkdinamozagreb" target="_blank" rel="noopener noreferrer"><Linkedin size={24} className="hover:scale-110 cursor-pointer transition-transform"/></a>
                 </div>
+                {/* Mobile Menu Trigger */}
                 <div className="lg:hidden cursor-pointer hover:opacity-70" onClick={() => setIsMenuOpen(true)}>
                     <Menu size={32} />
                 </div>
@@ -122,12 +146,13 @@ const HeaderV5: React.FC<HeaderV5Props> = ({ logoUrl }) => {
         </div>
       </header>
 
-      {/* MOBILE MENU */}
+      {/* MOBILE MENU OVERLAY */}
       <div 
         className={`fixed inset-0 z-[90] bg-black/60 backdrop-blur-sm transition-opacity duration-500 ${isMenuOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`} 
         onClick={() => setIsMenuOpen(false)}
       />
       
+      {/* MOBILE MENU DRAWER */}
       <div className={`fixed inset-y-0 right-0 z-[100] w-[85%] max-w-[380px] bg-[#002060] text-white transform transition-transform duration-500 cubic-bezier(0.77, 0, 0.175, 1) shadow-2xl ${isMenuOpen ? 'translate-x-0' : 'translate-x-full'}`}>
           <div className="flex justify-between items-center p-6 border-b border-white/10">
               <span className="font-condensed font-bold text-2xl uppercase tracking-wider">IZBORNIK</span>
