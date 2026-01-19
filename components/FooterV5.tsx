@@ -85,7 +85,7 @@ const FooterV5: React.FC<FooterV5Props> = ({ logoUrl }) => {
                     <div className="col-span-1 lg:col-span-2 flex flex-col md:flex-row gap-8 lg:gap-32 font-bold text-white uppercase text-lg font-condensed">
                         <ul className="space-y-4">
                             <li><Link href="/vijesti" className="hover:text-blue-300 transition-colors">Vijesti</Link></li>
-                            <li><Link href="/klub/momcad" className="hover:text-blue-300 transition-colors">Momčad</Link></li>
+                            <li><Link href="/momcad" className="hover:text-blue-300 transition-colors">Momčad</Link></li>
                             <li><Link href="/skola" className="hover:text-blue-300 transition-colors">Škola</Link></li>
                             <li><Link href="/klub" className="hover:text-blue-300 transition-colors">Klub</Link></li>
                         </ul>

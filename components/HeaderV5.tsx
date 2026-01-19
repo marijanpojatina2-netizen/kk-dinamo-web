@@ -107,7 +107,7 @@ const HeaderV5: React.FC<HeaderV5Props> = ({ logoUrl }) => {
             <div className="hidden lg:flex items-center gap-8">
                 <nav className={`flex items-center gap-6 xl:gap-8 font-condensed text-xl xl:text-2xl font-bold uppercase transition-colors duration-300 ${textColorClass}`}>
                     <Link href="/vijesti" className="hover:opacity-70 transition-opacity">Vijesti</Link>
-                    <Link href="/klub/momcad" className="hover:opacity-70 transition-opacity">Momčad</Link>
+                    <Link href="/momcad" className="hover:opacity-70 transition-opacity">Momčad</Link>
                     <Link href="/skola" className="hover:opacity-70 transition-opacity">Škola Košarke</Link>
                     <Link href="/sponzori" className="hover:opacity-70 transition-opacity">Sponzori</Link>
                     <Link href="/klub" className="hover:opacity-70 transition-opacity">Klub</Link>
@@ -164,7 +164,7 @@ const HeaderV5: React.FC<HeaderV5Props> = ({ logoUrl }) => {
           <div className="flex flex-col p-6 h-full overflow-y-auto">
               <nav className="flex flex-col gap-4">
                 <Link href="/vijesti" className="font-condensed font-bold text-4xl uppercase hover:text-blue-300 transition-colors">Vijesti</Link>
-                <Link href="/klub/momcad" className="font-condensed font-bold text-4xl uppercase hover:text-blue-300 transition-colors">Momčad</Link>
+                <Link href="/momcad" className="font-condensed font-bold text-4xl uppercase hover:text-blue-300 transition-colors">Momčad</Link>
                 <Link href="/skola" className="font-condensed font-bold text-4xl uppercase hover:text-blue-300 transition-colors">Škola Košarke</Link>
                 <Link href="/sponzori" className="font-condensed font-bold text-4xl uppercase hover:text-blue-300 transition-colors">Sponzori</Link>
                 <Link href="/klub" className="font-condensed font-bold text-4xl uppercase hover:text-blue-300 transition-colors">Klub</Link>

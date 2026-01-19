@@ -1,9 +1,8 @@
 
-import { client } from "../../lib/sanity";
-import { playersQuery, staffQuery, globalConfigQuery } from "../../lib/queries";
-// Pokušajmo s relativnom putanjom koja je sigurno točna s obzirom na strukturu
-import TeamPageContent from "../../../components/TeamPageContent";
-import { roster, staff as staticStaff } from "../../data/siteData";
+import { client } from "../lib/sanity";
+import { playersQuery, staffQuery, globalConfigQuery } from "../lib/queries";
+import TeamPageContent from "../../components/TeamPageContent";
+import { roster, staff as staticStaff } from "../data/siteData";
 
 // Forsiramo dinamičko renderiranje kako bismo izbjegli 404 na buildu ako podaci fale
 export const dynamic = 'force-dynamic';
