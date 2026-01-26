@@ -92,7 +92,9 @@ const FooterV5: React.FC<FooterV5Props> = ({ logoUrl }) => {
                         <ul className="space-y-4 text-white/70">
                             <li><Link href="/press" className="hover:text-white transition-colors">Press</Link></li>
                             <li><Link href="/impresum" className="hover:text-white transition-colors">Impresum</Link></li>
-                            <li><Link href="/politika-privatnosti" className="hover:text-white transition-colors">Politika Privatnosti</Link></li>
+                            <li><Link href="/pravila-o-kolacicima" className="hover:text-white transition-colors">Pravila o kolačićima</Link></li>
+                            <li><Link href="/zastita-osobnih-podataka" className="hover:text-white transition-colors">Zaštita osobnih podataka</Link></li>
+                            <li><Link href="/uvjeti-koristenja" className="hover:text-white transition-colors">Uvjeti korištenja</Link></li>
                             <li><Link href="/kontakt" className="hover:text-white transition-colors">Kontakt</Link></li>
                         </ul>
                     </div>

@@ -7,7 +7,6 @@ import Link from 'next/link';
 import HeaderV5 from './HeaderV5';
 import FooterV5 from './FooterV5';
 
-// ... (Interfaces remain the same)
 interface HeroData {
   title: string;
   subtitle: string;
@@ -103,7 +102,6 @@ interface HomePageProps {
   standingsConfig?: StandingsConfig;
 }
 
-// ... (Helper functions remain the same)
 const formatDate = (dateString: string) => {
   if (!dateString) return "";
   const date = new Date(dateString);
@@ -125,12 +123,6 @@ const formatDateTime = (dateString: string) => {
   return `${dayName}, ${time} h`;
 };
 
-const SpotifyIcon = () => (
-  <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor" className="text-[#1DB954]">
-    <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.46-1.02 15.96 1.681.539.3.719 1.02.419 1.56-.24.42-1.02.6-1.56.3z"/>
-  </svg>
-);
-
 const PlayerFlipCard: React.FC<{ player: PlayerItem }> = ({ player }) => {
   const [isFlipped, setIsFlipped] = useState(false);
 
@@ -146,7 +138,6 @@ const PlayerFlipCard: React.FC<{ player: PlayerItem }> = ({ player }) => {
                     {player.imageUrl && (
                       <img 
                         src={player.imageUrl} 
-                        // UKLONJEN GRAYSCALE
                         className="w-full h-full object-cover transition-all duration-500" 
                         alt={player.lastname}
                       />
@@ -217,6 +208,7 @@ export default function HomePageContent({
   const [email, setEmail] = useState('');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
+  const [gdprConsent, setGdprConsent] = useState(false);
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [message, setMessage] = useState('');
 
@@ -228,6 +220,13 @@ export default function HomePageContent({
 
   const handleNewsletterSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!gdprConsent) {
+      setStatus('error');
+      setMessage('Molimo prihvatite uvjete korištenja podataka.');
+      return;
+    }
+
     setStatus('loading');
     setMessage('');
 
@@ -246,6 +245,7 @@ export default function HomePageContent({
         setEmail('');
         setFirstName('');
         setLastName('');
+        setGdprConsent(false);
       } else {
         setStatus('error');
         setMessage(data.error || 'Došlo je do greške.');
@@ -258,11 +258,9 @@ export default function HomePageContent({
 
   const featuredNews = news && news.length > 0 ? news[0] : null;
   const gridNews = news && news.length > 1 ? news.slice(1, 5) : [];
-  const hasShopImage = !!shopConfig?.imageUrl;
 
   return (
     <div className="font-sans text-[#001035] bg-white w-full overflow-x-hidden selection:bg-[#002060] selection:text-white">
-      {/* HeaderV5 će sam odrediti vidljivost bazirano na scrollu za Home */}
       <HeaderV5 variant="transparent" logoUrl={logoUrl} />
 
       {/* HERO SECTION */}
@@ -331,11 +329,6 @@ export default function HomePageContent({
       <section className="max-w-[1920px] mx-auto px-4 lg:px-12 py-6 lg:py-10 pb-0 lg:pb-0">
           {featuredNews && (
             <Link href={`/vijesti/${featuredNews.slug}`} className="flex flex-col lg:grid lg:grid-cols-2 gap-0 lg:gap-x-8 mb-4 lg:mb-4 group cursor-pointer shadow-lg lg:shadow-none block">
-                {/* 
-                   GLAVNA SLIKA VIJESTI - POPRAVAK:
-                   Mičemo aspect ratio i visinska ograničenja. Slika diktira visinu.
-                   w-full osigurava širinu 1920px konteksta (pola grida).
-                */}
                 <div className="order-1 w-full bg-gray-200">
                     <img 
                       src={featuredNews.imageUrl} 
@@ -343,7 +336,6 @@ export default function HomePageContent({
                       alt={featuredNews.title}
                     />
                 </div>
-                
                 <div className="order-2 bg-white p-6 lg:p-8 xl:p-12 flex flex-col justify-center border-b lg:border-b-0 border-gray-100 h-full">
                     <span className="font-body text-sm font-bold text-gray-500 mb-4 uppercase tracking-widest">{formatDate(featuredNews.publishedAt)}</span>
                     <h2 className="font-condensed font-bold text-4xl lg:text-6xl xl:text-7xl text-black uppercase leading-[1.1] tracking-tighter transition-colors duration-500 group-hover:text-[#002060]">
@@ -385,8 +377,6 @@ export default function HomePageContent({
           </div>
       </section>
 
-      {/* ... (Ostale sekcije: MATCH CENTER, SHOP, ROSTER, SPOTIFY, STANDINGS/NEWSLETTER ostaju iste) ... */}
-      
       {/* MATCH CENTER */}
       <section className="max-w-[1920px] mx-auto px-4 lg:px-12 py-6 lg:py-8">
           <h2 className="font-condensed font-bold text-5xl md:text-8xl uppercase text-black leading-none mb-8 tracking-tighter">Raspored</h2>
@@ -496,37 +486,56 @@ export default function HomePageContent({
           </div>
       </section>
 
-      {/* SHOP SECTION */}
+      {/* SHOP SECTION - Updated Animation & Size */}
       <section className="max-w-[1920px] mx-auto w-full bg-white border-y border-gray-200">
           <div className="grid grid-cols-1 lg:grid-cols-2">
-              <div className="relative h-[600px] lg:h-auto overflow-hidden group bg-[#002060]">
-                  {hasShopImage ? (
-                      <>
-                          <img src={shopConfig!.imageUrl} className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:opacity-40 transition-opacity duration-700" alt="Shop Promo" />
-                          <div className="absolute inset-0 bg-gradient-to-t from-[#002060] via-transparent to-transparent"></div>
-                      </>
-                  ) : (
-                      <div className="absolute inset-0 flex flex-col justify-center items-center opacity-20 pointer-events-none select-none overflow-hidden transform -rotate-12 scale-150">
-                           {/* Fallback Ticker */}
-                      </div>
-                  )}
-                  <div className="relative z-10 h-full flex flex-col justify-end p-8 lg:p-16 text-white">
+              <div className="relative h-[600px] overflow-hidden group bg-[#002060]">
+                  {/* ANIMATED BACKGROUND TICKER - ALWAYS VISIBLE */}
+                  <div className="absolute inset-0 flex flex-col justify-center items-center opacity-[0.1] pointer-events-none select-none overflow-hidden transform -rotate-12 scale-150">
+                       <div className="animate-marquee whitespace-nowrap flex items-center gap-16 mb-12">
+                          {[...Array(8)].map((_, i) => (
+                              <div key={`r1-${i}`} className="flex items-center gap-16">
+                                  <span className="font-condensed font-bold text-9xl text-white">SHOP</span>
+                                  <ShoppingBag size={80} strokeWidth={2.5} className="text-white" />
+                              </div>
+                          ))}
+                       </div>
+                       <div className="animate-marquee-rev whitespace-nowrap flex items-center gap-16">
+                          {[...Array(8)].map((_, i) => (
+                              <div key={`r2-${i}`} className="flex items-center gap-16">
+                                  <span className="font-condensed font-bold text-9xl text-white">SHOP</span>
+                                  <ShoppingBag size={80} strokeWidth={2.5} className="text-white" />
+                              </div>
+                          ))}
+                       </div>
+                  </div>
+
+                  <div className="relative z-10 h-full flex flex-col justify-center items-center p-8 text-white text-center">
                       <div className="mb-6">
-                          <h2 className="font-condensed font-black text-6xl lg:text-8xl uppercase leading-[1.1] tracking-tighter">{shopConfig?.title || "Proud to be\nDinamo"}</h2>
+                          <h2 className="font-condensed font-black text-5xl lg:text-7xl uppercase leading-[1.1] tracking-tighter">{shopConfig?.title || "Proud to be\nDinamo"}</h2>
                       </div>
                       <a href={shopConfig?.buttonLink || "https://shop.kkdinamo.hr"} target="_blank" className="inline-flex items-center gap-4 px-8 py-4 w-fit font-condensed font-bold text-xl uppercase transition-colors bg-white text-[#002060] hover:bg-[#00C2FF] hover:text-white">
                           {shopConfig?.buttonText || "Posjeti Webshop"} <ArrowRight size={24} />
                       </a>
                   </div>
               </div>
-              <div className="grid grid-cols-2">
+              <div className="grid grid-cols-2 grid-rows-2 h-[600px]">
                   {shopItems.slice(0, 4).map((p, i) => (
-                      <a key={i} href={p.link} target="_blank" className="relative group border-b border-r border-gray-200 bg-white overflow-hidden flex flex-col aspect-square">
-                          <div className="flex-1 relative flex items-center justify-center p-6">
-                              {p.imageUrl && <img src={p.imageUrl} className="relative z-10 w-full h-full object-contain group-hover:scale-110 transition-transform duration-500" alt={p.name} />}
+                      <a key={i} href={p.link} target="_blank" className="relative group border-b border-r border-gray-200 bg-white overflow-hidden flex flex-col h-full">
+                          {/* Top 70% for Image - Always centered and contained */}
+                          <div className="h-[70%] w-full relative flex items-center justify-center p-4 bg-gray-50 transition-colors duration-300 group-hover:bg-white">
+                              {p.imageUrl && (
+                                  <img 
+                                    src={p.imageUrl} 
+                                    className="relative z-10 w-full h-full object-contain group-hover:scale-110 transition-transform duration-500" 
+                                    alt={p.name} 
+                                  />
+                              )}
                           </div>
-                          <div className="p-6 text-center z-20 bg-white group-hover:bg-[#002060] group-hover:text-white transition-colors duration-300">
-                              <h3 className="font-condensed font-bold text-xl lg:text-2xl uppercase mb-1">{p.name}</h3>
+                          
+                          {/* Bottom 30% for Text Info - Always visible */}
+                          <div className="h-[30%] w-full flex flex-col items-center justify-center p-2 bg-white border-t border-gray-100 group-hover:bg-[#002060] group-hover:text-white transition-colors duration-300 z-20">
+                              <h3 className="font-condensed font-bold text-lg lg:text-xl uppercase mb-1 text-center leading-tight px-2">{p.name}</h3>
                               <span className="font-body font-bold text-gray-500 group-hover:text-blue-300">{p.price}</span>
                           </div>
                       </a>
@@ -552,7 +561,7 @@ export default function HomePageContent({
            </div>
       </section>
 
-      {/* ... (Spotify & Standings & Newsletter form similar to before, kept concise here) */}
+      {/* STANDINGS & NEWSLETTER */}
       <section className="flex flex-col lg:flex-row w-full max-w-[1920px] mx-auto border-t border-gray-200">
            <div className="w-full lg:w-1/2 bg-[#F8F8F6] p-8 lg:p-24 flex flex-col">
                 <h2 className="font-condensed font-bold text-5xl md:text-7xl text-black uppercase leading-[1.1] mb-10 tracking-tighter">LJESTVICA</h2>
@@ -583,13 +592,41 @@ export default function HomePageContent({
            <div className="w-full lg:w-1/2 bg-[#002060] p-8 lg:p-24 flex flex-col justify-center text-white">
                 <h2 className="font-condensed font-bold text-5xl md:text-7xl uppercase leading-[1.1] mb-10 tracking-tighter">NEWSLETTER</h2>
                 <form className="flex flex-col gap-6 w-full max-w-lg" onSubmit={handleNewsletterSubmit}>
-                    {/* ... Form input fields ... */}
-                    <div className="flex flex-col gap-2">
-                        <label className="font-condensed font-bold text-2xl uppercase">E-MAIL</label>
-                        <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="bg-transparent border border-white p-4 text-white placeholder-white/50 focus:outline-none focus:bg-white/10" required />
+                    
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="flex flex-col gap-2">
+                          <label className="font-condensed font-bold text-lg uppercase">IME</label>
+                          <input type="text" value={firstName} onChange={(e) => setFirstName(e.target.value)} className="bg-transparent border border-white p-3 text-white placeholder-white/50 focus:outline-none focus:bg-white/10" required />
+                      </div>
+                      <div className="flex flex-col gap-2">
+                          <label className="font-condensed font-bold text-lg uppercase">PREZIME</label>
+                          <input type="text" value={lastName} onChange={(e) => setLastName(e.target.value)} className="bg-transparent border border-white p-3 text-white placeholder-white/50 focus:outline-none focus:bg-white/10" required />
+                      </div>
                     </div>
-                    {/* ... */}
-                    <button type="submit" disabled={status === 'loading'} className="mt-8 bg-white text-[#002060] font-condensed font-bold text-2xl uppercase py-4 px-10 self-start hover:scale-105 transition-transform">{status === 'loading' ? 'ŠALJEM...' : 'PRIJAVI SE'}</button>
+
+                    <div className="flex flex-col gap-2">
+                        <label className="font-condensed font-bold text-lg uppercase">E-MAIL</label>
+                        <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="bg-transparent border border-white p-3 text-white placeholder-white/50 focus:outline-none focus:bg-white/10" required />
+                    </div>
+
+                    <div className="flex items-start gap-3 mt-2">
+                      <input 
+                        type="checkbox" 
+                        id="gdpr" 
+                        checked={gdprConsent} 
+                        onChange={(e) => setGdprConsent(e.target.checked)} 
+                        className="mt-1 w-5 h-5 accent-[#00C2FF] cursor-pointer"
+                      />
+                      <label htmlFor="gdpr" className="text-xs text-gray-300 cursor-pointer">
+                        Ovime dajem izričitu privolu KK Dinamo Zagreb da moje osobne podatke (ime, prezime, e-mail adresa) koristi u svrhu slanja newslettera s novostima, ponudama i informacijama o klubu. Upoznat sam s pravom da u svakom trenutku mogu povući privolu klikom na link za odjavu u newsletteru ili slanjem zahtjeva na info@kkdinamo.hr. Moji podaci bit će pohranjeni sukladno <Link href="/politika-privatnosti" className="underline text-white">Politici privatnosti</Link>.
+                      </label>
+                    </div>
+
+                    <button type="submit" disabled={status === 'loading'} className="mt-4 bg-white text-[#002060] font-condensed font-bold text-2xl uppercase py-4 px-10 self-start hover:scale-105 transition-transform disabled:opacity-50 disabled:cursor-not-allowed">
+                      {status === 'loading' ? 'ŠALJEM...' : 'PRIJAVI SE'}
+                    </button>
+                    
+                    {message && <p className={`mt-2 ${status === 'error' ? 'text-red-400' : 'text-green-400'}`}>{message}</p>}
                 </form>
            </div>
       </section>

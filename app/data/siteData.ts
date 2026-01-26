@@ -49,23 +49,27 @@ export const shopItems = [
         price: "75€", 
         img: "https://shop.kkdinamo.hr/wp-content/uploads/2023/09/dres-plavi-23-24-prednja.png", 
         link: "https://shop.kkdinamo.hr/proizvod/dres",
-        fit: "contain" 
     },
     { 
         id: 2, 
         name: "Fan Hudica Plava", 
         price: "45€", 
-        img: "https://images.unsplash.com/photo-1556821840-3a63f95609a7?q=80&w=600", 
+        img: "https://shop.kkdinamo.hr/wp-content/uploads/2024/10/hudica-plava-1.png", // Changed to isolated product image
         link: "https://shop.kkdinamo.hr/proizvod/hudica",
-        fit: "cover" 
     },
     { 
         id: 3, 
         name: "Šal Dinamo", 
         price: "15€", 
-        img: "https://images.unsplash.com/photo-1520975661595-dc228151216a?q=80&w=600", 
+        img: "https://shop.kkdinamo.hr/wp-content/uploads/2023/09/sal-navijacki-1.png", // Changed to isolated product image
         link: "https://shop.kkdinamo.hr/proizvod/sal",
-        fit: "cover" 
+    },
+    { 
+        id: 4, 
+        name: "Kapa Zimska", 
+        price: "20€", 
+        img: "https://shop.kkdinamo.hr/wp-content/uploads/2023/11/kapa-zimska-plava.png", // Changed to isolated product image
+        link: "https://shop.kkdinamo.hr/proizvod/kapa",
     }
 ];
 

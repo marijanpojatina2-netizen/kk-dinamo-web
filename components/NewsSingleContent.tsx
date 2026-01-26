@@ -6,7 +6,7 @@ import HeaderV5 from './HeaderV5';
 import FooterV5 from './FooterV5';
 import { Calendar, User, Facebook, Linkedin, Ticket, ArrowRight, ChevronLeft } from 'lucide-react';
 import Link from 'next/link';
-import { PortableText } from '@portabletext/react';
+import { PortableText, PortableTextComponents } from '@portabletext/react';
 import { urlFor } from '../app/lib/sanity';
 
 // Custom X Icon
@@ -37,7 +37,9 @@ const formatDate = (dateString: string) => {
   return `${date.getDate().toString().padStart(2, '0')}.${(date.getMonth() + 1).toString().padStart(2, '0')}.${date.getFullYear()}.`;
 };
 
-// Custom component to render images within PortableText
+// --- CUSTOM PORTABLE TEXT COMPONENTS ---
+
+// 1. Image Renderer
 const PortableTextImage = ({ value }: any) => {
   return (
     <div className="my-8">
@@ -53,13 +55,68 @@ const PortableTextImage = ({ value }: any) => {
   );
 };
 
+// 2. YouTube Renderer
+const YouTubeEmbed = ({ value }: any) => {
+  const { url } = value;
+  if (!url) return null;
+  
+  // Extract video ID (basic regex for standard and short URLs)
+  const id = url.match(/(?:youtu\.be\/|youtube\.com\/(?:.*v=|.*\/)([\w-]{11}))/)?.[1];
+  
+  if (!id) return <a href={url} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">Pogledaj video</a>;
+
+  return (
+    <div className="my-8 w-full aspect-video">
+      <iframe
+        src={`https://www.youtube.com/embed/${id}`}
+        title="YouTube video player"
+        className="w-full h-full rounded-sm shadow-lg"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowFullScreen
+      />
+    </div>
+  );
+};
+
+// 3. Divider Renderer
+const Divider = ({ value }: any) => {
+  const style = value?.style === 'dashed' ? 'border-dashed' : 'border-solid';
+  return <hr className={`my-12 border-t-2 border-gray-200 ${style}`} />;
+};
+
+// Component Definition
+const myPortableTextComponents: PortableTextComponents = {
+  types: {
+    image: PortableTextImage,
+    youtube: YouTubeEmbed,
+    divider: Divider,
+  },
+  marks: {
+    // Handling Alignment Annotation
+    align: ({ value, children }: any) => {
+      const alignment = value?.alignment || 'left';
+      return <div style={{ textAlign: alignment }}>{children}</div>;
+    },
+    link: ({value, children}) => {
+      const target = (value?.href || '').startsWith('http') ? '_blank' : undefined
+      return (
+        <a href={value?.href} target={target} rel={target === '_blank' ? 'noindex nofollow' : undefined} className="text-[#00C2FF] hover:underline font-bold">
+          {children}
+        </a>
+      )
+    },
+  },
+  block: {
+    blockquote: ({children}) => <blockquote className="border-l-4 border-[#00C2FF] pl-4 italic text-gray-600 my-6">{children}</blockquote>,
+  }
+};
+
 export default function NewsSingleContent({ article, relatedNews, logoUrl }: NewsSingleContentProps) {
   
-  // Funkcija za dijeljenje na društvenim mrežama
   const handleShare = (platform: 'facebook' | 'twitter' | 'linkedin') => {
     if (typeof window === 'undefined') return;
 
-    const url = window.location.href; // Trenutni URL stranice
+    const url = window.location.href;
     const text = article?.title || 'KK Dinamo Zagreb';
     let shareUrl = '';
 
@@ -74,8 +131,6 @@ export default function NewsSingleContent({ article, relatedNews, logoUrl }: New
         shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`;
         break;
     }
-
-    // Otvori u novom prozoru
     window.open(shareUrl, '_blank', 'width=600,height=400,noopener,noreferrer');
   };
 
@@ -130,7 +185,6 @@ export default function NewsSingleContent({ article, relatedNews, logoUrl }: New
       {/* --- ARTICLE BODY --- */}
       <section className="max-w-[1000px] mx-auto px-4 lg:px-8 pb-20">
           
-          {/* Social Share Buttons */}
           <div className="flex gap-4 mb-12 border-b border-gray-100 pb-8">
               <span className="text-xs font-bold uppercase tracking-widest text-gray-400 self-center mr-4">Podijeli:</span>
               <button onClick={() => handleShare('facebook')} className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center text-gray-400 hover:bg-[#1877F2] hover:text-white hover:border-[#1877F2] transition-colors"><Facebook size={18} /></button>
@@ -142,11 +196,7 @@ export default function NewsSingleContent({ article, relatedNews, logoUrl }: New
               {article.body ? (
                   <PortableText 
                     value={article.body} 
-                    components={{
-                        types: {
-                            image: PortableTextImage
-                        }
-                    }}
+                    components={myPortableTextComponents}
                   />
               ) : (
                   <p className="text-gray-500 italic">Više detalja uskoro...</p>
@@ -154,12 +204,12 @@ export default function NewsSingleContent({ article, relatedNews, logoUrl }: New
           </div>
       </section>
 
-      {/* --- BOTTOM SECTION (3 COLUMNS) --- */}
+      {/* --- BOTTOM SECTION --- */}
       <section className="bg-gray-50 border-t border-gray-200 py-20">
           <div className="max-w-[1400px] mx-auto px-4 lg:px-8">
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
                   
-                  {/* COL 1: POVEZANE VIJESTI */}
+                  {/* POVEZANE VIJESTI */}
                   <div>
                       <h3 className="font-condensed font-bold text-2xl text-[#001035] uppercase mb-6 border-b-2 border-gray-200 pb-2">Povezane Vijesti</h3>
                       <div className="space-y-6">
@@ -179,22 +229,12 @@ export default function NewsSingleContent({ article, relatedNews, logoUrl }: New
                       </div>
                   </div>
 
-                  {/* COL 2: NEWSLETTER */}
-                  <div className="bg-white p-8 border border-gray-200 shadow-sm h-fit">
-                      <h3 className="font-condensed font-bold text-2xl text-[#001035] uppercase mb-2">Newsletter</h3>
-                      <p className="text-sm text-gray-500 mb-6">Prijavi se za novosti i ekskluzivne intervjue direktno u svoj inbox.</p>
-                      <form className="flex flex-col gap-4">
-                          <input type="email" placeholder="Tvoj email..." className="w-full bg-gray-50 border border-gray-300 p-3 text-sm focus:outline-none focus:border-[#002060]" />
-                          <button className="w-full bg-[#001035] text-white font-bold uppercase text-xs py-4 hover:bg-[#00C2FF] hover:text-[#001035] transition-colors">Prijavi se</button>
-                      </form>
-                  </div>
-
-                  {/* COL 3: OSIGURAJ SVOJE MJESTO (CTA) */}
-                  <div className="bg-[#002060] text-white p-8 text-center h-fit shadow-lg">
+                  {/* CTA: TICKETS */}
+                  <div className="bg-[#002060] text-white p-8 text-center h-fit shadow-lg col-span-2 flex flex-col justify-center items-center">
                       <Ticket size={48} className="mx-auto mb-4 text-[#00C2FF]" />
                       <h3 className="font-condensed font-bold text-4xl uppercase leading-none mb-2">Osiguraj svoje mjesto</h3>
                       <p className="text-blue-200 text-sm mb-6">Ne propusti spektakl u Draženovom domu. Kupnjom online izbjegavaš gužve.</p>
-                      <a href="https://core-event.co/organizers/kk-dinamo-zagreb-b746/" target="_blank" className="block w-full bg-[#00C2FF] text-[#001035] font-condensed font-bold text-xl uppercase py-4 hover:bg-white transition-colors">
+                      <a href="https://core-event.co/organizers/kk-dinamo-zagreb-b746/" target="_blank" className="block w-auto px-12 bg-[#00C2FF] text-[#001035] font-condensed font-bold text-xl uppercase py-4 hover:bg-white transition-colors">
                           Kupi Ulaznice
                       </a>
                       <p className="text-[10px] text-white/40 mt-4 uppercase tracking-widest">Powered by Core Event</p>
