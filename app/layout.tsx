@@ -3,6 +3,7 @@ import React from 'react';
 import type { Metadata } from 'next'
 import Script from 'next/script'
 import './globals.css'
+import CookieConsent from '../components/CookieConsent';
 
 export const metadata: Metadata = {
   title: {
@@ -39,7 +40,6 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
-  // Strukturirani podaci za Sportski Klub (Google SEO)
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'SportsTeam',
@@ -81,14 +81,51 @@ export default function RootLayout({
             --font-antonio: 'Antonio', sans-serif;
           }
         `}} />
-        {/* Inject JSON-LD Schema */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
+        
+        {/* 
+            INLINE SCRIPT: Provjera GDPR Postavki prije učitavanja
+            Čita 'cookie_consent_v2' JSON objekt.
+        */}
+        <script dangerouslySetInnerHTML={{__html: `
+          try {
+            const consentV2 = localStorage.getItem('cookie_consent_v2');
+            let analyticsAllowed = false;
+            let marketingAllowed = false;
+
+            if (consentV2) {
+                const settings = JSON.parse(consentV2);
+                analyticsAllowed = settings.analytics;
+                marketingAllowed = settings.marketing;
+            } else {
+                // Fallback za stari ključ ako postoji
+                const oldConsent = localStorage.getItem('cookie_consent');
+                if (oldConsent === 'accepted') {
+                    analyticsAllowed = true;
+                    marketingAllowed = true;
+                }
+            }
+
+            // Postavi GA flags
+            if (!analyticsAllowed) {
+               window['ga-disable-${gaId}'] = true;
+            } else {
+               window['ga-disable-${gaId}'] = false;
+            }
+
+            // Pohrani globalne varijable za kasnije skripte ako zatreba
+            window.cookieMarketingAllowed = marketingAllowed;
+
+          } catch (e) {
+             console.log('Cookie logic error', e);
+          }
+        `}} />
       </head>
       <body className={`font-sans antialiased`}>
-        {/* GOOGLE ANALYTICS (Load only if ID is present) */}
+        {/* GOOGLE ANALYTICS */}
         {gaId && (
           <>
             <Script
@@ -100,39 +137,72 @@ export default function RootLayout({
                 window.dataLayer = window.dataLayer || [];
                 function gtag(){dataLayer.push(arguments);}
                 gtag('js', new Date());
-                gtag('config', '${gaId}');
+                
+                // Zadano stanje - denied, osim ako skripta u headu nije otkrila pristanak
+                // Ipak, gtag config se okida ovdje.
+                
+                let adStorage = 'denied';
+                let analyticsStorage = 'denied';
+
+                try {
+                    const c = localStorage.getItem('cookie_consent_v2');
+                    if(c) {
+                        const s = JSON.parse(c);
+                        if(s.analytics) analyticsStorage = 'granted';
+                        if(s.marketing) adStorage = 'granted';
+                    } else if (localStorage.getItem('cookie_consent') === 'accepted') {
+                        adStorage = 'granted';
+                        analyticsStorage = 'granted';
+                    }
+                } catch(e){}
+
+                gtag('consent', 'default', {
+                    'ad_storage': adStorage,
+                    'analytics_storage': analyticsStorage
+                });
+
+                gtag('config', '${gaId}', {
+                    page_path: window.location.pathname,
+                });
               `}
             </Script>
           </>
         )}
 
-        {/* META PIXEL (Load only if ID is present) */}
+        {/* META PIXEL (Samo ako je marketing dozvoljen) */}
         {fbPixelId && (
           <>
             <Script id="meta-pixel" strategy="afterInteractive">
               {`
-                !function(f,b,e,v,n,t,s)
-                {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-                n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-                if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-                n.queue=[];t=b.createElement(e);t.async=!0;
-                t.src=v;s=b.getElementsByTagName(e)[0];
-                s.parentNode.insertBefore(t,s)}(window, document,'script',
-                'https://connect.facebook.net/en_US/fbevents.js');
-                fbq('init', '${fbPixelId}');
-                fbq('track', 'PageView');
+                const checkMarketing = () => {
+                    try {
+                        const c = localStorage.getItem('cookie_consent_v2');
+                        if(c && JSON.parse(c).marketing) return true;
+                        if(localStorage.getItem('cookie_consent') === 'accepted') return true;
+                    } catch(e){}
+                    return false;
+                };
+
+                if (checkMarketing()) {
+                    !function(f,b,e,v,n,t,s)
+                    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+                    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+                    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+                    n.queue=[];t=b.createElement(e);t.async=!0;
+                    t.src=v;s=b.getElementsByTagName(e)[0];
+                    s.parentNode.insertBefore(t,s)}(window, document,'script',
+                    'https://connect.facebook.net/en_US/fbevents.js');
+                    
+                    fbq('init', '${fbPixelId}');
+                    fbq('track', 'PageView');
+                }
               `}
             </Script>
-            <noscript>
-              <img height="1" width="1" style={{display: 'none'}}
-              src={`https://www.facebook.com/tr?id=${fbPixelId}&ev=PageView&noscript=1`}
-              alt="Meta Pixel"
-              />
-            </noscript>
           </>
         )}
 
         {children}
+        <CookieConsent />
       </body>
     </html>
   )
